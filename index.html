@@ -120,8 +120,13 @@
     flex: 1; background: var(--panel); border: 2px solid var(--wall); border-radius: 6px;
     padding: 5px 4px; text-align: center; cursor: pointer;
     transition: border-color 0.15s ease, background 0.15s ease, opacity 0.15s ease;
-    min-height: 40px; display: flex; flex-direction: column; justify-content: center; gap: 1px;
+    min-height: 40px; display: flex; flex-direction: row; align-items: center; gap: 6px;
   }
+  .chip-portrait {
+    width: 28px; height: 28px; border-radius: 4px; object-fit: cover; object-position: top center;
+    flex-shrink: 0; background: var(--panel-2);
+  }
+  .chip-text { display: flex; flex-direction: column; justify-content: center; gap: 1px; min-width: 0; text-align: left; }
   .chip .cls { font-family: var(--font-head); font-size: 0.7rem; font-weight: 600; }
   .chip .wpn { font-size: 0.56rem; color: var(--text-dim); }
   .chip.selected { border-color: var(--amber); background: var(--panel-2); }
@@ -513,15 +518,25 @@
       if (composeMode) chip.classList.add('compose');
       if (isKO) chip.classList.add('ko');
       const wpn = isKO ? 'Hors combat' : classData[op.cls].wpn;
+      const env = levelDefs[currentLevel].env || 'urbain';
 
+      const portrait = document.createElement('img');
+      portrait.className = 'chip-portrait';
+      portrait.src = getOperatorPortrait(op.cls, env);
+      portrait.alt = op.cls;
+
+      const textWrap = document.createElement('div');
+      textWrap.className = 'chip-text';
       const clsDiv = document.createElement('div');
       clsDiv.className = 'cls';
       clsDiv.textContent = op.cls;
       const wpnDiv = document.createElement('div');
       wpnDiv.className = 'wpn';
       wpnDiv.textContent = wpn;
-      chip.appendChild(clsDiv);
-      chip.appendChild(wpnDiv);
+      textWrap.appendChild(clsDiv);
+      textWrap.appendChild(wpnDiv);
+      chip.appendChild(portrait);
+      chip.appendChild(textWrap);
 
       if (!isKO) {
         chip.addEventListener('click', () => {
@@ -695,12 +710,24 @@
   // Portrait d'opérateur affiché en vignette sur le briefing, selon la
   // famille de camouflage de l'environnement (urbain sert pour résidence,
   // entrepôt, bureaux et banque, qui partagent tous ce camouflage).
+  // Portraits d'opérateurs par classe x environnement (Shadow ignore le camouflage).
   const ENV_OPERATOR_IMG = {
     urbain: './op-urbain.png',
     desert: './op-desert.png',
     jungle: './op-jungle.png',
     arctique: './op-arctique.png',
   };
+  const CLASS_ENV_OPERATOR_IMG = {
+    Assault: ENV_OPERATOR_IMG,
+    Heavy: { urbain: './op-heavy-urbain.png', desert: './op-heavy-desert.png', jungle: './op-heavy-jungle.png', arctique: './op-heavy-arctique.png' },
+    Light: { urbain: './op-light-urbain.png', desert: './op-light-desert.png', jungle: './op-light-jungle.png', arctique: './op-light-arctique.png' },
+  };
+  const SHADOW_OPERATOR_IMG = './op-shadow.png';
+  function getOperatorPortrait(cls, env) {
+    if (cls === 'Shadow') return SHADOW_OPERATOR_IMG;
+    const set = CLASS_ENV_OPERATOR_IMG[cls] || ENV_OPERATOR_IMG;
+    return set[env] || set.urbain;
+  }
 
   function showBriefing(levelId) {
     const def = levelDefs[levelId];

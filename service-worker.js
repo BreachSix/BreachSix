@@ -1,4 +1,4 @@
-const CACHE_VERSION = 'v9';
+const CACHE_VERSION = 'v10';
 const CACHE_NAME = 'breachsix-' + CACHE_VERSION;
 const ASSETS = [
   './',
@@ -26,6 +26,15 @@ const ASSETS = [
   './op-desert.png',
   './op-jungle.png',
   './op-arctique.png',
+  './op-heavy-urbain.png',
+  './op-heavy-desert.png',
+  './op-heavy-jungle.png',
+  './op-heavy-arctique.png',
+  './op-light-urbain.png',
+  './op-light-desert.png',
+  './op-light-jungle.png',
+  './op-light-arctique.png',
+  './op-shadow.png',
 ];
 
 self.addEventListener('install', (event) => {
