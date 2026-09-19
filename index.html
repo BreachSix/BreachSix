@@ -183,6 +183,10 @@
   footer { display: none; }
 
   #menu-screen, #mission-screen { display: flex; flex-direction: column; height: 100%; }
+  .menu-scroll {
+    flex: 1; min-height: 0; overflow-y: auto; -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+  }
   .back-btn {
     font-family: var(--font-head); font-size: 0.72rem; letter-spacing: 0.04em;
     background: transparent; border: 1px solid var(--wall); color: var(--text-dim);
@@ -234,19 +238,21 @@
     <header>
       <h1>Breach<span>Six</span></h1>
     </header>
-    <div class="brief" style="margin-bottom:14px;">
-      Choisis une mission. Ta composition d'escouade reste la même d'une mission à l'autre.
-    </div>
-    <div class="level-list" id="level-list"></div>
-    <button class="compose-btn" id="menu-compose-btn" style="margin-top:10px;">Composer les escouades</button>
-
-    <div class="skins-section">
-      <div class="skins-header">
-        <span class="squad-title" style="color:var(--amber);">Skins d'armes</span>
-        <span class="ads-count" id="ads-count">0 pub visionnée</span>
+    <div class="menu-scroll">
+      <div class="brief" style="margin-bottom:14px;">
+        Choisis une mission. Ta composition d'escouade reste la même d'une mission à l'autre.
       </div>
-      <div class="skin-track" id="skin-track"></div>
-      <button class="compose-btn watch-ad-btn" id="watch-ad-btn">▶ Regarder une pub optionnelle</button>
+      <div class="level-list" id="level-list"></div>
+      <button class="compose-btn" id="menu-compose-btn" style="margin-top:10px;">Composer les escouades</button>
+
+      <div class="skins-section">
+        <div class="skins-header">
+          <span class="squad-title" style="color:var(--amber);">Skins d'armes</span>
+          <span class="ads-count" id="ads-count">0 pub visionnée</span>
+        </div>
+        <div class="skin-track" id="skin-track"></div>
+        <button class="compose-btn watch-ad-btn" id="watch-ad-btn">▶ Regarder une pub optionnelle</button>
+      </div>
     </div>
   </div>
 
