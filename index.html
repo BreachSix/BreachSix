@@ -275,7 +275,6 @@
       <button class="compose-btn" id="compose-btn">Composer</button>
     </header>
     <div class="mission-tag" id="mission-tag">Niveau 1 · Résidence · Jour · 5 points d'entrée</div>
-    <button class="compose-btn" id="night-btn" style="margin-bottom:6px;">Passer en mode nuit</button>
 
     <div class="brief">
       <strong>Objectif :</strong> <span id="brief-objective">neutraliser la menace et libérer l'otage.</span>
@@ -517,17 +516,17 @@
          ] },
     4: { name: 'Niveau 4 · Entrepôt', sub: 'Désamorçage — la vitesse compte', env: 'urbain',
          rooms: [ { doors: ['N', 'NE', 'E', 'S', 'W'], threats: ['T1'], trap: false, type: 'bomb' } ] },
-    5: { name: 'Niveau 5 · Village isolé (désert)', sub: 'Test camouflage désert · 5 points d\'entrée', env: 'desert',
+    5: { name: 'Niveau 5 · Village isolé (désert)', sub: 'Facile · 5 entrées + 1 fenêtre', env: 'desert',
          rooms: [ { doors: ['N', 'NE', 'E', 'S', 'W', 'F'], threats: ['T1', 'T2'], trap: true } ] },
-    6: { name: 'Niveau 6 · Village isolé (jungle)', sub: 'Test camouflage jungle · 5 points d\'entrée', env: 'jungle',
+    6: { name: 'Niveau 6 · Village isolé (jungle)', sub: 'Facile · 5 entrées + 1 fenêtre', env: 'jungle',
          rooms: [ { doors: ['N', 'NE', 'E', 'S', 'W', 'F'], threats: ['T1', 'T2'], trap: true } ] },
-    7: { name: 'Niveau 7 · Base arctique', sub: 'Test camouflage arctique · 5 points d\'entrée', env: 'arctique',
+    7: { name: 'Niveau 7 · Base arctique', sub: 'Facile · 5 entrées + 1 fenêtre', env: 'arctique',
          rooms: [ { doors: ['N', 'NE', 'E', 'S', 'W', 'F'], threats: ['T1', 'T2'], trap: true } ] },
-    8: { name: 'Niveau 8 · Résidence', sub: 'Test défilement · 5 points d\'entrée', env: 'urbain',
+    8: { name: 'Niveau 8 · Résidence', sub: 'Mission de nuit · silencieux imposé · 5 points d\'entrée', env: 'urbain', night: true,
          rooms: [ { doors: ['N', 'NE', 'E', 'S', 'W', 'F'], threats: ['T1', 'T2'], trap: true } ] },
-    9: { name: 'Niveau 9 · Résidence', sub: 'Test défilement · 5 points d\'entrée', env: 'urbain',
+    9: { name: 'Niveau 9 · Immeuble de bureaux', sub: 'Facile · 5 entrées + 1 fenêtre', env: 'urbain',
          rooms: [ { doors: ['N', 'NE', 'E', 'S', 'W', 'F'], threats: ['T1', 'T2'], trap: true } ] },
-    10: { name: 'Niveau 10 · Résidence', sub: 'Test défilement · 5 points d\'entrée', env: 'urbain',
+    10: { name: 'Niveau 10 · Banque', sub: 'Facile · 5 entrées + 1 fenêtre', env: 'urbain',
          rooms: [ { doors: ['N', 'NE', 'E', 'S', 'W', 'F'], threats: ['T1', 'T2'], trap: true } ] },
   };
   const BOMB_THRESHOLD_MS = 1750; // fastest assigned operator must arrive within this
@@ -610,6 +609,8 @@
     currentRoomIndex = 0;
     levelCasualties = new Set();
     roomScores = [];
+    isNight = !!levelDefs[levelId].night;
+    document.body.classList.toggle('night', isNight);
     for (const k in assignments) delete assignments[k];
     selectedOp = null;
     resolved = false;
@@ -702,15 +703,8 @@
     }, 1400);
   });
 
-  function toggleNight() {
-    isNight = !isNight;
-    document.body.classList.toggle('night', isNight);
-    const btn = document.getElementById('night-btn');
-    btn.textContent = isNight ? 'Repasser en mode jour' : 'Passer en mode nuit';
-    btn.classList.toggle('active', isNight);
-    updateMissionTag();
-  }
-  document.getElementById('night-btn').addEventListener('click', toggleNight);
+  // Le mode nuit est déterminé par le niveau lui-même (voir levelDefs[].night),
+  // pas par un choix du joueur — cohérent avec "~1 niveau sur 10 de nuit".
 
   function onChipTap(op, isAssigned) {
     if (resolved) return;
