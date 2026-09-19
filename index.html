@@ -511,10 +511,16 @@
          rooms: [ { doors: ['N', 'NE', 'E', 'S', 'W', 'F'], threats: ['T1', 'T2'], trap: true } ] },
     7: { name: 'Niveau 7 · Base arctique', sub: 'Test camouflage arctique · 5 points d\'entrée', env: 'arctique',
          rooms: [ { doors: ['N', 'NE', 'E', 'S', 'W', 'F'], threats: ['T1', 'T2'], trap: true } ] },
+    8: { name: 'Niveau 8 · Résidence', sub: 'Test défilement · 5 points d\'entrée', env: 'urbain',
+         rooms: [ { doors: ['N', 'NE', 'E', 'S', 'W', 'F'], threats: ['T1', 'T2'], trap: true } ] },
+    9: { name: 'Niveau 9 · Résidence', sub: 'Test défilement · 5 points d\'entrée', env: 'urbain',
+         rooms: [ { doors: ['N', 'NE', 'E', 'S', 'W', 'F'], threats: ['T1', 'T2'], trap: true } ] },
+    10: { name: 'Niveau 10 · Résidence', sub: 'Test défilement · 5 points d\'entrée', env: 'urbain',
+         rooms: [ { doors: ['N', 'NE', 'E', 'S', 'W', 'F'], threats: ['T1', 'T2'], trap: true } ] },
   };
   const BOMB_THRESHOLD_MS = 1750; // fastest assigned operator must arrive within this
   const BOMB_FAST_MS = 1650;      // bonus: defused with real speed to spare
-  const bestScores = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0 };
+  const bestScores = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0, 10: 0 };
   let currentLevel = 1;
   let currentRoomIndex = 0;
   let levelCasualties = new Set(); // operators lost permanently for the rest of this level attempt
