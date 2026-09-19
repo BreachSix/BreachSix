@@ -344,6 +344,7 @@
 
     <div class="room-wrap">
       <svg viewBox="-16 -16 332 332" id="room-svg">
+        <g id="floor-walls-g">
         <!-- floor -->
         <rect x="20" y="20" width="260" height="260" fill="var(--floor)" rx="2"/>
         <!-- walls -->
@@ -351,6 +352,7 @@
         <!-- interior clutter -->
         <rect x="60" y="60" width="40" height="18" fill="#2c301f" stroke="#3a3f2c" stroke-width="1"/>
         <rect x="200" y="210" width="50" height="22" fill="#2c301f" stroke="#3a3f2c" stroke-width="1"/>
+        </g>
 
         <!-- Threat 1: standard guard -->
         <g id="t1-g">
@@ -613,7 +615,7 @@
 
   // --- Level definitions & menu ---
   const levelDefs = {
-    1: { name: 'Niveau 1 · Résidence', sub: 'Facile · 5 entrées + 1 fenêtre · 3 pièces enchaînées', env: 'urbain',
+    1: { name: 'Niveau 1 · Résidence', sub: 'Facile · 5 entrées + 1 fenêtre · 3 pièces enchaînées', env: 'urbain', roomShape: 'square',
          briefImg: './brief-residence.jpg',
          brief: 'Une cellule de Combine Ashgard utilise cette résidence de Corvane comme planque. Un otage y est retenu — nettoyez la maison et sécurisez-le.',
          rooms: [
@@ -621,7 +623,7 @@
            { doors: ['N', 'NE', 'E', 'S', 'W', 'F'], threats: ['T1'], trap: true },
            { doors: ['N', 'NE', 'E', 'S', 'W', 'F'], threats: ['T1', 'T2'], trap: true },
          ] },
-    2: { name: 'Niveau 2 · Résidence', sub: 'Difficile · 2 points d\'entrée · 3 pièces enchaînées', env: 'urbain',
+    2: { name: 'Niveau 2 · Résidence', sub: 'Difficile · 2 points d\'entrée · 3 pièces enchaînées', env: 'urbain', roomShape: 'square',
          briefImg: './brief-residence.jpg',
          brief: 'Renfort de sécurité signalé sur cette même planque de Corvane : la plupart des accès ont été condamnés. Seuls deux points d\'entrée restent praticables.',
          rooms: [
@@ -629,7 +631,7 @@
            { doors: ['N', 'S'], threats: ['T1'], trap: true },
            { doors: ['N', 'S'], threats: ['T1', 'T2'], trap: true },
          ] },
-    3: { name: 'Niveau 3 · Entrepôt', sub: '3 pièces enchaînées', env: 'urbain',
+    3: { name: 'Niveau 3 · Entrepôt', sub: '3 pièces enchaînées', env: 'urbain', roomShape: 'L',
          briefImg: './brief-entrepot.jpg',
          brief: 'Un entrepôt de la zone industrielle de Halveigh sert de relais logistique à Combine Ashgard. Progressez pièce par pièce jusqu\'au fond du bâtiment.',
          rooms: [
@@ -637,7 +639,7 @@
            { doors: ['N', 'NE', 'E', 'S', 'W'], threats: ['T1'], trap: true },
            { doors: ['N', 'NE', 'E', 'S', 'W'], threats: ['T1', 'T2'], trap: true },
          ] },
-    4: { name: 'Niveau 4 · Entrepôt', sub: 'Désamorçage — la vitesse compte · 3 pièces enchaînées', env: 'urbain',
+    4: { name: 'Niveau 4 · Entrepôt', sub: 'Désamorçage — la vitesse compte · 3 pièces enchaînées', env: 'urbain', roomShape: 'L',
          briefImg: './brief-entrepot.jpg',
          brief: 'Une charge explosive a été armée dans ce même entrepôt de Halveigh. Désamorcez-la avant l\'expiration du délai.',
          rooms: [
@@ -645,7 +647,7 @@
            { doors: ['N', 'NE', 'E', 'S', 'W'], threats: ['T1'], trap: true },
            { doors: ['N', 'NE', 'E', 'S', 'W'], threats: ['T1'], trap: false, type: 'bomb' },
          ] },
-    5: { name: 'Niveau 5 · Village isolé (désert)', sub: 'Facile · 5 entrées + 1 fenêtre · 3 pièces enchaînées', env: 'desert',
+    5: { name: 'Niveau 5 · Village isolé (désert)', sub: 'Facile · 5 entrées + 1 fenêtre · 3 pièces enchaînées', env: 'desert', roomShape: 'square',
          briefImg: './brief-desert.jpg',
          brief: 'Une cellule de Combine Ashgard s\'est retranchée dans un village isolé de Zahrastan. Infiltrez les lieux et neutralisez la menace.',
          rooms: [
@@ -653,7 +655,7 @@
            { doors: ['N', 'NE', 'E', 'S', 'W', 'F'], threats: ['T1'], trap: true },
            { doors: ['N', 'NE', 'E', 'S', 'W', 'F'], threats: ['T1', 'T2'], trap: true },
          ] },
-    6: { name: 'Niveau 6 · Village isolé (jungle)', sub: 'Facile · 5 entrées + 1 fenêtre · 3 pièces enchaînées', env: 'jungle',
+    6: { name: 'Niveau 6 · Village isolé (jungle)', sub: 'Facile · 5 entrées + 1 fenêtre · 3 pièces enchaînées', env: 'jungle', roomShape: 'square',
          briefImg: './brief-jungle.jpg',
          brief: 'Au cœur de la jungle de Verdance, un village abandonné sert de cache à l\'organisation. La végétation dense limite la visibilité — restez prudents.',
          rooms: [
@@ -661,7 +663,7 @@
            { doors: ['N', 'NE', 'E', 'S', 'W', 'F'], threats: ['T1'], trap: true },
            { doors: ['N', 'NE', 'E', 'S', 'W', 'F'], threats: ['T1', 'T2'], trap: true },
          ] },
-    7: { name: 'Niveau 7 · Base arctique', sub: 'Facile · 5 entrées + 1 fenêtre · 3 pièces enchaînées', env: 'arctique',
+    7: { name: 'Niveau 7 · Base arctique', sub: 'Facile · 5 entrées + 1 fenêtre · 3 pièces enchaînées', env: 'arctique', roomShape: 'square',
          briefImg: './brief-arctique.jpg',
          brief: 'Une base isolée dans les montagnes de la Rive Boréale, sous le couvert de la nuit. Chaque arme est équipée d\'un silencieux — l\'effet de surprise est total.',
          rooms: [
@@ -669,7 +671,7 @@
            { doors: ['N', 'NE', 'E', 'S', 'W', 'F'], threats: ['T1'], trap: true },
            { doors: ['N', 'NE', 'E', 'S', 'W', 'F'], threats: ['T1', 'T2'], trap: true },
          ] },
-    8: { name: 'Niveau 8 · Résidence', sub: 'Mission de nuit · silencieux imposé · 5 points d\'entrée · 3 pièces enchaînées', env: 'urbain', night: true,
+    8: { name: 'Niveau 8 · Résidence', sub: 'Mission de nuit · silencieux imposé · 5 points d\'entrée · 3 pièces enchaînées', env: 'urbain', roomShape: 'square', night: true,
          briefImg: './brief-residence.jpg',
          brief: 'Nouvelle activité nocturne détectée dans le secteur résidentiel de Corvane. Une intervention discrète est requise avant l\'aube.',
          rooms: [
@@ -677,7 +679,7 @@
            { doors: ['N', 'NE', 'E', 'S', 'W', 'F'], threats: ['T1'], trap: true },
            { doors: ['N', 'NE', 'E', 'S', 'W', 'F'], threats: ['T1', 'T2'], trap: true },
          ] },
-    9: { name: 'Niveau 9 · Immeuble de bureaux', sub: 'Facile · 5 entrées + 1 fenêtre · 3 pièces enchaînées', env: 'urbain',
+    9: { name: 'Niveau 9 · Immeuble de bureaux', sub: 'Facile · 5 entrées + 1 fenêtre · 3 pièces enchaînées', env: 'urbain', roomShape: 'square',
          briefImg: './brief-bureaux.jpg',
          brief: 'Un immeuble de bureaux du centre-ville de Corvane a été investi après les heures ouvrables. Sécurisez les étages.',
          rooms: [
@@ -685,7 +687,7 @@
            { doors: ['N', 'NE', 'E', 'S', 'W', 'F'], threats: ['T1'], trap: true },
            { doors: ['N', 'NE', 'E', 'S', 'W', 'F'], threats: ['T1', 'T2'], trap: true },
          ] },
-    10: { name: 'Niveau 10 · Banque', sub: 'Facile · 5 entrées + 1 fenêtre · 3 pièces enchaînées', env: 'urbain',
+    10: { name: 'Niveau 10 · Banque', sub: 'Facile · 5 entrées + 1 fenêtre · 3 pièces enchaînées', env: 'urbain', roomShape: 'square',
          briefImg: './brief-banque.jpg',
          brief: 'Une prise d\'otages est en cours dans une banque du quartier financier de Corvane. Le hall a déjà subi des dégâts — progressez avec prudence.',
          rooms: [
@@ -693,7 +695,7 @@
            { doors: ['N', 'NE', 'E', 'S', 'W', 'F'], threats: ['T1'], trap: true },
            { doors: ['N', 'NE', 'E', 'S', 'W', 'F'], threats: ['T1', 'T2'], trap: true },
          ] },
-    11: { name: 'Niveau 11 · Hôtel', sub: 'Facile · 5 entrées + 1 fenêtre · 3 pièces enchaînées', env: 'urbain',
+    11: { name: 'Niveau 11 · Hôtel', sub: 'Facile · 5 entrées + 1 fenêtre · 3 pièces enchaînées', env: 'urbain', roomShape: 'square',
          briefImg: './brief-hotel.jpg',
          brief: 'Une cellule de Combine Ashgard occupe discrètement un hôtel du centre-ville de Corvane. Sécurisez le hall d\'entrée avant que la situation ne s\'aggrave.',
          rooms: [
@@ -701,7 +703,7 @@
            { doors: ['N', 'NE', 'E', 'S', 'W', 'F'], threats: ['T1'], trap: true },
            { doors: ['N', 'NE', 'E', 'S', 'W', 'F'], threats: ['T1', 'T2'], trap: true },
          ] },
-    12: { name: 'Niveau 12 · Station de métro', sub: 'Facile · 5 entrées + 1 fenêtre · 3 pièces enchaînées', env: 'urbain',
+    12: { name: 'Niveau 12 · Station de métro', sub: 'Facile · 5 entrées + 1 fenêtre · 3 pièces enchaînées', env: 'urbain', roomShape: 'elongated',
          briefImg: './brief-station.jpg',
          brief: 'Une station de métro désaffectée de Corvane sert de point de passage à l\'organisation. Progressez sur le quai avec prudence.',
          rooms: [
@@ -709,7 +711,7 @@
            { doors: ['N', 'NE', 'E', 'S', 'W', 'F'], threats: ['T1'], trap: true },
            { doors: ['N', 'NE', 'E', 'S', 'W', 'F'], threats: ['T1', 'T2'], trap: true },
          ] },
-    13: { name: 'Niveau 13 · Train', sub: 'Facile · 5 entrées + 1 fenêtre · 3 pièces enchaînées', env: 'urbain',
+    13: { name: 'Niveau 13 · Train', sub: 'Facile · 5 entrées + 1 fenêtre · 3 pièces enchaînées', env: 'urbain', roomShape: 'elongated',
          briefImg: './brief-train.jpg',
          brief: 'Un train immobilisé en pleine voie près de Corvane a été investi par une cellule ennemie. Fouillez les wagons un à un.',
          rooms: [
@@ -717,7 +719,7 @@
            { doors: ['N', 'NE', 'E', 'S', 'W', 'F'], threats: ['T1'], trap: true },
            { doors: ['N', 'NE', 'E', 'S', 'W', 'F'], threats: ['T1', 'T2'], trap: true },
          ] },
-    14: { name: 'Niveau 14 · Cargo portuaire', sub: 'Facile · 5 entrées + 1 fenêtre · 3 pièces enchaînées', env: 'urbain',
+    14: { name: 'Niveau 14 · Cargo portuaire', sub: 'Facile · 5 entrées + 1 fenêtre · 3 pièces enchaînées', env: 'urbain', roomShape: 'elongated',
          briefImg: './brief-cargo.jpg',
          brief: 'Un cargo amarré dans le port industriel de Halveigh dissimule une cargaison suspecte. Montez à bord et neutralisez la menace.',
          rooms: [
@@ -725,7 +727,7 @@
            { doors: ['N', 'NE', 'E', 'S', 'W', 'F'], threats: ['T1'], trap: true },
            { doors: ['N', 'NE', 'E', 'S', 'W', 'F'], threats: ['T1', 'T2'], trap: true },
          ] },
-    15: { name: 'Niveau 15 · Hangar', sub: 'Facile · 5 entrées + 1 fenêtre · 3 pièces enchaînées', env: 'urbain',
+    15: { name: 'Niveau 15 · Hangar', sub: 'Facile · 5 entrées + 1 fenêtre · 3 pièces enchaînées', env: 'urbain', roomShape: 'L',
          briefImg: './brief-hangar.jpg',
          brief: 'Un hangar désaffecté de l\'aéroport de Halveigh sert d\'entrepôt clandestin à Combine Ashgard. Sécurisez les lieux.',
          rooms: [
@@ -733,7 +735,7 @@
            { doors: ['N', 'NE', 'E', 'S', 'W', 'F'], threats: ['T1'], trap: true },
            { doors: ['N', 'NE', 'E', 'S', 'W', 'F'], threats: ['T1', 'T2'], trap: true },
          ] },
-    16: { name: 'Niveau 16 · Immeuble de bureaux', sub: 'Modéré · 4 points d\'entrée · 4 pièces enchaînées', env: 'urbain',
+    16: { name: 'Niveau 16 · Immeuble de bureaux', sub: 'Modéré · 4 points d\'entrée · 4 pièces enchaînées', env: 'urbain', roomShape: 'square',
          briefImg: './brief-bureaux.jpg',
          brief: 'Une deuxième vague de Combine Ashgard a renforcé l\'immeuble de bureaux de Corvane. Les accès sont plus limités cette fois.',
          rooms: [
@@ -742,7 +744,7 @@
            { doors: ['N', 'NE', 'E', 'S'], threats: ['T1', 'T2'], trap: false },
            { doors: ['N', 'NE', 'E', 'S'], threats: ['T1', 'T2'], trap: true },
          ] },
-    17: { name: 'Niveau 17 · Banque', sub: 'Modéré · 4 points d\'entrée · 4 pièces enchaînées', env: 'urbain',
+    17: { name: 'Niveau 17 · Banque', sub: 'Modéré · 4 points d\'entrée · 4 pièces enchaînées', env: 'urbain', roomShape: 'square',
          briefImg: './brief-banque.jpg',
          brief: 'Une nouvelle prise d\'otages frappe la même banque de Corvane. La sécurité a été renforcée depuis le dernier assaut.',
          rooms: [
@@ -751,7 +753,7 @@
            { doors: ['N', 'NE', 'E', 'S'], threats: ['T1', 'T2'], trap: false },
            { doors: ['N', 'NE', 'E', 'S'], threats: ['T1', 'T2'], trap: true },
          ] },
-    18: { name: 'Niveau 18 · Hôtel', sub: 'Modéré · 4 points d\'entrée · 4 pièces enchaînées', env: 'urbain',
+    18: { name: 'Niveau 18 · Hôtel', sub: 'Modéré · 4 points d\'entrée · 4 pièces enchaînées', env: 'urbain', roomShape: 'square',
          briefImg: './brief-hotel.jpg',
          brief: 'Combine Ashgard revient occuper l\'hôtel de Corvane avec une cellule plus importante. Moins d\'accès, plus de vigilance requise.',
          rooms: [
@@ -760,7 +762,7 @@
            { doors: ['N', 'NE', 'E', 'S'], threats: ['T1', 'T2'], trap: false },
            { doors: ['N', 'NE', 'E', 'S'], threats: ['T1', 'T2'], trap: true },
          ] },
-    19: { name: 'Niveau 19 · Station de métro', sub: 'Modéré · 4 points d\'entrée · 4 pièces enchaînées', env: 'urbain',
+    19: { name: 'Niveau 19 · Station de métro', sub: 'Modéré · 4 points d\'entrée · 4 pièces enchaînées', env: 'urbain', roomShape: 'elongated',
          briefImg: './brief-station.jpg',
          brief: 'La station désaffectée de Corvane est de nouveau active. Les quais sont mieux surveillés qu\'auparavant.',
          rooms: [
@@ -769,7 +771,7 @@
            { doors: ['N', 'NE', 'E', 'S'], threats: ['T1', 'T2'], trap: false },
            { doors: ['N', 'NE', 'E', 'S'], threats: ['T1', 'T2'], trap: true },
          ] },
-    20: { name: 'Niveau 20 · Train', sub: 'Modéré · 4 points d\'entrée · 4 pièces enchaînées', env: 'urbain',
+    20: { name: 'Niveau 20 · Train', sub: 'Modéré · 4 points d\'entrée · 4 pièces enchaînées', env: 'urbain', roomShape: 'elongated',
          briefImg: './brief-train.jpg',
          brief: 'Un second convoi près de Corvane a été intercepté par l\'organisation. Les wagons sont verrouillés — moins de portes praticables.',
          rooms: [
@@ -778,7 +780,7 @@
            { doors: ['N', 'NE', 'E', 'S'], threats: ['T1', 'T2'], trap: false },
            { doors: ['N', 'NE', 'E', 'S'], threats: ['T1', 'T2'], trap: true },
          ] },
-    21: { name: 'Niveau 21 · Cargo portuaire', sub: 'Modéré · 4 points d\'entrée · 4 pièces enchaînées', env: 'urbain',
+    21: { name: 'Niveau 21 · Cargo portuaire', sub: 'Modéré · 4 points d\'entrée · 4 pièces enchaînées', env: 'urbain', roomShape: 'elongated',
          briefImg: './brief-cargo.jpg',
          brief: 'Un deuxième cargo du port de Halveigh transporte une cargaison suspecte, sous surveillance renforcée.',
          rooms: [
@@ -787,7 +789,7 @@
            { doors: ['N', 'NE', 'E', 'S'], threats: ['T1', 'T2'], trap: false },
            { doors: ['N', 'NE', 'E', 'S'], threats: ['T1', 'T2'], trap: true },
          ] },
-    22: { name: 'Niveau 22 · Hangar', sub: 'Modéré · 4 points d\'entrée · 4 pièces enchaînées', env: 'urbain',
+    22: { name: 'Niveau 22 · Hangar', sub: 'Modéré · 4 points d\'entrée · 4 pièces enchaînées', env: 'urbain', roomShape: 'L',
          briefImg: './brief-hangar.jpg',
          brief: 'Un second hangar de l\'aéroport de Halveigh sert de cache. L\'organisation a appris de ses erreurs — moins d\'ouvertures.',
          rooms: [
@@ -796,7 +798,7 @@
            { doors: ['N', 'NE', 'E', 'S'], threats: ['T1', 'T2'], trap: false },
            { doors: ['N', 'NE', 'E', 'S'], threats: ['T1', 'T2'], trap: true },
          ] },
-    23: { name: 'Niveau 23 · Village isolé (désert)', sub: 'Modéré · 4 points d\'entrée · 4 pièces enchaînées', env: 'desert',
+    23: { name: 'Niveau 23 · Village isolé (désert)', sub: 'Modéré · 4 points d\'entrée · 4 pièces enchaînées', env: 'desert', roomShape: 'square',
          briefImg: './brief-desert.jpg',
          brief: 'Une seconde cellule de Combine Ashgard s\'est installée plus profondément dans le village de Zahrastan.',
          rooms: [
@@ -805,7 +807,7 @@
            { doors: ['N', 'NE', 'E', 'S'], threats: ['T1', 'T2'], trap: false },
            { doors: ['N', 'NE', 'E', 'S'], threats: ['T1', 'T2'], trap: true },
          ] },
-    24: { name: 'Niveau 24 · Village isolé (jungle)', sub: 'Modéré · 4 points d\'entrée · 4 pièces enchaînées', env: 'jungle',
+    24: { name: 'Niveau 24 · Village isolé (jungle)', sub: 'Modéré · 4 points d\'entrée · 4 pièces enchaînées', env: 'jungle', roomShape: 'square',
          briefImg: './brief-jungle.jpg',
          brief: 'Plus profondément dans la jungle de Verdance, une deuxième cache attend d\'être neutralisée.',
          rooms: [
@@ -814,7 +816,7 @@
            { doors: ['N', 'NE', 'E', 'S'], threats: ['T1', 'T2'], trap: false },
            { doors: ['N', 'NE', 'E', 'S'], threats: ['T1', 'T2'], trap: true },
          ] },
-    25: { name: 'Niveau 25 · Base arctique', sub: 'Modéré · 4 points d\'entrée · Nuit · 4 pièces enchaînées', env: 'arctique', night: true,
+    25: { name: 'Niveau 25 · Base arctique', sub: 'Modéré · 4 points d\'entrée · Nuit · 4 pièces enchaînées', env: 'arctique', roomShape: 'square', night: true,
          briefImg: './brief-arctique.jpg',
          brief: 'Une deuxième base de la Rive Boréale est infiltrée de nuit. Les accès ont été réduits depuis la dernière incursion.',
          rooms: [
@@ -978,6 +980,116 @@
     }, 700);
   }
 
+  // Gabarits de forme de pièce selon le type de lieu. "square" reproduit
+  // exactement la géométrie d'origine ; "L" et "elongated" donnent une vraie
+  // silhouette distincte (entrepôt/hangar, et navire/train/station).
+  const ROOM_SHAPES = {
+    square: {
+      viewBox: '-16 -16 332 332',
+      floorWallsSVG: '<rect x="20" y="20" width="260" height="260" fill="var(--floor)" rx="2"/>' +
+        '<rect x="20" y="20" width="260" height="260" fill="none" stroke="var(--wall)" stroke-width="6" rx="2"/>' +
+        '<rect x="60" y="60" width="40" height="18" fill="#2c301f" stroke="#3a3f2c" stroke-width="1"/>' +
+        '<rect x="200" y="210" width="50" height="22" fill="#2c301f" stroke="#3a3f2c" stroke-width="1"/>',
+      center: { x: 150, y: 150 },
+      doors: { N:{x:150,y:20}, NE:{x:280,y:80}, E:{x:280,y:220}, S:{x:150,y:280}, W:{x:20,y:150}, F:{x:20,y:220} },
+      t1: { x: 175, y: 85 }, t2: { x: 115, y: 205 }, bomb: { x: 175, y: 70 },
+    },
+    L: {
+      viewBox: '-16 -16 380 400',
+      floorWallsSVG: '<path d="M20,20 L280,20 L280,160 L160,160 L160,360 L20,360 Z" fill="var(--floor)"/>' +
+        '<path d="M20,20 L280,20 L280,160 L160,160 L160,360 L20,360 Z" fill="none" stroke="var(--wall)" stroke-width="6"/>' +
+        '<rect x="200" y="50" width="50" height="20" fill="#2c301f" stroke="#3a3f2c" stroke-width="1"/>' +
+        '<rect x="55" y="280" width="40" height="18" fill="#2c301f" stroke="#3a3f2c" stroke-width="1"/>',
+      center: { x: 150, y: 190 },
+      doors: { N:{x:150,y:20}, NE:{x:280,y:60}, E:{x:280,y:120}, S:{x:90,y:360}, W:{x:20,y:260}, F:{x:20,y:80} },
+      t1: { x: 220, y: 90 }, t2: { x: 90, y: 280 }, bomb: { x: 220, y: 90 },
+    },
+    elongated: {
+      viewBox: '-16 -16 500 200',
+      floorWallsSVG: '<rect x="20" y="20" width="460" height="160" fill="var(--floor)" rx="2"/>' +
+        '<rect x="20" y="20" width="460" height="160" fill="none" stroke="var(--wall)" stroke-width="6" rx="2"/>' +
+        '<rect x="100" y="60" width="40" height="18" fill="#2c301f" stroke="#3a3f2c" stroke-width="1"/>' +
+        '<rect x="350" y="115" width="50" height="22" fill="#2c301f" stroke="#3a3f2c" stroke-width="1"/>',
+      center: { x: 250, y: 100 },
+      doors: { N:{x:140,y:20}, NE:{x:460,y:50}, E:{x:460,y:140}, S:{x:140,y:180}, W:{x:20,y:90}, F:{x:300,y:20} },
+      t1: { x: 220, y: 60 }, t2: { x: 400, y: 130 }, bomb: { x: 220, y: 60 },
+    },
+  };
+
+  function applyRoomShape(shapeKey) {
+    const shape = ROOM_SHAPES[shapeKey] || ROOM_SHAPES.square;
+    document.getElementById('room-svg').setAttribute('viewBox', shape.viewBox);
+    document.getElementById('floor-walls-g').innerHTML = shape.floorWallsSVG;
+
+    Object.keys(shape.doors).forEach(id => {
+      const pos = shape.doors[id];
+      const g = document.querySelector('.door[data-door="' + id + '"]');
+      if (!g) return;
+      g.setAttribute('data-x', pos.x);
+      g.setAttribute('data-y', pos.y);
+      if (id === 'F') {
+        const rect = g.querySelector('rect');
+        rect.setAttribute('x', pos.x - 12);
+        rect.setAttribute('y', pos.y - 12);
+        const lines = g.querySelectorAll('line');
+        lines[0].setAttribute('x1', pos.x); lines[0].setAttribute('x2', pos.x);
+        lines[0].setAttribute('y1', pos.y - 12); lines[0].setAttribute('y2', pos.y + 12);
+        lines[1].setAttribute('y1', pos.y); lines[1].setAttribute('y2', pos.y);
+        lines[1].setAttribute('x1', pos.x - 12); lines[1].setAttribute('x2', pos.x + 12);
+      } else {
+        const circle = g.querySelector('circle.door-ring');
+        circle.setAttribute('cx', pos.x);
+        circle.setAttribute('cy', pos.y);
+      }
+      const countText = g.querySelector('.door-count');
+      countText.setAttribute('x', pos.x);
+      countText.setAttribute('y', pos.y + 4);
+      const dx = pos.x - shape.center.x, dy = pos.y - shape.center.y;
+      const dist = Math.hypot(dx, dy) || 1;
+      const label = g.querySelector('.door-label');
+      label.setAttribute('x', pos.x + (dx / dist) * 22);
+      label.setAttribute('y', pos.y + (dy / dist) * 22 + 3);
+    });
+
+    threats.T1.x = shape.t1.x; threats.T1.y = shape.t1.y;
+    const t1g = document.getElementById('t1-g');
+    const t1circles = t1g.querySelectorAll('circle');
+    t1circles[0].setAttribute('cx', shape.t1.x); t1circles[0].setAttribute('cy', shape.t1.y);
+    t1circles[1].setAttribute('cx', shape.t1.x); t1circles[1].setAttribute('cy', shape.t1.y);
+    const t1label = t1g.querySelector('text');
+    t1label.setAttribute('x', shape.t1.x); t1label.setAttribute('y', shape.t1.y - 13);
+
+    threats.T2.x = shape.t2.x; threats.T2.y = shape.t2.y;
+    const t2g = document.getElementById('t2-g');
+    const cx2 = shape.t2.x, cy2 = shape.t2.y;
+    const relPoints = [[0,-12],[9,-7],[9,5],[0,12],[-9,5],[-9,-7]];
+    t2g.querySelector('polygon').setAttribute('points', relPoints.map(p => (cx2 + p[0]) + ',' + (cy2 + p[1])).join(' '));
+    const hostageCircle = t2g.querySelector('circle');
+    hostageCircle.setAttribute('cx', cx2 + 17); hostageCircle.setAttribute('cy', cy2 + 9);
+    const hostageLine = t2g.querySelector('line');
+    hostageLine.setAttribute('x1', cx2 + 17); hostageLine.setAttribute('x2', cx2 + 17);
+    hostageLine.setAttribute('y1', cy2 + 14); hostageLine.setAttribute('y2', cy2 + 21);
+    const t2texts = t2g.querySelectorAll('text');
+    t2texts[0].setAttribute('x', cx2 + 3); t2texts[0].setAttribute('y', cy2 + 23);
+    t2texts[1].setAttribute('x', cx2 + 3); t2texts[1].setAttribute('y', cy2 + 33);
+
+    const bombG = document.getElementById('bomb-g');
+    const bx = shape.bomb.x, by = shape.bomb.y;
+    const bombRects = bombG.querySelectorAll('rect');
+    bombRects[0].setAttribute('x', bx - 15); bombRects[0].setAttribute('y', by);
+    const bombCircle = bombG.querySelector('circle');
+    bombCircle.setAttribute('cx', bx); bombCircle.setAttribute('cy', by);
+    const bombLine = bombG.querySelector('line');
+    bombLine.setAttribute('x1', bx); bombLine.setAttribute('y1', by - 4);
+    bombLine.setAttribute('x2', bx + 4); bombLine.setAttribute('y2', by - 12);
+    const bombTexts = bombG.querySelectorAll('text');
+    bombTexts[0].setAttribute('x', bx); bombTexts[0].setAttribute('y', by + 2);
+    bombTexts[1].setAttribute('x', bx); bombTexts[1].setAttribute('y', by + 45);
+    bombRects[1].setAttribute('x', bx - 40); bombRects[1].setAttribute('y', by + 52);
+    const timerFill = document.getElementById('bomb-timer-fill');
+    timerFill.setAttribute('x', bx - 40); timerFill.setAttribute('y', by + 52);
+  }
+
   function showBriefing(levelId) {
     const def = levelDefs[levelId];
     pendingBriefingLevel = levelId;
@@ -1013,6 +1125,7 @@
     isNight = !!levelDefs[levelId].night;
     document.body.classList.toggle('night', isNight);
     applyRoomTheme(levelDefs[levelId].env);
+    applyRoomShape(levelDefs[levelId].roomShape);
     for (const k in assignments) delete assignments[k];
     selectedOp = null;
     resolved = false;
@@ -1317,6 +1430,23 @@
       g.classList.add('op-marker');
       g.classList.add('cls-' + op.cls.toLowerCase());
 
+      // Sac à dos : à l'opposé de la direction visée (le dos), sous le corps.
+      const packByClass = {
+        Heavy: { x: -4.5, y: 8, w: 9, h: 6.5 },
+        Light: { x: -3.5, y: 6, w: 7, h: 5.5 },
+        Assault: { x: -3.5, y: 6.5, w: 7, h: 6 },
+        Shadow: { x: -3, y: 6, w: 6, h: 5 },
+      };
+      const pack = packByClass[op.cls];
+      const packEl = document.createElementNS(ns, 'rect');
+      packEl.setAttribute('x', pack.x); packEl.setAttribute('y', pack.y);
+      packEl.setAttribute('width', pack.w); packEl.setAttribute('height', pack.h);
+      packEl.setAttribute('rx', '2');
+      packEl.setAttribute('fill', camo.dark);
+      packEl.setAttribute('stroke', camo.outline);
+      packEl.setAttribute('stroke-width', '1');
+      g.appendChild(packEl);
+
       // Corps : silhouette distincte par classe, teintée selon le camouflage
       // de l'environnement (Shadow reste toujours noir, peu importe l'env).
       let body;
@@ -1342,6 +1472,7 @@
       body.setAttribute('fill', camo.mid);
       body.setAttribute('stroke', camo.outline);
       body.setAttribute('stroke-width', '1.4');
+      body.classList.add('op-body');
       g.appendChild(body);
 
       // Motif de camouflage : deux petites taches (foncée/claire), absentes pour Shadow.
@@ -1358,7 +1489,38 @@
         g.appendChild(speck2);
       }
 
-      // Arme : ligne au-dessus du corps, absente pour Shadow (karambit, pas d'arme visible).
+      // Casque : distinct du corps, dépasse vers l'avant (direction de la cible).
+      const helmetByClass = {
+        Heavy: { cy: -13, r: 6 }, Light: { cy: -11, r: 5 },
+        Assault: { cy: -12, r: 5.5 }, Shadow: { cy: -11, r: 5.5 },
+      };
+      const helmet = helmetByClass[op.cls];
+      const helmetEl = document.createElementNS(ns, 'circle');
+      helmetEl.setAttribute('cx', '0'); helmetEl.setAttribute('cy', helmet.cy);
+      helmetEl.setAttribute('r', helmet.r);
+      helmetEl.setAttribute('fill', op.cls === 'Shadow' ? camo.mid : camo.dark);
+      helmetEl.setAttribute('stroke', camo.outline);
+      helmetEl.setAttribute('stroke-width', '1.2');
+      g.appendChild(helmetEl);
+
+      if (op.cls === 'Heavy' || op.cls === 'Assault') {
+        // Visière : ligne sombre au bas du casque
+        const visor = document.createElementNS(ns, 'line');
+        visor.setAttribute('x1', -helmet.r * 0.6); visor.setAttribute('x2', helmet.r * 0.6);
+        visor.setAttribute('y1', helmet.cy + helmet.r * 0.35); visor.setAttribute('y2', helmet.cy + helmet.r * 0.35);
+        visor.setAttribute('stroke', camo.outline);
+        visor.setAttribute('stroke-width', '1.4');
+        g.appendChild(visor);
+      } else if (op.cls === 'Light') {
+        // Casquette : petit rebord à l'avant du casque
+        const brim = document.createElementNS(ns, 'rect');
+        brim.setAttribute('x', '-3.5'); brim.setAttribute('y', helmet.cy - helmet.r - 0.5);
+        brim.setAttribute('width', '7'); brim.setAttribute('height', '1.6'); brim.setAttribute('rx', '0.8');
+        brim.setAttribute('fill', camo.outline);
+        g.appendChild(brim);
+      }
+
+      // Arme : ligne + chargeur, absente pour Shadow (karambit visible à la place).
       if (op.cls !== 'Shadow') {
         const weaponWidth = op.cls === 'Heavy' ? 3.4 : (op.cls === 'Light' ? 2 : 2.6);
         const weaponLen = op.cls === 'Heavy' ? 9 : (op.cls === 'Light' ? 6 : 7.5);
@@ -1369,6 +1531,31 @@
         weapon.setAttribute('stroke-width', String(weaponWidth));
         weapon.setAttribute('stroke-linecap', 'round');
         g.appendChild(weapon);
+
+        // Chargeur : petit rectangle sombre près de la garde de l'arme.
+        const mag = document.createElementNS(ns, 'rect');
+        mag.setAttribute('x', '-3.4'); mag.setAttribute('y', '-11');
+        mag.setAttribute('width', '2.6'); mag.setAttribute('height', op.cls === 'Heavy' ? '6.5' : '5');
+        mag.setAttribute('rx', '0.8');
+        mag.setAttribute('fill', '#1a1a1a');
+        mag.setAttribute('stroke', camo.outline);
+        mag.setAttribute('stroke-width', '0.6');
+        g.appendChild(mag);
+      } else {
+        // Karambit : petite lame courbée visible au côté, avec son anneau.
+        const blade = document.createElementNS(ns, 'line');
+        blade.setAttribute('x1', '4'); blade.setAttribute('y1', '2');
+        blade.setAttribute('x2', '9'); blade.setAttribute('y2', '7');
+        blade.setAttribute('stroke', '#2c2c2c');
+        blade.setAttribute('stroke-width', '2.2');
+        blade.setAttribute('stroke-linecap', 'round');
+        g.appendChild(blade);
+        const ring = document.createElementNS(ns, 'circle');
+        ring.setAttribute('cx', '4'); ring.setAttribute('cy', '2'); ring.setAttribute('r', '1.4');
+        ring.setAttribute('fill', 'none');
+        ring.setAttribute('stroke', '#2c2c2c');
+        ring.setAttribute('stroke-width', '1');
+        g.appendChild(ring);
       }
 
       // Badge d'escouade : petit accent ambre/teal, pas la silhouette entière.
@@ -1443,7 +1630,7 @@
         }
         if (isCasualty) {
           setTimeout(() => {
-            marker.querySelector('rect, circle, polygon').setAttribute('fill', 'var(--danger)');
+            marker.querySelector('.op-body').setAttribute('fill', 'var(--danger)');
             marker.style.transition += ', opacity 0.4s ease';
             marker.style.opacity = '0.15';
           }, duration * 0.35);
