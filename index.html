@@ -192,10 +192,9 @@
   }
   .briefing-image-wrap img#briefing-image { width: 100%; height: 100%; object-fit: cover; display: block; }
   .briefing-operator-vignette {
-    position: absolute; right: 0; bottom: 0; height: 100%; width: 55%;
-    object-fit: cover; object-position: top center;
-    -webkit-mask-image: radial-gradient(ellipse 75% 90% at 68% 62%, black 40%, transparent 78%);
-    mask-image: radial-gradient(ellipse 75% 90% at 68% 62%, black 40%, transparent 78%);
+    position: absolute; right: 6px; bottom: 0; height: 100%; width: auto;
+    object-fit: contain; object-position: bottom right;
+    filter: drop-shadow(-3px 2px 6px rgba(0,0,0,0.5));
     pointer-events: none;
   }
   .menu-scroll {
@@ -677,10 +676,10 @@
   // famille de camouflage de l'environnement (urbain sert pour résidence,
   // entrepôt, bureaux et banque, qui partagent tous ce camouflage).
   const ENV_OPERATOR_IMG = {
-    urbain: './op-urbain.jpg',
-    desert: './op-desert.jpg',
-    jungle: './op-jungle.jpg',
-    arctique: './op-arctique.jpg',
+    urbain: './op-urbain.png',
+    desert: './op-desert.png',
+    jungle: './op-jungle.png',
+    arctique: './op-arctique.png',
   };
 
   function showBriefing(levelId) {
