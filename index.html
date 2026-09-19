@@ -31,6 +31,8 @@
     --font-body: 'Inter', system-ui, sans-serif;
   }
   :root:not([data-theme="light"]) { color-scheme: dark; }
+  html.large-text { font-size: 112%; }
+  body.colorblind { --danger: #d97706; --ok: #2b7fb8; }
   @media (prefers-color-scheme: light) {
     :root:not([data-theme="dark"]) {
       --bg: #14160f; --panel: #1e2117; --text: #e9e4d4;
@@ -244,6 +246,16 @@
       </div>
       <div class="level-list" id="level-list"></div>
       <button class="compose-btn" id="menu-compose-btn" style="margin-top:10px;">Composer les escouades</button>
+
+      <div class="skins-section">
+        <div class="skins-header">
+          <span class="squad-title" style="color:var(--amber);">Accessibilité</span>
+        </div>
+        <div style="display:flex; gap:8px;">
+          <button class="compose-btn" id="colorblind-btn" style="flex:1;">Mode daltonien</button>
+          <button class="compose-btn" id="large-text-btn" style="flex:1;">Texte agrandi</button>
+        </div>
+      </div>
 
       <div class="skins-section">
         <div class="skins-header">
@@ -1145,6 +1157,35 @@
     hint.textContent = 'Sélectionne un opérateur pour commencer.';
     renderAll();
   });
+
+  // --- Accessibilité ---
+  function loadBoolPref(key) {
+    try { return localStorage.getItem(key) === '1'; } catch (e) { return false; }
+  }
+  function saveBoolPref(key, value) {
+    try { localStorage.setItem(key, value ? '1' : '0'); } catch (e) {}
+  }
+  let colorblindMode = loadBoolPref('breachsix-colorblind');
+  let largeTextMode = loadBoolPref('breachsix-large-text');
+
+  function applyAccessibility() {
+    document.body.classList.toggle('colorblind', colorblindMode);
+    document.documentElement.classList.toggle('large-text', largeTextMode);
+    document.getElementById('colorblind-btn').classList.toggle('active', colorblindMode);
+    document.getElementById('large-text-btn').classList.toggle('active', largeTextMode);
+  }
+
+  document.getElementById('colorblind-btn').addEventListener('click', () => {
+    colorblindMode = !colorblindMode;
+    saveBoolPref('breachsix-colorblind', colorblindMode);
+    applyAccessibility();
+  });
+  document.getElementById('large-text-btn').addEventListener('click', () => {
+    largeTextMode = !largeTextMode;
+    saveBoolPref('breachsix-large-text', largeTextMode);
+    applyAccessibility();
+  });
+  applyAccessibility();
 
   initDoors();
   applyLevelVisibility();
