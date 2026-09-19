@@ -201,9 +201,16 @@
   .briefing-enemy-wrap {
     max-height: 32vh; overflow: hidden; border-radius: 6px;
     border: 1px solid var(--wall); background: var(--panel); margin-bottom: 10px;
-    display: flex; align-items: center; justify-content: center;
+    display: flex; align-items: center; justify-content: center; position: relative;
   }
-  .briefing-enemy-wrap img { max-width: 100%; max-height: 32vh; object-fit: contain; display: block; }
+  .briefing-faction-logo {
+    position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+    width: 78%; height: auto; opacity: 0.16; filter: grayscale(1);
+    -webkit-mask-image: radial-gradient(ellipse 60% 60% at center, black 45%, transparent 85%);
+    mask-image: radial-gradient(ellipse 60% 60% at center, black 45%, transparent 85%);
+    pointer-events: none;
+  }
+  .briefing-enemy-wrap img#briefing-enemy-img { max-width: 100%; max-height: 32vh; object-fit: contain; display: block; position: relative; z-index: 1; }
   .briefing-operator-vignette {
     position: absolute; right: 6px; bottom: 0; height: 100%; width: auto;
     object-fit: contain; object-position: bottom right;
@@ -335,6 +342,7 @@
     <div class="mission-tag" id="briefing-title" style="margin-bottom:8px;"></div>
     <div class="brief" id="briefing-text" style="max-height:40%; overflow-y:auto; margin-bottom:10px;"></div>
     <div class="briefing-enemy-wrap">
+      <img class="briefing-faction-logo" src="./faction-logo.jpg" alt="">
       <img id="briefing-enemy-img" src="" alt="">
     </div>
     <button class="go-btn ready" id="briefing-start-btn" style="margin-top:auto;">LANCER LA MISSION →</button>
