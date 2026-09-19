@@ -252,6 +252,31 @@
   }
   .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
   #next-room-btn { background: var(--amber); color: #2a2410; border-color: var(--amber); }
+
+  .celebration-card {
+    background: var(--panel); border: 2px solid var(--amber); border-radius: 10px;
+    padding: 26px 22px; max-width: 340px; width: 100%; text-align: center;
+    animation: celebPop 0.4s cubic-bezier(0.2, 0.8, 0.3, 1.2);
+  }
+  @keyframes celebPop {
+    0% { transform: scale(0.6); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+  }
+  .celebration-label {
+    font-family: var(--font-head); font-size: 0.8rem; letter-spacing: 0.08em;
+    color: var(--amber); text-transform: uppercase; margin-bottom: 10px;
+  }
+  .celebration-img {
+    width: 100%; max-height: 180px; object-fit: contain; margin-bottom: 14px;
+    filter: drop-shadow(0 4px 14px rgba(201,162,74,0.35));
+  }
+  .celebration-title {
+    font-family: var(--font-head); font-size: 1.4rem; font-weight: 700; color: var(--text);
+    margin-bottom: 4px;
+  }
+  .celebration-sub {
+    font-size: 0.8rem; color: var(--text-dim); margin-bottom: 16px; line-height: 1.4;
+  }
 </style>
 </head>
 <body>
@@ -424,6 +449,16 @@
     <button class="replay-btn" id="next-room-btn" style="display:none;">Pièce suivante →</button>
     <button class="replay-btn" id="replay-btn">Rejouer la pièce</button>
     <button class="replay-btn" id="menu-return-btn" style="margin-top:8px;">Retour au menu</button>
+  </div>
+</div>
+
+<div class="overlay" id="celebration-overlay">
+  <div class="celebration-card">
+    <div class="celebration-label" id="celebration-label">Skin débloqué !</div>
+    <img class="celebration-img" id="celebration-img" src="" alt="">
+    <div class="celebration-title" id="celebration-title">Cuivre</div>
+    <div class="celebration-sub" id="celebration-sub"></div>
+    <button class="replay-btn" id="celebration-close-btn">Continuer</button>
   </div>
 </div>
 
@@ -796,6 +831,25 @@
     document.documentElement.style.setProperty('--wall', darkenHex(palette.wall, factor));
   }
 
+  // --- Paliers de progression (tous les 15 niveaux complétés) ---
+  const LEVEL_MILESTONE_STEP = 15;
+  function checkLevelMilestone() {
+    const completedCount = Object.values(bestScores).filter(s => s > 0).length;
+    const tier = Math.floor(completedCount / LEVEL_MILESTONE_STEP);
+    const shownTier = loadIntPref('breachsix-milestone-tier', 0);
+    if (tier > shownTier) {
+      saveIntPref('breachsix-milestone-tier', tier);
+      setTimeout(() => {
+        showCelebration({
+          label: 'Palier atteint !',
+          img: './milestone-karambit.jpg',
+          title: (tier * LEVEL_MILESTONE_STEP) + ' niveaux complétés',
+          sub: 'Un karambit de prestige a été débloqué pour souligner votre progression.',
+        });
+      }, 700);
+    }
+  }
+
   function showBriefing(levelId) {
     const def = levelDefs[levelId];
     pendingBriefingLevel = levelId;
@@ -905,6 +959,17 @@
     showToast._t = setTimeout(() => toast.classList.remove('show'), 2600);
   }
 
+  function showCelebration({ label, img, title, sub }) {
+    document.getElementById('celebration-label').textContent = label;
+    document.getElementById('celebration-img').src = img;
+    document.getElementById('celebration-title').textContent = title;
+    document.getElementById('celebration-sub').textContent = sub;
+    document.getElementById('celebration-overlay').classList.add('show');
+  }
+  document.getElementById('celebration-close-btn').addEventListener('click', () => {
+    document.getElementById('celebration-overlay').classList.remove('show');
+  });
+
   document.getElementById('watch-ad-btn').addEventListener('click', () => {
     if (watchingAd) return;
     watchingAd = true;
@@ -918,7 +983,16 @@
       btn.textContent = '▶ Regarder une pub optionnelle';
       const justUnlocked = skinDefs.find(s => s.req === adsWatched);
       renderSkinTrack();
-      showToast(justUnlocked ? 'Skin débloqué : ' + justUnlocked.name + ' !' : 'Pub visionnée (' + adsWatched + ')');
+      if (justUnlocked) {
+        showCelebration({
+          label: 'Skin débloqué !',
+          img: justUnlocked.img,
+          title: justUnlocked.name,
+          sub: 'Ce skin d\'arme est maintenant disponible.',
+        });
+      } else {
+        showToast('Pub visionnée (' + adsWatched + ')');
+      }
     }, 1400);
   });
 
@@ -1364,6 +1438,7 @@
         bestScores[currentLevel] = total;
         bestNote.textContent = 'Nouveau meilleur score !';
       }
+      checkLevelMilestone();
       replayBtn.textContent = 'Rejouer le niveau';
       replayBtn.onclick = () => enterMission(currentLevel);
     }
@@ -1387,6 +1462,15 @@
   }
   function saveBoolPref(key, value) {
     try { localStorage.setItem(key, value ? '1' : '0'); } catch (e) {}
+  }
+  function loadIntPref(key, fallback) {
+    try {
+      const v = parseInt(localStorage.getItem(key), 10);
+      return Number.isFinite(v) ? v : fallback;
+    } catch (e) { return fallback; }
+  }
+  function saveIntPref(key, value) {
+    try { localStorage.setItem(key, String(value)); } catch (e) {}
   }
   let colorblindMode = loadBoolPref('breachsix-colorblind');
   let largeTextMode = loadBoolPref('breachsix-large-text');
