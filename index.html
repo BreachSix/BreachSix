@@ -515,13 +515,42 @@
     glassBreak: './sound-glass-break.mp3',
     explosion: './sound-explosion.mp3',
   };
-  function playSfx(key) {
-    const src = SFX[key];
-    if (!src) return;
+
+  // Préchargement : créer un objet Audio à la volée pour chaque tir prend un
+  // instant (requête réseau + décodage), ce qui causait un décalage audible
+  // entre l'action visuelle et le son. On précharge une fois chaque fichier
+  // au démarrage, puis on clone l'élément déjà chargé pour chaque lecture.
+  const PRELOADED_AUDIO = {};
+  function preloadAudio(key, src) {
+    const a = new Audio(src);
+    a.preload = 'auto';
+    a.load();
+    PRELOADED_AUDIO[key] = a;
+  }
+  [
+    ['sfx-glassBreak', SFX.glassBreak],
+    ['sfx-explosion', SFX.explosion],
+    ['class-Assault', CLASS_SOUND_SRC.Assault],
+    ['class-Heavy', CLASS_SOUND_SRC.Heavy],
+    ['class-Light', CLASS_SOUND_SRC.Light],
+    ['night', NIGHT_SOUND_SRC],
+  ].forEach(([key, src]) => preloadAudio(key, src));
+
+  function playPreloaded(key, rate) {
+    const base = PRELOADED_AUDIO[key];
+    if (!base) return;
     try {
-      const audio = new Audio(src);
-      audio.play().catch(() => {});
+      const clip = base.cloneNode(true);
+      clip.playbackRate = rate || 1.0;
+      clip.preservesPitch = false;
+      clip.mozPreservesPitch = false;
+      clip.webkitPreservesPitch = false;
+      clip.play().catch(() => {});
     } catch (e) {}
+  }
+
+  function playSfx(key) {
+    playPreloaded('sfx-' + key);
   }
 
   // Éclat visuel orange-jaune, utilisé à la fois pour l'explosion de la
@@ -548,18 +577,38 @@
     setTimeout(() => g.remove(), 420);
   }
 
+  // Éclat de tir en forme d'étoile (plus reconnaissable qu'un simple point),
+  // déclenché deux fois en succession rapide pour évoquer une rafale.
+  function spawnMuzzleFlash(marker, tipY) {
+    const ns = 'http://www.w3.org/2000/svg';
+    function oneFlash() {
+      const g = document.createElementNS(ns, 'g');
+      g.setAttribute('transform', 'translate(0,' + tipY + ')');
+      g.style.pointerEvents = 'none';
+      const halo = document.createElementNS(ns, 'circle');
+      halo.setAttribute('r', '4.5'); halo.setAttribute('fill', '#ff8c1a'); halo.setAttribute('opacity', '0.5');
+      const star = document.createElementNS(ns, 'polygon');
+      const pts = [];
+      for (let k = 0; k < 8; k++) {
+        const ang = k * Math.PI / 4;
+        const rad = k % 2 === 0 ? 3.6 : 1.5;
+        pts.push((Math.cos(ang) * rad).toFixed(2) + ',' + (Math.sin(ang) * rad).toFixed(2));
+      }
+      star.setAttribute('points', pts.join(' '));
+      star.setAttribute('fill', '#ffe066');
+      g.appendChild(halo); g.appendChild(star);
+      marker.appendChild(g);
+      setTimeout(() => g.remove(), 80);
+    }
+    oneFlash();
+    setTimeout(oneFlash, 60);
+  }
+
   function playClassSound(cls) {
-    const src = isNight ? NIGHT_SOUND_SRC : CLASS_SOUND_SRC[cls];
-    if (!src) return; // Shadow : pas de son
-    try {
-      const audio = new Audio(src);
-      const rate = isNight ? (CLASS_PLAYBACK_RATE[cls] || 1.0) : 1.0;
-      audio.playbackRate = rate;
-      audio.preservesPitch = false;
-      audio.mozPreservesPitch = false;
-      audio.webkitPreservesPitch = false;
-      audio.play().catch(() => {});
-    } catch (e) {}
+    const rate = isNight ? (CLASS_PLAYBACK_RATE[cls] || 1.0) : 1.0;
+    const key = isNight ? 'night' : 'class-' + cls;
+    if (!isNight && !CLASS_SOUND_SRC[cls]) return; // Shadow : pas de son
+    playPreloaded(key, rate);
   }
 
   // Camouflage par environnement — codes validés pour la production.
@@ -572,7 +621,7 @@
   };
   // Shadow ignore le camouflage : une seule tenue noire intégrale, peu importe l'environnement.
   const SHADOW_PALETTE = { dark: '#000000', mid: '#111111', light: '#333333', outline: '#000000', text: '#e9e4d4' };
-  const SQUAD_BADGE_COLOR = { a: '#EF9F27', b: '#1D9E75' }; // ambre / teal
+  const SQUAD_BADGE_COLOR = { a: '#EF9F27', b: '#5b8a9e' }; // ambre / teal-bleu, aligné sur --squad-b
 
   // Room content: two threats, each reachable from a subset of doors
   const threats = {
@@ -1763,12 +1812,7 @@
         if (op.cls !== 'Shadow' && !isBombRoom) {
           playClassSound(op.cls);
           const tipY = parseFloat(marker.dataset.weaponTipY || '-16');
-          const flash = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-          flash.setAttribute('cx', '0'); flash.setAttribute('cy', tipY);
-          flash.setAttribute('r', '3.2'); flash.setAttribute('fill', '#ffe066');
-          flash.setAttribute('opacity', '0.95');
-          marker.appendChild(flash);
-          setTimeout(() => flash.remove(), 90);
+          spawnMuzzleFlash(marker, tipY);
         }
       }
 
