@@ -80,7 +80,7 @@
   svg { display: block; width: auto; height: 100%; max-width: 100%; max-height: 34vh; touch-action: manipulation; }
 
   body.night {
-    --floor: #0a0b06; --wall: #1c1f14; --amber-dim: #6b5822;
+    --amber-dim: #6b5822;
   }
   body.night .room-wrap::after {
     content: ''; position: absolute; inset: 0; background: radial-gradient(circle at 50% 40%, rgba(120,140,90,0.04), rgba(0,0,0,0.55));
@@ -734,6 +734,28 @@
     return set[env] || set.urbain;
   }
 
+  // Palettes de plancher/mur par environnement — donne à chaque famille de
+  // camouflage sa propre ambiance de pièce, plutôt qu'un même vert olive partout.
+  const ROOM_PALETTES = {
+    urbain:   { floor: '#34372f', wall: '#565c52' },
+    desert:   { floor: '#5a4a30', wall: '#7d6a45' },
+    jungle:   { floor: '#26331e', wall: '#3f5a30' },
+    arctique: { floor: '#7c8a90', wall: '#a8b6bc' },
+  };
+  function darkenHex(hex, factor) {
+    const n = parseInt(hex.slice(1), 16);
+    const r = Math.round(((n >> 16) & 255) * factor);
+    const g = Math.round(((n >> 8) & 255) * factor);
+    const b = Math.round((n & 255) * factor);
+    return '#' + [r, g, b].map(v => v.toString(16).padStart(2, '0')).join('');
+  }
+  function applyRoomTheme(env) {
+    const palette = ROOM_PALETTES[env] || ROOM_PALETTES.urbain;
+    const factor = isNight ? 0.28 : 1;
+    document.documentElement.style.setProperty('--floor', darkenHex(palette.floor, factor));
+    document.documentElement.style.setProperty('--wall', darkenHex(palette.wall, factor));
+  }
+
   function showBriefing(levelId) {
     const def = levelDefs[levelId];
     pendingBriefingLevel = levelId;
@@ -766,6 +788,7 @@
     roomScores = [];
     isNight = !!levelDefs[levelId].night;
     document.body.classList.toggle('night', isNight);
+    applyRoomTheme(levelDefs[levelId].env);
     for (const k in assignments) delete assignments[k];
     selectedOp = null;
     resolved = false;
