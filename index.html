@@ -411,3 +411,737 @@
     { id: 'a1', squad: 'a', cls: 'Assault' },
     { id: 'a2', squad: 'a', cls: 'Light' },
     { id: 'a3', squad: 'a', cls: 'Heavy' },
+    { id: 'b1', squad: 'b', cls: 'Assault' },
+    { id: 'b2', squad: 'b', cls: 'Light' },
+    { id: 'b3', squad: 'b', cls: 'Shadow' },
+  ];
+
+  const doors = ['N', 'NE', 'E', 'S', 'W'];
+  const assignments = {}; // doorId -> operator
+  let selectedOp = null;
+  let resolved = false;
+  let composeMode = false;
+
+  const rosterA = document.getElementById('squad-a');
+  const rosterB = document.getElementById('squad-b');
+  const hint = document.getElementById('hint');
+  const goBtn = document.getElementById('go-btn');
+
+  function isOpAssigned(op) {
+    return Object.values(assignments).some(arr => arr.some(o => o.id === op.id));
+  }
+
+  function renderRoster() {
+    rosterA.innerHTML = '';
+    rosterB.innerHTML = '';
+    operators.forEach(op => {
+      const chip = document.createElement('div');
+      chip.className = 'chip squad-' + op.squad;
+      const isAssigned = isOpAssigned(op);
+      const isKO = levelCasualties.has(op.id);
+      if (isAssigned) chip.classList.add('assigned');
+      if (selectedOp === op.id) chip.classList.add('selected');
+      if (composeMode) chip.classList.add('compose');
+      if (isKO) chip.classList.add('ko');
+      const wpn = isKO ? 'Hors combat' : classData[op.cls].wpn;
+
+      const clsDiv = document.createElement('div');
+      clsDiv.className = 'cls';
+      clsDiv.textContent = op.cls;
+      const wpnDiv = document.createElement('div');
+      wpnDiv.className = 'wpn';
+      wpnDiv.textContent = wpn;
+      chip.appendChild(clsDiv);
+      chip.appendChild(wpnDiv);
+
+      if (!isKO) {
+        chip.addEventListener('click', () => {
+          if (composeMode) { cycleClass(op); }
+          else { onChipTap(op, isAssigned); }
+        });
+      }
+      (op.squad === 'a' ? rosterA : rosterB).appendChild(chip);
+    });
+  }
+
+  function cycleClass(op) {
+    const idx = classOrder.indexOf(op.cls);
+    op.cls = classOrder[(idx + 1) % classOrder.length];
+    renderAll();
+  }
+
+  function toggleCompose() {
+    if (resolved) return;
+    composeMode = !composeMode;
+    if (composeMode) {
+      for (const k in assignments) delete assignments[k];
+      selectedOp = null;
+      hint.textContent = 'Touche un opérateur pour changer sa classe.';
+    } else {
+      hint.textContent = 'Sélectionne un opérateur pour commencer.';
+    }
+    document.getElementById('compose-btn').classList.toggle('active', composeMode);
+    document.getElementById('compose-btn').textContent = composeMode ? 'Prêt' : 'Composer';
+    renderAll();
+  }
+  document.getElementById('compose-btn').addEventListener('click', toggleCompose);
+
+  // --- Level definitions & menu ---
+  const levelDefs = {
+    1: { name: 'Niveau 1 · Résidence', sub: 'Facile · 5 entrées + 1 fenêtre', env: 'urbain',
+         rooms: [ { doors: ['N', 'NE', 'E', 'S', 'W', 'F'], threats: ['T1', 'T2'], trap: true } ] },
+    2: { name: 'Niveau 2 · Résidence', sub: 'Difficile · 2 points d\'entrée', env: 'urbain',
+         rooms: [ { doors: ['N', 'S'], threats: ['T1', 'T2'], trap: true } ] },
+    3: { name: 'Niveau 3 · Entrepôt', sub: '2 pièces enchaînées', env: 'urbain',
+         rooms: [
+           { doors: ['N', 'NE', 'E', 'S', 'W'], threats: ['T1'], trap: false },
+           { doors: ['N', 'NE', 'E', 'S', 'W'], threats: ['T1', 'T2'], trap: true },
+         ] },
+    4: { name: 'Niveau 4 · Entrepôt', sub: 'Désamorçage — la vitesse compte', env: 'urbain',
+         rooms: [ { doors: ['N', 'NE', 'E', 'S', 'W'], threats: ['T1'], trap: false, type: 'bomb' } ] },
+  };
+  const BOMB_THRESHOLD_MS = 1750; // fastest assigned operator must arrive within this
+  const BOMB_FAST_MS = 1650;      // bonus: defused with real speed to spare
+  const bestScores = { 1: 0, 2: 0, 3: 0, 4: 0 };
+  let currentLevel = 1;
+  let currentRoomIndex = 0;
+  let levelCasualties = new Set(); // operators lost permanently for the rest of this level attempt
+  let roomScores = [];
+  let isNight = false;
+
+  function currentRoom() {
+    return levelDefs[currentLevel].rooms[currentRoomIndex];
+  }
+
+  function applyLevelVisibility() {
+    const room = currentRoom();
+    document.querySelectorAll('.door').forEach(g => {
+      const doorId = g.getAttribute('data-door');
+      g.style.display = room.doors.includes(doorId) ? '' : 'none';
+    });
+    const isBomb = room.type === 'bomb';
+    document.getElementById('t1-g').style.display = (!isBomb && room.threats.includes('T1')) ? '' : 'none';
+    document.getElementById('t2-g').style.display = (!isBomb && room.threats.includes('T2')) ? '' : 'none';
+    document.getElementById('bomb-g').style.display = isBomb ? '' : 'none';
+  }
+
+  function resetRoomVisuals() {
+    document.querySelectorAll('#room-svg .op-marker').forEach(m => m.remove());
+    document.getElementById('t1-g').style.opacity = '';
+    document.getElementById('t2-g').style.opacity = '';
+    document.getElementById('bomb-g').style.opacity = '';
+    const hostageCircle = document.getElementById('t2-g').querySelector('circle');
+    hostageCircle.setAttribute('fill', '#5b8a9e');
+    const timerFill = document.getElementById('bomb-timer-fill');
+    timerFill.style.transition = 'none';
+    timerFill.setAttribute('width', '80');
+    timerFill.setAttribute('fill', 'var(--danger)');
+  }
+
+  function updateMissionTag() {
+    const tag = document.getElementById('mission-tag');
+    const def = levelDefs[currentLevel];
+    const room = currentRoom();
+    const timeLabel = isNight ? 'Nuit' : 'Jour';
+    const roomPart = def.rooms.length > 1 ? ' · Pièce ' + (currentRoomIndex + 1) + '/' + def.rooms.length : '';
+    tag.textContent = 'Niveau ' + currentLevel + ' · ' + timeLabel + roomPart + ' · ' + room.doors.length + " points d'entrée";
+    const objectiveEl = document.getElementById('brief-objective');
+    if (room.type === 'bomb') {
+      objectiveEl.textContent = "désamorcer la bombe avant l'explosion — la vitesse de l'opérateur compte plus que sa classe.";
+    } else if (room.threats.includes('T2')) {
+      objectiveEl.textContent = 'neutraliser la menace et libérer l\'otage.';
+    } else {
+      objectiveEl.textContent = 'neutraliser la menace.';
+    }
+  }
+
+  function renderLevelList() {
+    const list = document.getElementById('level-list');
+    list.innerHTML = '';
+    Object.keys(levelDefs).forEach(id => {
+      const def = levelDefs[id];
+      const card = document.createElement('div');
+      card.className = 'level-card';
+      card.innerHTML =
+        '<div><div class="lc-title">' + def.name + '</div><div class="lc-sub">' + def.sub + '</div></div>' +
+        '<div class="lc-score"><span class="lbl">Meilleur score</span>' + bestScores[id].toLocaleString('fr-CA') + '</div>';
+      card.addEventListener('click', () => enterMission(Number(id)));
+      list.appendChild(card);
+    });
+  }
+
+  function showScreen(name) {
+    document.getElementById('menu-screen').style.display = name === 'menu' ? 'flex' : 'none';
+    document.getElementById('mission-screen').style.display = name === 'mission' ? 'flex' : 'none';
+  }
+
+  function enterMission(levelId) {
+    currentLevel = levelId;
+    currentRoomIndex = 0;
+    levelCasualties = new Set();
+    roomScores = [];
+    for (const k in assignments) delete assignments[k];
+    selectedOp = null;
+    resolved = false;
+    composeMode = false;
+    document.getElementById('overlay').classList.remove('show');
+    document.getElementById('compose-btn').classList.remove('active');
+    document.getElementById('compose-btn').textContent = 'Composer';
+    applyLevelVisibility();
+    resetRoomVisuals();
+    updateMissionTag();
+    hint.textContent = 'Sélectionne un opérateur pour commencer.';
+    renderAll();
+    showScreen('mission');
+  }
+
+  function enterRoom(index) {
+    currentRoomIndex = index;
+    for (const k in assignments) delete assignments[k];
+    selectedOp = null;
+    resolved = false;
+    document.getElementById('overlay').classList.remove('show');
+    applyLevelVisibility();
+    resetRoomVisuals();
+    updateMissionTag();
+    hint.textContent = 'Sélectionne un opérateur pour commencer.';
+    renderAll();
+  }
+
+  document.getElementById('back-btn').addEventListener('click', () => {
+    renderLevelList();
+    showScreen('menu');
+  });
+  document.getElementById('menu-return-btn').addEventListener('click', () => {
+    document.getElementById('overlay').classList.remove('show');
+    renderLevelList();
+    showScreen('menu');
+  });
+  document.getElementById('menu-compose-btn').addEventListener('click', () => {
+    enterMission(currentLevel);
+    toggleCompose();
+  });
+
+  // --- Ad-based cosmetic skin unlocks (simulated) ---
+  const skinDefs = [
+    { name: 'Cuivre', req: 5 },
+    { name: 'Argent', req: 10 },
+    { name: 'Or', req: 15 },
+    { name: 'Damas', req: 25 },
+    { name: 'Platine', req: 35 },
+    { name: 'Diamant', req: 50 },
+  ];
+  let adsWatched = 0;
+  let watchingAd = false;
+
+  function renderSkinTrack() {
+    document.getElementById('ads-count').textContent = adsWatched + (adsWatched === 1 ? ' pub visionnée' : ' pubs visionnées');
+    const track = document.getElementById('skin-track');
+    track.innerHTML = '';
+    skinDefs.forEach(s => {
+      const unlocked = adsWatched >= s.req;
+      const chip = document.createElement('div');
+      chip.className = 'skin-chip' + (unlocked ? ' unlocked' : '');
+      chip.innerHTML = '<div class="sc-name">' + s.name + '</div><div class="sc-req">' + (unlocked ? 'Débloqué' : s.req + ' pubs') + '</div>';
+      track.appendChild(chip);
+    });
+  }
+
+  function showToast(msg) {
+    const toast = document.getElementById('toast');
+    toast.textContent = msg;
+    toast.classList.add('show');
+    clearTimeout(showToast._t);
+    showToast._t = setTimeout(() => toast.classList.remove('show'), 2600);
+  }
+
+  document.getElementById('watch-ad-btn').addEventListener('click', () => {
+    if (watchingAd) return;
+    watchingAd = true;
+    const btn = document.getElementById('watch-ad-btn');
+    btn.disabled = true;
+    btn.textContent = 'Pub en cours…';
+    setTimeout(() => {
+      adsWatched++;
+      watchingAd = false;
+      btn.disabled = false;
+      btn.textContent = '▶ Regarder une pub optionnelle';
+      const justUnlocked = skinDefs.find(s => s.req === adsWatched);
+      renderSkinTrack();
+      showToast(justUnlocked ? 'Skin débloqué : ' + justUnlocked.name + ' !' : 'Pub visionnée (' + adsWatched + ')');
+    }, 1400);
+  });
+
+  function toggleNight() {
+    isNight = !isNight;
+    document.body.classList.toggle('night', isNight);
+    const btn = document.getElementById('night-btn');
+    btn.textContent = isNight ? 'Repasser en mode jour' : 'Passer en mode nuit';
+    btn.classList.toggle('active', isNight);
+    updateMissionTag();
+  }
+  document.getElementById('night-btn').addEventListener('click', toggleNight);
+
+  function onChipTap(op, isAssigned) {
+    if (resolved) return;
+    if (isAssigned) {
+      // unassign from wherever it's currently placed
+      for (const d in assignments) {
+        assignments[d] = assignments[d].filter(o => o.id !== op.id);
+        if (assignments[d].length === 0) delete assignments[d];
+      }
+      selectedOp = null;
+      hint.textContent = 'Opérateur retiré. Sélectionne un opérateur pour continuer.';
+      renderAll();
+      return;
+    }
+    selectedOp = (selectedOp === op.id) ? null : op.id;
+    hint.textContent = selectedOp
+      ? 'Touche un point d\'entrée pour assigner cet opérateur.'
+      : 'Sélectionne un opérateur pour commencer.';
+    renderAll();
+  }
+
+  function onDoorTap(doorId) {
+    if (resolved || composeMode) return;
+    const current = assignments[doorId] || [];
+    if (selectedOp) {
+      const op = operators.find(o => o.id === selectedOp);
+      if (!assignments[doorId]) assignments[doorId] = [];
+      assignments[doorId].push(op);
+      selectedOp = null;
+      hint.textContent = 'Assigné. Tu peux ajouter un autre opérateur au même point, ou toucher GO.';
+      renderAll();
+      return;
+    }
+    if (current.length > 0) {
+      // no operator selected: remove the most recently assigned one at this door
+      current.pop();
+      if (current.length === 0) delete assignments[doorId];
+      hint.textContent = 'Opérateur retiré du point d\'entrée.';
+      renderAll();
+      return;
+    }
+    hint.textContent = 'Sélectionne d\'abord un opérateur ci-dessous.';
+  }
+
+  function renderDoors() {
+    document.querySelectorAll('.door').forEach(g => {
+      const doorId = g.getAttribute('data-door');
+      const ring = g.querySelector('.door-ring');
+      const countText = g.querySelector('.door-count');
+      const arr = assignments[doorId] || [];
+      if (arr.length > 0) {
+        const lastSquad = arr[arr.length - 1].squad;
+        ring.setAttribute('fill', lastSquad === 'a' ? 'var(--squad-a)' : 'var(--squad-b)');
+        ring.setAttribute('stroke', 'var(--text)');
+        if (countText) countText.textContent = arr.length > 1 ? String(arr.length) : '';
+      } else {
+        ring.setAttribute('fill', 'var(--panel)');
+        ring.setAttribute('stroke', 'var(--amber-dim)');
+        if (countText) countText.textContent = '';
+      }
+    });
+  }
+
+  function initDoors() {
+    document.querySelectorAll('.door').forEach(g => {
+      const doorId = g.getAttribute('data-door');
+      g.style.cursor = 'pointer';
+      g.addEventListener('click', () => onDoorTap(doorId));
+    });
+  }
+
+  function renderGo() {
+    const count = Object.values(assignments).reduce((sum, arr) => sum + arr.length, 0);
+    goBtn.disabled = count === 0 || resolved || composeMode;
+    goBtn.classList.toggle('ready', count > 0 && !resolved && !composeMode);
+  }
+
+  function renderAll() {
+    renderRoster();
+    renderDoors();
+    renderGo();
+  }
+
+  goBtn.addEventListener('click', runAssault);
+
+  function runAssault() {
+    if (resolved) return;
+    resolved = true;
+    renderAll();
+    hint.textContent = 'Assaut en cours...';
+
+    const room = currentRoom();
+    const svg = document.getElementById('room-svg');
+    const assignedList = [];
+    for (const doorId in assignments) {
+      assignments[doorId].forEach(op => assignedList.push([doorId, op]));
+    }
+
+    // Determine trap casualties (hidden mechanic: Heavy forcing the trapped door) — only if this room has the trap active
+    const casualtyIds = new Set();
+    if (room.trap) {
+      assignedList.forEach(([doorId, op]) => {
+        if (doorId === trappedDoor && op.cls === trapClass) casualtyIds.add(op.id);
+      });
+    }
+
+    const survivors = assignedList.filter(([, op]) => !casualtyIds.has(op.id));
+
+    // Smart target assignment: the squad splits up inside the room based on
+    // class strengths, regardless of which door each operator came through.
+    // Heavy/Shadow are best suited for the armored guard (T2); anyone can
+    // handle the standard guard (T1). If only one threat is active in this
+    // room, everyone converges on it.
+    const t2Rank = { Heavy: 0, Shadow: 1, Assault: 2, Light: 2 };
+    const targets = []; // { doorId, op, targetThreatId }
+    const hasT2 = room.threats.includes('T2');
+
+    if (!hasT2) {
+      survivors.forEach(([doorId, op]) => targets.push({ doorId, op, targetThreatId: 'T1' }));
+    } else if (survivors.length === 1) {
+      const [doorId, op] = survivors[0];
+      const t = (op.cls === 'Heavy' || op.cls === 'Shadow') ? 'T2' : 'T1';
+      targets.push({ doorId, op, targetThreatId: t });
+    } else if (survivors.length > 1) {
+      const pool = survivors.map(([doorId, op]) => ({ doorId, op }));
+      pool.sort((a, b) => t2Rank[a.op.cls] - t2Rank[b.op.cls]);
+      const bestForT2 = pool[0];
+      const rest = pool.slice(1);
+      targets.push({ ...bestForT2, targetThreatId: 'T2' });
+      // first remaining operator covers the standard guard, any extras
+      // reinforce whichever threat best matches their class
+      rest.forEach((entry, idx) => {
+        const t = idx === 0 ? 'T1' : ((entry.op.cls === 'Heavy' || entry.op.cls === 'Shadow') ? 'T2' : 'T1');
+        targets.push({ ...entry, targetThreatId: t });
+      });
+    }
+
+    const byThreat = { T1: targets.filter(t => t.targetThreatId === 'T1').map(t => t.op),
+                        T2: targets.filter(t => t.targetThreatId === 'T2').map(t => t.op) };
+
+    function fastestOf(list) {
+      let f = list[0];
+      list.forEach(op => { if (classData[op.cls].speed > classData[f.cls].speed) f = op; });
+      return f;
+    }
+
+    const t1Cleared = byThreat.T1.length > 0;
+    const t2Cleared = !hasT2 || byThreat.T2.length > 0;
+    // Heavy and Shadow (karambit, up close) both handle the armored guard cleanly.
+    function isCleanT2Handler(op) {
+      return op.cls === 'Heavy' || op.cls === 'Shadow';
+    }
+    const hostageSafe = !hasT2 || (t2Cleared && byThreat.T2.some(isCleanT2Handler));
+
+    // Purely cosmetic: the failure message when the hostage is hurt.
+    let hostageFailReason = null;
+    if (hasT2 && t2Cleared && !hostageSafe) {
+      hostageFailReason = 'gunfight';
+    }
+    const isBombRoom = room.type === 'bomb';
+    let bombDefused = true, bombFastDefuse = false, fastestArrivalMs = null;
+    if (isBombRoom) {
+      const arrivals = assignedList
+        .filter(([, op]) => !casualtyIds.has(op.id))
+        .map(([, op]) => 2200 - classData[op.cls].speed * 300);
+      fastestArrivalMs = arrivals.length ? Math.min(...arrivals) : null;
+      bombDefused = fastestArrivalMs !== null && fastestArrivalMs <= BOMB_THRESHOLD_MS;
+      bombFastDefuse = fastestArrivalMs !== null && fastestArrivalMs <= BOMB_FAST_MS;
+    }
+
+    const primarySuccess = isBombRoom ? (t1Cleared && bombDefused) : (t1Cleared && t2Cleared);
+    const noOperatorLost = casualtyIds.size === 0;
+    // At night, every weapon is fitted with a silencer regardless of class,
+    // so gunfire never gives the squad away. A bomb-only room has no enemy to
+    // shoot at all, so the objective is trivially met there too.
+    const stealthSuccess = isBombRoom || isNight || !assignedList.some(([, op]) => op.cls !== 'Shadow');
+
+    const slowestDuration = 2200 - (assignedList.length ? Math.min(...assignedList.map(([, op]) => classData[op.cls].speed)) * 300 : 0);
+
+    function makeOperatorMarker(op) {
+      const ns = 'http://www.w3.org/2000/svg';
+      const env = levelDefs[currentLevel].env || 'urbain';
+      const camo = op.cls === 'Shadow' ? SHADOW_PALETTE : CAMO_PALETTES[env];
+      const badgeColor = SQUAD_BADGE_COLOR[op.squad];
+
+      const g = document.createElementNS(ns, 'g');
+      g.classList.add('op-marker');
+      g.classList.add('cls-' + op.cls.toLowerCase());
+
+      // Corps : silhouette distincte par classe, teintée selon le camouflage
+      // de l'environnement (Shadow reste toujours noir, peu importe l'env).
+      let body;
+      if (op.cls === 'Heavy') {
+        body = document.createElementNS(ns, 'rect');
+        body.setAttribute('x', '-10'); body.setAttribute('y', '-10');
+        body.setAttribute('width', '20'); body.setAttribute('height', '20');
+        body.setAttribute('rx', '4');
+      } else if (op.cls === 'Light') {
+        body = document.createElementNS(ns, 'rect');
+        body.setAttribute('x', '-7'); body.setAttribute('y', '-8');
+        body.setAttribute('width', '14'); body.setAttribute('height', '16');
+        body.setAttribute('rx', '5');
+      } else if (op.cls === 'Shadow') {
+        body = document.createElementNS(ns, 'rect');
+        body.setAttribute('x', '-8'); body.setAttribute('y', '-8');
+        body.setAttribute('width', '16'); body.setAttribute('height', '16');
+        body.setAttribute('rx', '3');
+      } else {
+        body = document.createElementNS(ns, 'circle');
+        body.setAttribute('r', '9');
+      }
+      body.setAttribute('fill', camo.mid);
+      body.setAttribute('stroke', camo.outline);
+      body.setAttribute('stroke-width', '1.4');
+      g.appendChild(body);
+
+      // Motif de camouflage : deux petites taches (foncée/claire), absentes pour Shadow.
+      if (op.cls !== 'Shadow') {
+        const speck1 = document.createElementNS(ns, 'rect');
+        speck1.setAttribute('x', '-5'); speck1.setAttribute('y', '-6');
+        speck1.setAttribute('width', '6'); speck1.setAttribute('height', '3');
+        speck1.setAttribute('rx', '1'); speck1.setAttribute('fill', camo.dark);
+        g.appendChild(speck1);
+        const speck2 = document.createElementNS(ns, 'rect');
+        speck2.setAttribute('x', '0'); speck2.setAttribute('y', '2');
+        speck2.setAttribute('width', '5'); speck2.setAttribute('height', '3');
+        speck2.setAttribute('rx', '1'); speck2.setAttribute('fill', camo.light);
+        g.appendChild(speck2);
+      }
+
+      // Arme : ligne au-dessus du corps, absente pour Shadow (karambit, pas d'arme visible).
+      if (op.cls !== 'Shadow') {
+        const weaponWidth = op.cls === 'Heavy' ? 3.4 : (op.cls === 'Light' ? 2 : 2.6);
+        const weaponLen = op.cls === 'Heavy' ? 9 : (op.cls === 'Light' ? 6 : 7.5);
+        const weapon = document.createElementNS(ns, 'line');
+        weapon.setAttribute('x1', '0'); weapon.setAttribute('y1', '-9');
+        weapon.setAttribute('x2', '0'); weapon.setAttribute('y2', String(-9 - weaponLen));
+        weapon.setAttribute('stroke', camo.outline);
+        weapon.setAttribute('stroke-width', String(weaponWidth));
+        weapon.setAttribute('stroke-linecap', 'round');
+        g.appendChild(weapon);
+      }
+
+      // Badge d'escouade : petit accent ambre/teal, pas la silhouette entière.
+      const badge = document.createElementNS(ns, 'circle');
+      badge.setAttribute('cx', '6'); badge.setAttribute('cy', '-6');
+      badge.setAttribute('r', '2.6');
+      badge.setAttribute('fill', badgeColor);
+      badge.setAttribute('stroke', camo.outline);
+      badge.setAttribute('stroke-width', '0.6');
+      g.appendChild(badge);
+
+      const label = document.createElementNS(ns, 'text');
+      label.setAttribute('text-anchor', 'middle');
+      label.setAttribute('dy', '3');
+      label.setAttribute('font-size', '8');
+      label.setAttribute('fill', camo.text);
+      label.textContent = op.cls[0];
+      g.appendChild(label);
+      return g;
+    }
+
+    assignedList.forEach(([doorId, op], i) => {
+      const doorEl = document.querySelector('.door[data-door="' + doorId + '"]');
+      const x = Number(doorEl.getAttribute('data-x'));
+      const y = Number(doorEl.getAttribute('data-y'));
+      const marker = makeOperatorMarker(op);
+      marker.setAttribute('transform', 'translate(' + x + ',' + y + ')');
+      svg.appendChild(marker);
+
+      const speed = classData[op.cls].speed;
+      // Light vaults through the window quickly — a small speed bonus that
+      // rewards using this alternate access with the right class.
+      const windowBonus = (doorId === 'F' && op.cls === 'Light') ? 250 : 0;
+      const duration = 2200 - speed * 300 - windowBonus;
+      const isCasualty = casualtyIds.has(op.id);
+      const assignedTarget = targets.find(t => t.op.id === op.id);
+      // casualties never reach a target; they fall partway toward whichever
+      // threat their door was nearest to, purely for visual direction
+      const fallbackThreat = threats[doorThreatMap[doorId]];
+      const threat = assignedTarget ? threats[assignedTarget.targetThreatId] : fallbackThreat;
+
+      let targetX, targetY;
+      if (isCasualty) {
+        targetX = x + (fallbackThreat.x - x) * 0.35;
+        targetY = y + (fallbackThreat.y - y) * 0.35;
+      } else {
+        // Ranged classes hold back at a standoff distance; Shadow (karambit)
+        // always closes in to melee range.
+        // Defusing a bomb always requires direct contact, regardless of class.
+        const standoff = isBombRoom ? 8 : (op.cls === 'Shadow' ? 6 : 50);
+        const dx = threat.x - x, dy = threat.y - y;
+        const dist = Math.hypot(dx, dy) || 1;
+        const ux = dx / dist, uy = dy / dist;
+        const perpX = -uy, perpY = ux;
+        const fan = (i % 3 - 1) * 12; // spread multiple operators around the target
+        targetX = threat.x - ux * standoff + perpX * fan;
+        targetY = threat.y - uy * standoff + perpY * fan;
+      }
+
+      setTimeout(() => {
+        marker.style.transition = 'transform ' + duration + 'ms ease-in';
+        marker.setAttribute('transform', 'translate(' + targetX + ',' + targetY + ')');
+        if (isCasualty) {
+          setTimeout(() => {
+            marker.querySelector('rect, circle, polygon').setAttribute('fill', 'var(--danger)');
+            marker.style.transition += ', opacity 0.4s ease';
+            marker.style.opacity = '0.15';
+          }, duration * 0.35);
+        }
+      }, 300 + i * 220);
+    });
+
+    if (isBombRoom) {
+      const timerFill = document.getElementById('bomb-timer-fill');
+      setTimeout(() => {
+        timerFill.style.transition = 'width ' + BOMB_THRESHOLD_MS + 'ms linear';
+        timerFill.setAttribute('width', '0');
+      }, 300);
+    }
+
+    const maxDelay = 300 + assignedList.length * 220 + slowestDuration + 700;
+    setTimeout(() => {
+      if (isBombRoom) {
+        const timerFill = document.getElementById('bomb-timer-fill');
+        timerFill.style.transition = 'opacity 0.3s ease';
+        timerFill.setAttribute('fill', bombDefused ? 'var(--ok)' : 'var(--danger)');
+        document.getElementById('bomb-g').style.opacity = bombDefused ? '0.4' : '1';
+      } else {
+        if (t1Cleared) document.getElementById('t1-g').style.opacity = '0.15';
+        if (t2Cleared) {
+          document.getElementById('t2-g').style.transition = 'opacity 0.3s ease';
+          document.getElementById('t2-g').style.opacity = hostageSafe ? '0.15' : '0.5';
+          if (!hostageSafe) document.getElementById('t2-g').querySelector('circle').setAttribute('fill', 'var(--danger)');
+        }
+      }
+    }, maxDelay - 500);
+
+    setTimeout(() => {
+      showResult({ primarySuccess, noOperatorLost, hostageSafe, hostageFailReason, stealthSuccess, t1Cleared, t2Cleared, hasT2, casualtyIds, isBombRoom, bombDefused, bombFastDefuse });
+    }, maxDelay);
+  }
+
+  function showResult(r) {
+    const overlay = document.getElementById('overlay');
+    const title = document.getElementById('result-title');
+    const scoreEl = document.getElementById('result-score');
+    const bestNote = document.getElementById('best-score-note');
+    const list = document.getElementById('obj-list');
+    const replayBtn = document.getElementById('replay-btn');
+    const nextBtn = document.getElementById('next-room-btn');
+    const menuBtn = document.getElementById('menu-return-btn');
+    list.innerHTML = '';
+    bestNote.textContent = '';
+    nextBtn.style.display = 'none';
+    replayBtn.style.display = '';
+    replayBtn.textContent = 'Rejouer la pièce';
+    replayBtn.onclick = null;
+
+    if (!r.primarySuccess) {
+      title.textContent = r.isBombRoom ? 'La bombe a explosé' : 'Mission échouée';
+      scoreEl.textContent = '0 pt';
+      const missed = [];
+      if (r.isBombRoom) {
+        missed.push(!r.t1Cleared
+          ? 'Personne n\'a été envoyé désamorcer la bombe'
+          : 'La bombe a explosé avant d\'être désamorcée — les opérateurs envoyés étaient trop lents');
+      } else {
+        if (!r.t1Cleared) missed.push('Le garde n\'a pas été neutralisé (aucun opérateur envoyé de ce côté)');
+        if (r.hasT2 && !r.t2Cleared) missed.push('Le garde blindé n\'a pas été neutralisé (aucun opérateur envoyé de ce côté)');
+      }
+      missed.forEach(m => {
+        const li = document.createElement('li');
+        li.className = 'no';
+        li.innerHTML = '<span class="mark">✗</span><span>' + m + '</span>';
+        list.appendChild(li);
+      });
+      overlay.classList.add('show');
+      return;
+    }
+
+    // Room cleared: casualties from this room become permanently unavailable
+    // for the rest of this level attempt.
+    r.casualtyIds.forEach(id => levelCasualties.add(id));
+
+    let secondaries;
+    if (r.isBombRoom) {
+      secondaries = [
+        { label: 'Aucun opérateur perdu', ok: r.noOperatorLost },
+        { label: 'Aucun coup de feu tiré (approche furtive)', ok: r.stealthSuccess },
+        { label: 'Désamorçage rapide et maîtrisé (marge de sécurité)', ok: r.bombFastDefuse },
+      ];
+    } else {
+      const hostageLabel = r.hostageSafe
+        ? 'Otage libéré sans blessure'
+        : 'Otage blessé dans l\'échange de tirs';
+      secondaries = [
+        { label: 'Aucun opérateur perdu', ok: r.noOperatorLost },
+        { label: hostageLabel, ok: r.hostageSafe },
+        { label: 'Aucun coup de feu tiré (approche furtive)', ok: r.stealthSuccess },
+      ];
+    }
+    const achieved = secondaries.filter(s => s.ok).length;
+    const scoreTable = [1000, 2500, 5000, 10000];
+    const roomScore = scoreTable[achieved];
+    roomScores[currentRoomIndex] = roomScore;
+
+    const def = levelDefs[currentLevel];
+    const isLastRoom = currentRoomIndex === def.rooms.length - 1;
+
+    secondaries.forEach(s => {
+      const li = document.createElement('li');
+      li.className = s.ok ? 'ok' : 'no';
+      li.innerHTML = '<span class="mark">' + (s.ok ? '✓' : '✗') + '</span><span>' + s.label + '</span>';
+      list.appendChild(li);
+    });
+
+    if (!isLastRoom) {
+      title.textContent = 'Pièce sécurisée';
+      scoreEl.textContent = roomScore.toLocaleString('fr-CA') + ' pts';
+      nextBtn.style.display = '';
+      nextBtn.onclick = () => enterRoom(currentRoomIndex + 1);
+    } else {
+      const total = roomScores.reduce((a, b) => a + (b || 0), 0);
+      title.textContent = def.rooms.length > 1 ? 'Niveau complété' : 'Mission réussie';
+      scoreEl.textContent = total.toLocaleString('fr-CA') + ' pts';
+      if (total > bestScores[currentLevel]) {
+        bestScores[currentLevel] = total;
+        bestNote.textContent = 'Nouveau meilleur score !';
+      }
+      replayBtn.textContent = 'Rejouer le niveau';
+      replayBtn.onclick = () => enterMission(currentLevel);
+    }
+
+    overlay.classList.add('show');
+  }
+
+  document.getElementById('replay-btn').addEventListener('click', () => {
+    for (const k in assignments) delete assignments[k];
+    selectedOp = null;
+    resolved = false;
+    document.getElementById('overlay').classList.remove('show');
+    resetRoomVisuals();
+    hint.textContent = 'Sélectionne un opérateur pour commencer.';
+    renderAll();
+  });
+
+  initDoors();
+  applyLevelVisibility();
+  renderAll();
+  renderLevelList();
+  renderSkinTrack();
+  showScreen('menu');
+})();
+</script>
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('service-worker.js').catch(() => {});
+    });
+  }
+</script>
+</body>
+</html>
