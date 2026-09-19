@@ -184,7 +184,12 @@
 
   footer { display: none; }
 
-  #menu-screen, #mission-screen { display: flex; flex-direction: column; height: 100%; }
+  #menu-screen, #mission-screen, #briefing-screen { display: flex; flex-direction: column; height: 100%; }
+  .briefing-image-wrap {
+    width: 100%; max-height: 38vh; overflow: hidden; border-radius: 6px;
+    border: 1px solid var(--wall); margin-bottom: 10px; flex-shrink: 0; background: var(--panel);
+  }
+  .briefing-image-wrap img { width: 100%; height: 100%; object-fit: cover; display: block; }
   .menu-scroll {
     flex: 1; min-height: 0; overflow-y: auto; -webkit-overflow-scrolling: touch;
     overscroll-behavior: contain;
@@ -266,6 +271,19 @@
         <button class="compose-btn watch-ad-btn" id="watch-ad-btn">▶ Regarder une pub optionnelle</button>
       </div>
     </div>
+  </div>
+
+  <!-- BRIEFING SCREEN -->
+  <div id="briefing-screen" style="display:none;">
+    <header>
+      <button class="back-btn" id="briefing-back-btn">← Menu</button>
+    </header>
+    <div class="briefing-image-wrap">
+      <img id="briefing-image" src="" alt="">
+    </div>
+    <div class="mission-tag" id="briefing-title" style="margin-bottom:8px;"></div>
+    <div class="brief" id="briefing-text" style="flex:1; overflow-y:auto; margin-bottom:10px;"></div>
+    <button class="go-btn ready" id="briefing-start-btn">LANCER LA MISSION →</button>
   </div>
 
   <!-- MISSION SCREEN -->
@@ -532,33 +550,54 @@
   // --- Level definitions & menu ---
   const levelDefs = {
     1: { name: 'Niveau 1 · Résidence', sub: 'Facile · 5 entrées + 1 fenêtre', env: 'urbain',
+         briefImg: './brief-residence.jpg',
+         brief: 'Une cellule de Combine Ashgard utilise cette résidence de Corvane comme planque. Un otage y est retenu — nettoyez la maison et sécurisez-le.',
          rooms: [ { doors: ['N', 'NE', 'E', 'S', 'W', 'F'], threats: ['T1', 'T2'], trap: true } ] },
     2: { name: 'Niveau 2 · Résidence', sub: 'Difficile · 2 points d\'entrée', env: 'urbain',
+         briefImg: './brief-residence.jpg',
+         brief: 'Renfort de sécurité signalé sur cette même planque de Corvane : la plupart des accès ont été condamnés. Seuls deux points d\'entrée restent praticables.',
          rooms: [ { doors: ['N', 'S'], threats: ['T1', 'T2'], trap: true } ] },
     3: { name: 'Niveau 3 · Entrepôt', sub: '2 pièces enchaînées', env: 'urbain',
+         briefImg: './brief-entrepot.jpg',
+         brief: 'Un entrepôt de la zone industrielle de Halveigh sert de relais logistique à Combine Ashgard. Progressez pièce par pièce jusqu\'au fond du bâtiment.',
          rooms: [
            { doors: ['N', 'NE', 'E', 'S', 'W'], threats: ['T1'], trap: false },
            { doors: ['N', 'NE', 'E', 'S', 'W'], threats: ['T1', 'T2'], trap: true },
          ] },
     4: { name: 'Niveau 4 · Entrepôt', sub: 'Désamorçage — la vitesse compte', env: 'urbain',
+         briefImg: './brief-entrepot.jpg',
+         brief: 'Une charge explosive a été armée dans ce même entrepôt de Halveigh. Désamorcez-la avant l\'expiration du délai.',
          rooms: [ { doors: ['N', 'NE', 'E', 'S', 'W'], threats: ['T1'], trap: false, type: 'bomb' } ] },
     5: { name: 'Niveau 5 · Village isolé (désert)', sub: 'Facile · 5 entrées + 1 fenêtre', env: 'desert',
+         briefImg: './brief-desert.jpg',
+         brief: 'Une cellule de Combine Ashgard s\'est retranchée dans un village isolé de Zahrastan. Infiltrez les lieux et neutralisez la menace.',
          rooms: [ { doors: ['N', 'NE', 'E', 'S', 'W', 'F'], threats: ['T1', 'T2'], trap: true } ] },
     6: { name: 'Niveau 6 · Village isolé (jungle)', sub: 'Facile · 5 entrées + 1 fenêtre', env: 'jungle',
+         briefImg: './brief-jungle.jpg',
+         brief: 'Au cœur de la jungle de Verdance, un village abandonné sert de cache à l\'organisation. La végétation dense limite la visibilité — restez prudents.',
          rooms: [ { doors: ['N', 'NE', 'E', 'S', 'W', 'F'], threats: ['T1', 'T2'], trap: true } ] },
     7: { name: 'Niveau 7 · Base arctique', sub: 'Facile · 5 entrées + 1 fenêtre', env: 'arctique',
+         briefImg: './brief-arctique.jpg',
+         brief: 'Une base isolée dans les montagnes de la Rive Boréale, sous le couvert de la nuit. Chaque arme est équipée d\'un silencieux — l\'effet de surprise est total.',
          rooms: [ { doors: ['N', 'NE', 'E', 'S', 'W', 'F'], threats: ['T1', 'T2'], trap: true } ] },
     8: { name: 'Niveau 8 · Résidence', sub: 'Mission de nuit · silencieux imposé · 5 points d\'entrée', env: 'urbain', night: true,
+         briefImg: './brief-residence.jpg',
+         brief: 'Nouvelle activité nocturne détectée dans le secteur résidentiel de Corvane. Une intervention discrète est requise avant l\'aube.',
          rooms: [ { doors: ['N', 'NE', 'E', 'S', 'W', 'F'], threats: ['T1', 'T2'], trap: true } ] },
     9: { name: 'Niveau 9 · Immeuble de bureaux', sub: 'Facile · 5 entrées + 1 fenêtre', env: 'urbain',
+         briefImg: './brief-bureaux.jpg',
+         brief: 'Un immeuble de bureaux du centre-ville de Corvane a été investi après les heures ouvrables. Sécurisez les étages.',
          rooms: [ { doors: ['N', 'NE', 'E', 'S', 'W', 'F'], threats: ['T1', 'T2'], trap: true } ] },
     10: { name: 'Niveau 10 · Banque', sub: 'Facile · 5 entrées + 1 fenêtre', env: 'urbain',
+         briefImg: './brief-banque.jpg',
+         brief: 'Une prise d\'otages est en cours dans une banque du quartier financier de Corvane. Le hall a déjà subi des dégâts — progressez avec prudence.',
          rooms: [ { doors: ['N', 'NE', 'E', 'S', 'W', 'F'], threats: ['T1', 'T2'], trap: true } ] },
   };
   const BOMB_THRESHOLD_MS = 1750; // fastest assigned operator must arrive within this
   const BOMB_FAST_MS = 1650;      // bonus: defused with real speed to spare
   const bestScores = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0, 10: 0 };
   let currentLevel = 1;
+  let pendingBriefingLevel = null;
   let currentRoomIndex = 0;
   let levelCasualties = new Set(); // operators lost permanently for the rest of this level attempt
   let roomScores = [];
@@ -620,13 +659,31 @@
       card.innerHTML =
         '<div><div class="lc-title">' + def.name + '</div><div class="lc-sub">' + def.sub + '</div></div>' +
         '<div class="lc-score"><span class="lbl">Meilleur score</span>' + bestScores[id].toLocaleString('fr-CA') + '</div>';
-      card.addEventListener('click', () => enterMission(Number(id)));
+      card.addEventListener('click', () => showBriefing(Number(id)));
       list.appendChild(card);
     });
   }
 
+  function showBriefing(levelId) {
+    const def = levelDefs[levelId];
+    pendingBriefingLevel = levelId;
+    document.getElementById('briefing-image').src = def.briefImg || '';
+    document.getElementById('briefing-image').alt = def.name;
+    document.getElementById('briefing-title').textContent = def.name;
+    document.getElementById('briefing-text').textContent = def.brief || '';
+    showScreen('briefing');
+  }
+  document.getElementById('briefing-back-btn').addEventListener('click', () => {
+    renderLevelList();
+    showScreen('menu');
+  });
+  document.getElementById('briefing-start-btn').addEventListener('click', () => {
+    if (pendingBriefingLevel != null) enterMission(pendingBriefingLevel);
+  });
+
   function showScreen(name) {
     document.getElementById('menu-screen').style.display = name === 'menu' ? 'flex' : 'none';
+    document.getElementById('briefing-screen').style.display = name === 'briefing' ? 'flex' : 'none';
     document.getElementById('mission-screen').style.display = name === 'mission' ? 'flex' : 'none';
   }
 
