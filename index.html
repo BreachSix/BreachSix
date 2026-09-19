@@ -403,6 +403,21 @@
   };
   const classOrder = ['Assault', 'Light', 'Heavy', 'Shadow'];
 
+  // Sons d'armes par classe. Shadow n'a pas d'entrée : toujours silencieux (karambit).
+  const CLASS_SOUND_SRC = {
+    Assault: './sound-assault.mp3',
+    Heavy: './sound-heavy.mp3',
+    Light: './sound-light.mp3',
+  };
+  function playClassSound(cls) {
+    const src = CLASS_SOUND_SRC[cls];
+    if (!src) return;
+    try {
+      const audio = new Audio(src);
+      audio.play().catch(() => {}); // ignore si le navigateur bloque l'autoplay
+    } catch (e) {}
+  }
+
   // Camouflage par environnement — codes validés pour la production.
   // "text" est choisi selon le contraste (clair sur camo foncé, foncé sur camo clair).
   const CAMO_PALETTES = {
@@ -1008,6 +1023,9 @@
       setTimeout(() => {
         marker.style.transition = 'transform ' + duration + 'ms ease-in';
         marker.setAttribute('transform', 'translate(' + targetX + ',' + targetY + ')');
+        if (op.cls !== 'Shadow') {
+          setTimeout(() => playClassSound(op.cls), isCasualty ? duration * 0.35 : duration);
+        }
         if (isCasualty) {
           setTimeout(() => {
             marker.querySelector('rect, circle, polygon').setAttribute('fill', 'var(--danger)');
