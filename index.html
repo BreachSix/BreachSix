@@ -518,16 +518,24 @@
     explosion: './sound-explosion.mp3',
   };
 
-  // Préchargement : créer un objet Audio à la volée pour chaque tir prend un
-  // instant (requête réseau + décodage), ce qui causait un décalage audible
-  // entre l'action visuelle et le son. On précharge une fois chaque fichier
-  // au démarrage, puis on clone l'élément déjà chargé pour chaque lecture.
-  const PRELOADED_AUDIO = {};
-  function preloadAudio(key, src) {
-    const a = new Audio(src);
-    a.preload = 'auto';
-    a.load();
-    PRELOADED_AUDIO[key] = a;
+  // Web Audio API : les fichiers sont décodés une seule fois en mémoire au
+  // démarrage, puis chaque lecture démarre quasi instantanément (contrairement
+  // à new Audio()/cloneNode() qui gardait un léger délai de lecture audible).
+  let audioCtx = null;
+  const AUDIO_BUFFERS = {};
+  function getAudioCtx() {
+    if (!audioCtx) {
+      const AC = window.AudioContext || window.webkitAudioContext;
+      audioCtx = new AC();
+    }
+    return audioCtx;
+  }
+  function loadAudioBuffer(key, src) {
+    fetch(src)
+      .then(res => res.arrayBuffer())
+      .then(arr => getAudioCtx().decodeAudioData(arr))
+      .then(buf => { AUDIO_BUFFERS[key] = buf; })
+      .catch(() => {});
   }
   [
     ['sfx-glassBreak', SFX.glassBreak],
@@ -536,18 +544,18 @@
     ['class-Heavy', CLASS_SOUND_SRC.Heavy],
     ['class-Light', CLASS_SOUND_SRC.Light],
     ['night', NIGHT_SOUND_SRC],
-  ].forEach(([key, src]) => preloadAudio(key, src));
+  ].forEach(([key, src]) => loadAudioBuffer(key, src));
 
   function playPreloaded(key, rate) {
-    const base = PRELOADED_AUDIO[key];
-    if (!base) return;
+    const buf = AUDIO_BUFFERS[key];
+    if (!buf) return; // pas encore décodé (rare) : on n'échoue pas, on saute simplement
     try {
-      const clip = base.cloneNode(true);
-      clip.playbackRate = rate || 1.0;
-      clip.preservesPitch = false;
-      clip.mozPreservesPitch = false;
-      clip.webkitPreservesPitch = false;
-      clip.play().catch(() => {});
+      const ctx = getAudioCtx();
+      const node = ctx.createBufferSource();
+      node.buffer = buf;
+      node.playbackRate.value = rate || 1.0;
+      node.connect(ctx.destination);
+      node.start(0);
     } catch (e) {}
   }
 
@@ -1107,9 +1115,9 @@
   // coin supérieur gauche de la pièce, peu importe sa forme.
   const COMPASS_ROSE_SVG =
     '<g opacity="0.65" pointer-events="none">' +
-    '<circle cx="4" cy="4" r="15" fill="none" stroke="var(--wall)" stroke-width="1.5"/>' +
-    '<polygon points="4,-7 0,7 4,3 8,7" fill="var(--amber-dim)"/>' +
-    '<text x="4" y="-12" text-anchor="middle" font-family="var(--font-body)" font-size="9" fill="var(--text-dim)">N</text>' +
+    '<circle cx="3" cy="3" r="9" fill="none" stroke="var(--wall)" stroke-width="1.2"/>' +
+    '<polygon points="3,-3.5 0.8,4.5 3,2 5.2,4.5" fill="var(--amber-dim)"/>' +
+    '<text x="3" y="-6" text-anchor="middle" font-family="var(--font-body)" font-size="7" fill="var(--text-dim)">N</text>' +
     '</g>';
 
   const ROOM_SHAPES = {
@@ -1480,6 +1488,12 @@
   }
 
   goBtn.addEventListener('click', runAssault);
+  // Certains navigateurs mobiles suspendent le contexte audio tant qu'aucun
+  // geste utilisateur n'a eu lieu — on s'assure qu'il tourne avant l'assaut.
+  document.addEventListener('pointerdown', () => {
+    const ctx = getAudioCtx();
+    if (ctx.state === 'suspended') ctx.resume();
+  }, { once: true });
 
   function runAssault() {
     if (resolved) return;
