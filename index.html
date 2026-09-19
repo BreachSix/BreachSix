@@ -251,7 +251,7 @@
     text-align: center; max-width: 90%;
   }
   .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
-  #next-room-btn { background: var(--amber); color: #2a2410; border-color: var(--amber); }
+  #next-room-btn, #next-level-btn { background: var(--amber); color: #2a2410; border-color: var(--amber); }
 
   .celebration-card {
     background: var(--panel); border: 2px solid var(--amber); border-radius: 10px;
@@ -447,6 +447,7 @@
     <div class="best-score" id="best-score-note"></div>
     <ul class="obj-list" id="obj-list"></ul>
     <button class="replay-btn" id="next-room-btn" style="display:none;">Pièce suivante →</button>
+    <button class="replay-btn" id="next-level-btn" style="display:none;">Niveau suivant →</button>
     <button class="replay-btn" id="replay-btn">Rejouer la pièce</button>
     <button class="replay-btn" id="menu-return-btn" style="margin-top:8px;">Retour au menu</button>
   </div>
@@ -612,109 +613,216 @@
 
   // --- Level definitions & menu ---
   const levelDefs = {
-    1: { name: 'Niveau 1 · Résidence', sub: 'Facile · 5 entrées + 1 fenêtre', env: 'urbain',
+    1: { name: 'Niveau 1 · Résidence', sub: 'Facile · 5 entrées + 1 fenêtre · 3 pièces enchaînées', env: 'urbain',
          briefImg: './brief-residence.jpg',
          brief: 'Une cellule de Combine Ashgard utilise cette résidence de Corvane comme planque. Un otage y est retenu — nettoyez la maison et sécurisez-le.',
-         rooms: [ { doors: ['N', 'NE', 'E', 'S', 'W', 'F'], threats: ['T1', 'T2'], trap: true } ] },
-    2: { name: 'Niveau 2 · Résidence', sub: 'Difficile · 2 points d\'entrée', env: 'urbain',
+         rooms: [
+           { doors: ['N', 'NE', 'E', 'S', 'W', 'F'], threats: ['T1'], trap: false },
+           { doors: ['N', 'NE', 'E', 'S', 'W', 'F'], threats: ['T1'], trap: true },
+           { doors: ['N', 'NE', 'E', 'S', 'W', 'F'], threats: ['T1', 'T2'], trap: true },
+         ] },
+    2: { name: 'Niveau 2 · Résidence', sub: 'Difficile · 2 points d\'entrée · 3 pièces enchaînées', env: 'urbain',
          briefImg: './brief-residence.jpg',
          brief: 'Renfort de sécurité signalé sur cette même planque de Corvane : la plupart des accès ont été condamnés. Seuls deux points d\'entrée restent praticables.',
-         rooms: [ { doors: ['N', 'S'], threats: ['T1', 'T2'], trap: true } ] },
-    3: { name: 'Niveau 3 · Entrepôt', sub: '2 pièces enchaînées', env: 'urbain',
+         rooms: [
+           { doors: ['N', 'S'], threats: ['T1'], trap: false },
+           { doors: ['N', 'S'], threats: ['T1'], trap: true },
+           { doors: ['N', 'S'], threats: ['T1', 'T2'], trap: true },
+         ] },
+    3: { name: 'Niveau 3 · Entrepôt', sub: '3 pièces enchaînées', env: 'urbain',
          briefImg: './brief-entrepot.jpg',
          brief: 'Un entrepôt de la zone industrielle de Halveigh sert de relais logistique à Combine Ashgard. Progressez pièce par pièce jusqu\'au fond du bâtiment.',
          rooms: [
            { doors: ['N', 'NE', 'E', 'S', 'W'], threats: ['T1'], trap: false },
+           { doors: ['N', 'NE', 'E', 'S', 'W'], threats: ['T1'], trap: true },
            { doors: ['N', 'NE', 'E', 'S', 'W'], threats: ['T1', 'T2'], trap: true },
          ] },
-    4: { name: 'Niveau 4 · Entrepôt', sub: 'Désamorçage — la vitesse compte', env: 'urbain',
+    4: { name: 'Niveau 4 · Entrepôt', sub: 'Désamorçage — la vitesse compte · 3 pièces enchaînées', env: 'urbain',
          briefImg: './brief-entrepot.jpg',
          brief: 'Une charge explosive a été armée dans ce même entrepôt de Halveigh. Désamorcez-la avant l\'expiration du délai.',
-         rooms: [ { doors: ['N', 'NE', 'E', 'S', 'W'], threats: ['T1'], trap: false, type: 'bomb' } ] },
-    5: { name: 'Niveau 5 · Village isolé (désert)', sub: 'Facile · 5 entrées + 1 fenêtre', env: 'desert',
+         rooms: [
+           { doors: ['N', 'NE', 'E', 'S', 'W'], threats: ['T1'], trap: false },
+           { doors: ['N', 'NE', 'E', 'S', 'W'], threats: ['T1'], trap: true },
+           { doors: ['N', 'NE', 'E', 'S', 'W'], threats: ['T1'], trap: false, type: 'bomb' },
+         ] },
+    5: { name: 'Niveau 5 · Village isolé (désert)', sub: 'Facile · 5 entrées + 1 fenêtre · 3 pièces enchaînées', env: 'desert',
          briefImg: './brief-desert.jpg',
          brief: 'Une cellule de Combine Ashgard s\'est retranchée dans un village isolé de Zahrastan. Infiltrez les lieux et neutralisez la menace.',
-         rooms: [ { doors: ['N', 'NE', 'E', 'S', 'W', 'F'], threats: ['T1', 'T2'], trap: true } ] },
-    6: { name: 'Niveau 6 · Village isolé (jungle)', sub: 'Facile · 5 entrées + 1 fenêtre', env: 'jungle',
+         rooms: [
+           { doors: ['N', 'NE', 'E', 'S', 'W', 'F'], threats: ['T1'], trap: false },
+           { doors: ['N', 'NE', 'E', 'S', 'W', 'F'], threats: ['T1'], trap: true },
+           { doors: ['N', 'NE', 'E', 'S', 'W', 'F'], threats: ['T1', 'T2'], trap: true },
+         ] },
+    6: { name: 'Niveau 6 · Village isolé (jungle)', sub: 'Facile · 5 entrées + 1 fenêtre · 3 pièces enchaînées', env: 'jungle',
          briefImg: './brief-jungle.jpg',
          brief: 'Au cœur de la jungle de Verdance, un village abandonné sert de cache à l\'organisation. La végétation dense limite la visibilité — restez prudents.',
-         rooms: [ { doors: ['N', 'NE', 'E', 'S', 'W', 'F'], threats: ['T1', 'T2'], trap: true } ] },
-    7: { name: 'Niveau 7 · Base arctique', sub: 'Facile · 5 entrées + 1 fenêtre', env: 'arctique',
+         rooms: [
+           { doors: ['N', 'NE', 'E', 'S', 'W', 'F'], threats: ['T1'], trap: false },
+           { doors: ['N', 'NE', 'E', 'S', 'W', 'F'], threats: ['T1'], trap: true },
+           { doors: ['N', 'NE', 'E', 'S', 'W', 'F'], threats: ['T1', 'T2'], trap: true },
+         ] },
+    7: { name: 'Niveau 7 · Base arctique', sub: 'Facile · 5 entrées + 1 fenêtre · 3 pièces enchaînées', env: 'arctique',
          briefImg: './brief-arctique.jpg',
          brief: 'Une base isolée dans les montagnes de la Rive Boréale, sous le couvert de la nuit. Chaque arme est équipée d\'un silencieux — l\'effet de surprise est total.',
-         rooms: [ { doors: ['N', 'NE', 'E', 'S', 'W', 'F'], threats: ['T1', 'T2'], trap: true } ] },
-    8: { name: 'Niveau 8 · Résidence', sub: 'Mission de nuit · silencieux imposé · 5 points d\'entrée', env: 'urbain', night: true,
+         rooms: [
+           { doors: ['N', 'NE', 'E', 'S', 'W', 'F'], threats: ['T1'], trap: false },
+           { doors: ['N', 'NE', 'E', 'S', 'W', 'F'], threats: ['T1'], trap: true },
+           { doors: ['N', 'NE', 'E', 'S', 'W', 'F'], threats: ['T1', 'T2'], trap: true },
+         ] },
+    8: { name: 'Niveau 8 · Résidence', sub: 'Mission de nuit · silencieux imposé · 5 points d\'entrée · 3 pièces enchaînées', env: 'urbain', night: true,
          briefImg: './brief-residence.jpg',
          brief: 'Nouvelle activité nocturne détectée dans le secteur résidentiel de Corvane. Une intervention discrète est requise avant l\'aube.',
-         rooms: [ { doors: ['N', 'NE', 'E', 'S', 'W', 'F'], threats: ['T1', 'T2'], trap: true } ] },
-    9: { name: 'Niveau 9 · Immeuble de bureaux', sub: 'Facile · 5 entrées + 1 fenêtre', env: 'urbain',
+         rooms: [
+           { doors: ['N', 'NE', 'E', 'S', 'W', 'F'], threats: ['T1'], trap: false },
+           { doors: ['N', 'NE', 'E', 'S', 'W', 'F'], threats: ['T1'], trap: true },
+           { doors: ['N', 'NE', 'E', 'S', 'W', 'F'], threats: ['T1', 'T2'], trap: true },
+         ] },
+    9: { name: 'Niveau 9 · Immeuble de bureaux', sub: 'Facile · 5 entrées + 1 fenêtre · 3 pièces enchaînées', env: 'urbain',
          briefImg: './brief-bureaux.jpg',
          brief: 'Un immeuble de bureaux du centre-ville de Corvane a été investi après les heures ouvrables. Sécurisez les étages.',
-         rooms: [ { doors: ['N', 'NE', 'E', 'S', 'W', 'F'], threats: ['T1', 'T2'], trap: true } ] },
-    10: { name: 'Niveau 10 · Banque', sub: 'Facile · 5 entrées + 1 fenêtre', env: 'urbain',
+         rooms: [
+           { doors: ['N', 'NE', 'E', 'S', 'W', 'F'], threats: ['T1'], trap: false },
+           { doors: ['N', 'NE', 'E', 'S', 'W', 'F'], threats: ['T1'], trap: true },
+           { doors: ['N', 'NE', 'E', 'S', 'W', 'F'], threats: ['T1', 'T2'], trap: true },
+         ] },
+    10: { name: 'Niveau 10 · Banque', sub: 'Facile · 5 entrées + 1 fenêtre · 3 pièces enchaînées', env: 'urbain',
          briefImg: './brief-banque.jpg',
          brief: 'Une prise d\'otages est en cours dans une banque du quartier financier de Corvane. Le hall a déjà subi des dégâts — progressez avec prudence.',
-         rooms: [ { doors: ['N', 'NE', 'E', 'S', 'W', 'F'], threats: ['T1', 'T2'], trap: true } ] },
-    11: { name: 'Niveau 11 · Hôtel', sub: 'Facile · 5 entrées + 1 fenêtre', env: 'urbain',
+         rooms: [
+           { doors: ['N', 'NE', 'E', 'S', 'W', 'F'], threats: ['T1'], trap: false },
+           { doors: ['N', 'NE', 'E', 'S', 'W', 'F'], threats: ['T1'], trap: true },
+           { doors: ['N', 'NE', 'E', 'S', 'W', 'F'], threats: ['T1', 'T2'], trap: true },
+         ] },
+    11: { name: 'Niveau 11 · Hôtel', sub: 'Facile · 5 entrées + 1 fenêtre · 3 pièces enchaînées', env: 'urbain',
          briefImg: './brief-hotel.jpg',
          brief: 'Une cellule de Combine Ashgard occupe discrètement un hôtel du centre-ville de Corvane. Sécurisez le hall d\'entrée avant que la situation ne s\'aggrave.',
-         rooms: [ { doors: ['N', 'NE', 'E', 'S', 'W', 'F'], threats: ['T1', 'T2'], trap: true } ] },
-    12: { name: 'Niveau 12 · Station de métro', sub: 'Facile · 5 entrées + 1 fenêtre', env: 'urbain',
+         rooms: [
+           { doors: ['N', 'NE', 'E', 'S', 'W', 'F'], threats: ['T1'], trap: false },
+           { doors: ['N', 'NE', 'E', 'S', 'W', 'F'], threats: ['T1'], trap: true },
+           { doors: ['N', 'NE', 'E', 'S', 'W', 'F'], threats: ['T1', 'T2'], trap: true },
+         ] },
+    12: { name: 'Niveau 12 · Station de métro', sub: 'Facile · 5 entrées + 1 fenêtre · 3 pièces enchaînées', env: 'urbain',
          briefImg: './brief-station.jpg',
          brief: 'Une station de métro désaffectée de Corvane sert de point de passage à l\'organisation. Progressez sur le quai avec prudence.',
-         rooms: [ { doors: ['N', 'NE', 'E', 'S', 'W', 'F'], threats: ['T1', 'T2'], trap: true } ] },
-    13: { name: 'Niveau 13 · Train', sub: 'Facile · 5 entrées + 1 fenêtre', env: 'urbain',
+         rooms: [
+           { doors: ['N', 'NE', 'E', 'S', 'W', 'F'], threats: ['T1'], trap: false },
+           { doors: ['N', 'NE', 'E', 'S', 'W', 'F'], threats: ['T1'], trap: true },
+           { doors: ['N', 'NE', 'E', 'S', 'W', 'F'], threats: ['T1', 'T2'], trap: true },
+         ] },
+    13: { name: 'Niveau 13 · Train', sub: 'Facile · 5 entrées + 1 fenêtre · 3 pièces enchaînées', env: 'urbain',
          briefImg: './brief-train.jpg',
          brief: 'Un train immobilisé en pleine voie près de Corvane a été investi par une cellule ennemie. Fouillez les wagons un à un.',
-         rooms: [ { doors: ['N', 'NE', 'E', 'S', 'W', 'F'], threats: ['T1', 'T2'], trap: true } ] },
-    14: { name: 'Niveau 14 · Cargo portuaire', sub: 'Facile · 5 entrées + 1 fenêtre', env: 'urbain',
+         rooms: [
+           { doors: ['N', 'NE', 'E', 'S', 'W', 'F'], threats: ['T1'], trap: false },
+           { doors: ['N', 'NE', 'E', 'S', 'W', 'F'], threats: ['T1'], trap: true },
+           { doors: ['N', 'NE', 'E', 'S', 'W', 'F'], threats: ['T1', 'T2'], trap: true },
+         ] },
+    14: { name: 'Niveau 14 · Cargo portuaire', sub: 'Facile · 5 entrées + 1 fenêtre · 3 pièces enchaînées', env: 'urbain',
          briefImg: './brief-cargo.jpg',
          brief: 'Un cargo amarré dans le port industriel de Halveigh dissimule une cargaison suspecte. Montez à bord et neutralisez la menace.',
-         rooms: [ { doors: ['N', 'NE', 'E', 'S', 'W', 'F'], threats: ['T1', 'T2'], trap: true } ] },
-    15: { name: 'Niveau 15 · Hangar', sub: 'Facile · 5 entrées + 1 fenêtre', env: 'urbain',
+         rooms: [
+           { doors: ['N', 'NE', 'E', 'S', 'W', 'F'], threats: ['T1'], trap: false },
+           { doors: ['N', 'NE', 'E', 'S', 'W', 'F'], threats: ['T1'], trap: true },
+           { doors: ['N', 'NE', 'E', 'S', 'W', 'F'], threats: ['T1', 'T2'], trap: true },
+         ] },
+    15: { name: 'Niveau 15 · Hangar', sub: 'Facile · 5 entrées + 1 fenêtre · 3 pièces enchaînées', env: 'urbain',
          briefImg: './brief-hangar.jpg',
          brief: 'Un hangar désaffecté de l\'aéroport de Halveigh sert d\'entrepôt clandestin à Combine Ashgard. Sécurisez les lieux.',
-         rooms: [ { doors: ['N', 'NE', 'E', 'S', 'W', 'F'], threats: ['T1', 'T2'], trap: true } ] },
-    16: { name: 'Niveau 16 · Immeuble de bureaux', sub: 'Modéré · 4 points d\'entrée', env: 'urbain',
+         rooms: [
+           { doors: ['N', 'NE', 'E', 'S', 'W', 'F'], threats: ['T1'], trap: false },
+           { doors: ['N', 'NE', 'E', 'S', 'W', 'F'], threats: ['T1'], trap: true },
+           { doors: ['N', 'NE', 'E', 'S', 'W', 'F'], threats: ['T1', 'T2'], trap: true },
+         ] },
+    16: { name: 'Niveau 16 · Immeuble de bureaux', sub: 'Modéré · 4 points d\'entrée · 4 pièces enchaînées', env: 'urbain',
          briefImg: './brief-bureaux.jpg',
          brief: 'Une deuxième vague de Combine Ashgard a renforcé l\'immeuble de bureaux de Corvane. Les accès sont plus limités cette fois.',
-         rooms: [ { doors: ['N', 'NE', 'E', 'S'], threats: ['T1', 'T2'], trap: true } ] },
-    17: { name: 'Niveau 17 · Banque', sub: 'Modéré · 4 points d\'entrée', env: 'urbain',
+         rooms: [
+           { doors: ['N', 'NE', 'E', 'S'], threats: ['T1'], trap: false },
+           { doors: ['N', 'NE', 'E', 'S'], threats: ['T1'], trap: true },
+           { doors: ['N', 'NE', 'E', 'S'], threats: ['T1', 'T2'], trap: false },
+           { doors: ['N', 'NE', 'E', 'S'], threats: ['T1', 'T2'], trap: true },
+         ] },
+    17: { name: 'Niveau 17 · Banque', sub: 'Modéré · 4 points d\'entrée · 4 pièces enchaînées', env: 'urbain',
          briefImg: './brief-banque.jpg',
          brief: 'Une nouvelle prise d\'otages frappe la même banque de Corvane. La sécurité a été renforcée depuis le dernier assaut.',
-         rooms: [ { doors: ['N', 'NE', 'E', 'S'], threats: ['T1', 'T2'], trap: true } ] },
-    18: { name: 'Niveau 18 · Hôtel', sub: 'Modéré · 4 points d\'entrée', env: 'urbain',
+         rooms: [
+           { doors: ['N', 'NE', 'E', 'S'], threats: ['T1'], trap: false },
+           { doors: ['N', 'NE', 'E', 'S'], threats: ['T1'], trap: true },
+           { doors: ['N', 'NE', 'E', 'S'], threats: ['T1', 'T2'], trap: false },
+           { doors: ['N', 'NE', 'E', 'S'], threats: ['T1', 'T2'], trap: true },
+         ] },
+    18: { name: 'Niveau 18 · Hôtel', sub: 'Modéré · 4 points d\'entrée · 4 pièces enchaînées', env: 'urbain',
          briefImg: './brief-hotel.jpg',
          brief: 'Combine Ashgard revient occuper l\'hôtel de Corvane avec une cellule plus importante. Moins d\'accès, plus de vigilance requise.',
-         rooms: [ { doors: ['N', 'NE', 'E', 'S'], threats: ['T1', 'T2'], trap: true } ] },
-    19: { name: 'Niveau 19 · Station de métro', sub: 'Modéré · 4 points d\'entrée', env: 'urbain',
+         rooms: [
+           { doors: ['N', 'NE', 'E', 'S'], threats: ['T1'], trap: false },
+           { doors: ['N', 'NE', 'E', 'S'], threats: ['T1'], trap: true },
+           { doors: ['N', 'NE', 'E', 'S'], threats: ['T1', 'T2'], trap: false },
+           { doors: ['N', 'NE', 'E', 'S'], threats: ['T1', 'T2'], trap: true },
+         ] },
+    19: { name: 'Niveau 19 · Station de métro', sub: 'Modéré · 4 points d\'entrée · 4 pièces enchaînées', env: 'urbain',
          briefImg: './brief-station.jpg',
          brief: 'La station désaffectée de Corvane est de nouveau active. Les quais sont mieux surveillés qu\'auparavant.',
-         rooms: [ { doors: ['N', 'NE', 'E', 'S'], threats: ['T1', 'T2'], trap: true } ] },
-    20: { name: 'Niveau 20 · Train', sub: 'Modéré · 4 points d\'entrée', env: 'urbain',
+         rooms: [
+           { doors: ['N', 'NE', 'E', 'S'], threats: ['T1'], trap: false },
+           { doors: ['N', 'NE', 'E', 'S'], threats: ['T1'], trap: true },
+           { doors: ['N', 'NE', 'E', 'S'], threats: ['T1', 'T2'], trap: false },
+           { doors: ['N', 'NE', 'E', 'S'], threats: ['T1', 'T2'], trap: true },
+         ] },
+    20: { name: 'Niveau 20 · Train', sub: 'Modéré · 4 points d\'entrée · 4 pièces enchaînées', env: 'urbain',
          briefImg: './brief-train.jpg',
          brief: 'Un second convoi près de Corvane a été intercepté par l\'organisation. Les wagons sont verrouillés — moins de portes praticables.',
-         rooms: [ { doors: ['N', 'NE', 'E', 'S'], threats: ['T1', 'T2'], trap: true } ] },
-    21: { name: 'Niveau 21 · Cargo portuaire', sub: 'Modéré · 4 points d\'entrée', env: 'urbain',
+         rooms: [
+           { doors: ['N', 'NE', 'E', 'S'], threats: ['T1'], trap: false },
+           { doors: ['N', 'NE', 'E', 'S'], threats: ['T1'], trap: true },
+           { doors: ['N', 'NE', 'E', 'S'], threats: ['T1', 'T2'], trap: false },
+           { doors: ['N', 'NE', 'E', 'S'], threats: ['T1', 'T2'], trap: true },
+         ] },
+    21: { name: 'Niveau 21 · Cargo portuaire', sub: 'Modéré · 4 points d\'entrée · 4 pièces enchaînées', env: 'urbain',
          briefImg: './brief-cargo.jpg',
          brief: 'Un deuxième cargo du port de Halveigh transporte une cargaison suspecte, sous surveillance renforcée.',
-         rooms: [ { doors: ['N', 'NE', 'E', 'S'], threats: ['T1', 'T2'], trap: true } ] },
-    22: { name: 'Niveau 22 · Hangar', sub: 'Modéré · 4 points d\'entrée', env: 'urbain',
+         rooms: [
+           { doors: ['N', 'NE', 'E', 'S'], threats: ['T1'], trap: false },
+           { doors: ['N', 'NE', 'E', 'S'], threats: ['T1'], trap: true },
+           { doors: ['N', 'NE', 'E', 'S'], threats: ['T1', 'T2'], trap: false },
+           { doors: ['N', 'NE', 'E', 'S'], threats: ['T1', 'T2'], trap: true },
+         ] },
+    22: { name: 'Niveau 22 · Hangar', sub: 'Modéré · 4 points d\'entrée · 4 pièces enchaînées', env: 'urbain',
          briefImg: './brief-hangar.jpg',
          brief: 'Un second hangar de l\'aéroport de Halveigh sert de cache. L\'organisation a appris de ses erreurs — moins d\'ouvertures.',
-         rooms: [ { doors: ['N', 'NE', 'E', 'S'], threats: ['T1', 'T2'], trap: true } ] },
-    23: { name: 'Niveau 23 · Village isolé (désert)', sub: 'Modéré · 4 points d\'entrée', env: 'desert',
+         rooms: [
+           { doors: ['N', 'NE', 'E', 'S'], threats: ['T1'], trap: false },
+           { doors: ['N', 'NE', 'E', 'S'], threats: ['T1'], trap: true },
+           { doors: ['N', 'NE', 'E', 'S'], threats: ['T1', 'T2'], trap: false },
+           { doors: ['N', 'NE', 'E', 'S'], threats: ['T1', 'T2'], trap: true },
+         ] },
+    23: { name: 'Niveau 23 · Village isolé (désert)', sub: 'Modéré · 4 points d\'entrée · 4 pièces enchaînées', env: 'desert',
          briefImg: './brief-desert.jpg',
          brief: 'Une seconde cellule de Combine Ashgard s\'est installée plus profondément dans le village de Zahrastan.',
-         rooms: [ { doors: ['N', 'NE', 'E', 'S'], threats: ['T1', 'T2'], trap: true } ] },
-    24: { name: 'Niveau 24 · Village isolé (jungle)', sub: 'Modéré · 4 points d\'entrée', env: 'jungle',
+         rooms: [
+           { doors: ['N', 'NE', 'E', 'S'], threats: ['T1'], trap: false },
+           { doors: ['N', 'NE', 'E', 'S'], threats: ['T1'], trap: true },
+           { doors: ['N', 'NE', 'E', 'S'], threats: ['T1', 'T2'], trap: false },
+           { doors: ['N', 'NE', 'E', 'S'], threats: ['T1', 'T2'], trap: true },
+         ] },
+    24: { name: 'Niveau 24 · Village isolé (jungle)', sub: 'Modéré · 4 points d\'entrée · 4 pièces enchaînées', env: 'jungle',
          briefImg: './brief-jungle.jpg',
          brief: 'Plus profondément dans la jungle de Verdance, une deuxième cache attend d\'être neutralisée.',
-         rooms: [ { doors: ['N', 'NE', 'E', 'S'], threats: ['T1', 'T2'], trap: true } ] },
-    25: { name: 'Niveau 25 · Base arctique', sub: 'Modéré · 4 points d\'entrée · Nuit', env: 'arctique', night: true,
+         rooms: [
+           { doors: ['N', 'NE', 'E', 'S'], threats: ['T1'], trap: false },
+           { doors: ['N', 'NE', 'E', 'S'], threats: ['T1'], trap: true },
+           { doors: ['N', 'NE', 'E', 'S'], threats: ['T1', 'T2'], trap: false },
+           { doors: ['N', 'NE', 'E', 'S'], threats: ['T1', 'T2'], trap: true },
+         ] },
+    25: { name: 'Niveau 25 · Base arctique', sub: 'Modéré · 4 points d\'entrée · Nuit · 4 pièces enchaînées', env: 'arctique', night: true,
          briefImg: './brief-arctique.jpg',
          brief: 'Une deuxième base de la Rive Boréale est infiltrée de nuit. Les accès ont été réduits depuis la dernière incursion.',
-         rooms: [ { doors: ['N', 'NE', 'E', 'S'], threats: ['T1', 'T2'], trap: true } ] },
+         rooms: [
+           { doors: ['N', 'NE', 'E', 'S'], threats: ['T1'], trap: false },
+           { doors: ['N', 'NE', 'E', 'S'], threats: ['T1'], trap: true },
+           { doors: ['N', 'NE', 'E', 'S'], threats: ['T1', 'T2'], trap: false },
+           { doors: ['N', 'NE', 'E', 'S'], threats: ['T1', 'T2'], trap: true },
+         ] },
   };
   const BOMB_THRESHOLD_MS = 1750; // fastest assigned operator must arrive within this
   const BOMB_FAST_MS = 1650;      // bonus: defused with real speed to spare
@@ -831,28 +939,50 @@
     document.documentElement.style.setProperty('--wall', darkenHex(palette.wall, factor));
   }
 
-  // --- Paliers de progression (tous les 15 niveaux complétés) ---
+  // --- Paliers de progression séquentiels (niveaux 1-15, puis 16-30, etc.) ---
   const LEVEL_MILESTONE_STEP = 15;
+  // Échelle de prestige du karambit : palier 1 (15 niveaux) = le moins prestigieux,
+  // palier 10 (150 niveaux) = le rainbow Damascus, la récompense ultime.
+  // Seul le fini du palier 10 est illustré pour l'instant (image fournie) ;
+  // les autres réutilisent temporairement la même image en attendant leurs visuels dédiés.
+  const MILESTONE_TIERS = [
+    { name: 'Acier brossé', img: './milestone-tier1.jpg' },
+    { name: 'Noir tactique', img: './milestone-tier2.jpg' },
+    { name: 'Cuivre', img: './milestone-tier3.jpg' },
+    { name: 'Bronze antique', img: './milestone-tier4.jpg' },
+    { name: 'Argent', img: './milestone-tier5.jpg' },
+    { name: 'Or', img: './milestone-tier6.jpg' },
+    { name: 'Nacre', img: './milestone-tier7.jpg' },
+    { name: 'Platine', img: './milestone-tier8.jpg' },
+    { name: 'Diamant taillé', img: './milestone-tier9.jpg' },
+    { name: 'Damascus arc-en-ciel', img: './milestone-karambit.jpg' },
+  ];
   function checkLevelMilestone() {
-    const completedCount = Object.values(bestScores).filter(s => s > 0).length;
-    const tier = Math.floor(completedCount / LEVEL_MILESTONE_STEP);
     const shownTier = loadIntPref('breachsix-milestone-tier', 0);
-    if (tier > shownTier) {
-      saveIntPref('breachsix-milestone-tier', tier);
-      setTimeout(() => {
-        showCelebration({
-          label: 'Palier atteint !',
-          img: './milestone-karambit.jpg',
-          title: (tier * LEVEL_MILESTONE_STEP) + ' niveaux complétés',
-          sub: 'Un karambit de prestige a été débloqué pour souligner votre progression.',
-        });
-      }, 700);
+    const nextTier = shownTier + 1;
+    const rangeStart = shownTier * LEVEL_MILESTONE_STEP + 1;
+    const rangeEnd = nextTier * LEVEL_MILESTONE_STEP;
+    if (!levelDefs[rangeEnd]) return; // ce palier n'existe pas encore dans le contenu actuel
+    for (let id = rangeStart; id <= rangeEnd; id++) {
+      if (!(bestScores[id] > 0)) return; // palier pas encore complété en entier, dans l'ordre
     }
+    saveIntPref('breachsix-milestone-tier', nextTier);
+    const tierInfo = MILESTONE_TIERS[nextTier - 1] || MILESTONE_TIERS[MILESTONE_TIERS.length - 1];
+    setTimeout(() => {
+      showCelebration({
+        label: 'Palier ' + nextTier + '/10 atteint !',
+        img: tierInfo.img,
+        title: rangeEnd + ' niveaux complétés',
+        sub: 'Karambit "' + tierInfo.name + '" débloqué.',
+      });
+    }, 700);
   }
 
   function showBriefing(levelId) {
     const def = levelDefs[levelId];
     pendingBriefingLevel = levelId;
+    document.getElementById('overlay').classList.remove('show');
+    document.getElementById('celebration-overlay').classList.remove('show');
     document.getElementById('briefing-image').src = def.briefImg || '';
     document.getElementById('briefing-image').alt = def.name;
     document.getElementById('briefing-operator').src = ENV_OPERATOR_IMG[def.env] || '';
@@ -1359,10 +1489,12 @@
     const list = document.getElementById('obj-list');
     const replayBtn = document.getElementById('replay-btn');
     const nextBtn = document.getElementById('next-room-btn');
+    const nextLevelBtn = document.getElementById('next-level-btn');
     const menuBtn = document.getElementById('menu-return-btn');
     list.innerHTML = '';
     bestNote.textContent = '';
     nextBtn.style.display = 'none';
+    nextLevelBtn.style.display = 'none';
     replayBtn.style.display = '';
     replayBtn.textContent = 'Rejouer la pièce';
     replayBtn.onclick = null;
@@ -1441,6 +1573,10 @@
       checkLevelMilestone();
       replayBtn.textContent = 'Rejouer le niveau';
       replayBtn.onclick = () => enterMission(currentLevel);
+      if (levelDefs[currentLevel + 1]) {
+        nextLevelBtn.style.display = '';
+        nextLevelBtn.onclick = () => showBriefing(currentLevel + 1);
+      }
     }
 
     overlay.classList.add('show');

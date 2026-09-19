@@ -1,4 +1,4 @@
-const CACHE_VERSION = 'v12';
+const CACHE_VERSION = 'v13';
 const CACHE_NAME = 'breachsix-' + CACHE_VERSION;
 const ASSETS = [
   './',
@@ -42,6 +42,15 @@ const ASSETS = [
   './skin-platine.jpg',
   './skin-diamant.jpg',
   './milestone-karambit.jpg',
+  './milestone-tier1.jpg',
+  './milestone-tier2.jpg',
+  './milestone-tier3.jpg',
+  './milestone-tier4.jpg',
+  './milestone-tier5.jpg',
+  './milestone-tier6.jpg',
+  './milestone-tier7.jpg',
+  './milestone-tier8.jpg',
+  './milestone-tier9.jpg',
 ];
 
 self.addEventListener('install', (event) => {
