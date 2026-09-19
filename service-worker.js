@@ -1,4 +1,4 @@
-const CACHE_VERSION = 'v8';
+const CACHE_VERSION = 'v9';
 const CACHE_NAME = 'breachsix-' + CACHE_VERSION;
 const ASSETS = [
   './',
@@ -17,6 +17,11 @@ const ASSETS = [
   './brief-desert.jpg',
   './brief-jungle.jpg',
   './brief-arctique.jpg',
+  './brief-hotel.jpg',
+  './brief-station.jpg',
+  './brief-train.jpg',
+  './brief-cargo.jpg',
+  './brief-hangar.jpg',
   './op-urbain.png',
   './op-desert.png',
   './op-jungle.png',

@@ -600,10 +600,30 @@
          briefImg: './brief-banque.jpg',
          brief: 'Une prise d\'otages est en cours dans une banque du quartier financier de Corvane. Le hall a déjà subi des dégâts — progressez avec prudence.',
          rooms: [ { doors: ['N', 'NE', 'E', 'S', 'W', 'F'], threats: ['T1', 'T2'], trap: true } ] },
+    11: { name: 'Niveau 11 · Hôtel', sub: 'Facile · 5 entrées + 1 fenêtre', env: 'urbain',
+         briefImg: './brief-hotel.jpg',
+         brief: 'Une cellule de Combine Ashgard occupe discrètement un hôtel du centre-ville de Corvane. Sécurisez le hall d\'entrée avant que la situation ne s\'aggrave.',
+         rooms: [ { doors: ['N', 'NE', 'E', 'S', 'W', 'F'], threats: ['T1', 'T2'], trap: true } ] },
+    12: { name: 'Niveau 12 · Station de métro', sub: 'Facile · 5 entrées + 1 fenêtre', env: 'urbain',
+         briefImg: './brief-station.jpg',
+         brief: 'Une station de métro désaffectée de Corvane sert de point de passage à l\'organisation. Progressez sur le quai avec prudence.',
+         rooms: [ { doors: ['N', 'NE', 'E', 'S', 'W', 'F'], threats: ['T1', 'T2'], trap: true } ] },
+    13: { name: 'Niveau 13 · Train', sub: 'Facile · 5 entrées + 1 fenêtre', env: 'urbain',
+         briefImg: './brief-train.jpg',
+         brief: 'Un train immobilisé en pleine voie près de Corvane a été investi par une cellule ennemie. Fouillez les wagons un à un.',
+         rooms: [ { doors: ['N', 'NE', 'E', 'S', 'W', 'F'], threats: ['T1', 'T2'], trap: true } ] },
+    14: { name: 'Niveau 14 · Cargo portuaire', sub: 'Facile · 5 entrées + 1 fenêtre', env: 'urbain',
+         briefImg: './brief-cargo.jpg',
+         brief: 'Un cargo amarré dans le port industriel de Halveigh dissimule une cargaison suspecte. Montez à bord et neutralisez la menace.',
+         rooms: [ { doors: ['N', 'NE', 'E', 'S', 'W', 'F'], threats: ['T1', 'T2'], trap: true } ] },
+    15: { name: 'Niveau 15 · Hangar', sub: 'Facile · 5 entrées + 1 fenêtre', env: 'urbain',
+         briefImg: './brief-hangar.jpg',
+         brief: 'Un hangar désaffecté de l\'aéroport de Halveigh sert d\'entrepôt clandestin à Combine Ashgard. Sécurisez les lieux.',
+         rooms: [ { doors: ['N', 'NE', 'E', 'S', 'W', 'F'], threats: ['T1', 'T2'], trap: true } ] },
   };
   const BOMB_THRESHOLD_MS = 1750; // fastest assigned operator must arrive within this
   const BOMB_FAST_MS = 1650;      // bonus: defused with real speed to spare
-  const bestScores = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0, 10: 0 };
+  const bestScores = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0, 10: 0, 11: 0, 12: 0, 13: 0, 14: 0, 15: 0 };
   let currentLevel = 1;
   let pendingBriefingLevel = null;
   let currentRoomIndex = 0;
