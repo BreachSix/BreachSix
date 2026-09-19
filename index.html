@@ -203,7 +203,7 @@
     border: 1px solid var(--wall); background: var(--panel); margin-bottom: 10px;
     display: flex; align-items: center; justify-content: center;
   }
-  .briefing-enemy-wrap img { width: 100%; height: 100%; object-fit: cover; object-position: top center; display: block; }
+  .briefing-enemy-wrap img { width: 100%; height: 100%; object-fit: contain; object-position: center top; display: block; }
   .briefing-operator-vignette {
     position: absolute; right: 6px; bottom: 0; height: 100%; width: auto;
     object-fit: contain; object-position: bottom right;
@@ -970,10 +970,10 @@
     arctique: './op-arctique.png',
   };
   const ENV_ENEMY_IMG = {
-    urbain: './enemy-urbain.jpg',
-    desert: './enemy-desert.jpg',
-    jungle: './enemy-jungle.jpg',
-    arctique: './enemy-arctique.jpg',
+    urbain: './enemy-urbain.png',
+    desert: './enemy-desert.png',
+    jungle: './enemy-jungle.png',
+    arctique: './enemy-arctique.png',
   };
   const CLASS_ENV_OPERATOR_IMG = {
     Assault: ENV_OPERATOR_IMG,
