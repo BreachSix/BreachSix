@@ -1,4 +1,5 @@
-const CACHE_NAME = 'breachsix-v1';
+const CACHE_VERSION = 'v2';
+const CACHE_NAME = 'breachsix-' + CACHE_VERSION;
 const ASSETS = [
   './',
   './index.html',
@@ -24,7 +25,31 @@ self.addEventListener('activate', (event) => {
 });
 
 self.addEventListener('fetch', (event) => {
+  const req = event.request;
+  const isHtml = req.mode === 'navigate' ||
+    (req.method === 'GET' && req.headers.get('accept') && req.headers.get('accept').includes('text/html'));
+
+  if (isHtml) {
+    // Réseau d'abord : charge toujours la version la plus récente du jeu si
+    // une connexion est disponible. En cas d'échec (hors ligne), se rabat
+    // sur la dernière version mise en cache.
+    event.respondWith(
+      fetch(req)
+        .then((res) => {
+          const resClone = res.clone();
+          caches.open(CACHE_NAME).then((cache) => cache.put(req, resClone));
+          return res;
+        })
+        .catch(() =>
+          caches.match(req).then((cached) => cached || caches.match('./index.html'))
+        )
+    );
+    return;
+  }
+
+  // Cache d'abord pour le reste (icônes, manifest) — ces fichiers changent
+  // rarement, autant les servir instantanément depuis le cache.
   event.respondWith(
-    caches.match(event.request).then((cached) => cached || fetch(event.request))
+    caches.match(req).then((cached) => cached || fetch(req))
   );
 });
