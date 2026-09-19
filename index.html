@@ -25,6 +25,8 @@
     --squad-b: #5b8a9e;
     --danger: #b1503e;
     --ok: #6f8f52;
+    --enemy: #2c3e5c;
+    --enemy-dark: #18202f;
     --text: #e9e4d4;
     --text-dim: #a6a190;
     --font-head: 'Oswald', 'Arial Narrow', sans-serif;
@@ -356,18 +358,21 @@
 
         <!-- Threat 1: standard guard -->
         <g id="t1-g">
-          <circle class="threat-pulse" cx="175" cy="85" r="10" fill="var(--danger)" stroke="#5c1c14" stroke-width="1.5"/>
-          <circle cx="175" cy="85" r="3" fill="#5c1c14"/>
-          <text x="175" y="72" class="door-label" fill="var(--danger)">GARDE</text>
+          <circle class="threat-pulse enemy-body" cx="175" cy="85" r="9" fill="var(--enemy)" stroke="var(--enemy-dark)" stroke-width="1.5"/>
+          <circle class="enemy-helmet" cx="175" cy="79" r="4" fill="var(--enemy-dark)"/>
+          <line class="enemy-weapon" x1="175" y1="76" x2="175" y2="69" stroke="var(--enemy-dark)" stroke-width="2.4" stroke-linecap="round"/>
+          <text x="175" y="65" class="door-label" fill="var(--enemy)">GARDE</text>
         </g>
 
         <!-- Threat 2: armored guard holding hostage as shield -->
         <g id="t2-g">
-          <polygon class="threat-pulse" points="115,193 124,198 124,210 115,217 106,210 106,198"
-            fill="#5c130c" stroke="var(--danger)" stroke-width="2"/>
-          <circle cx="132" cy="214" r="6.5" fill="#5b8a9e" stroke="#33586a" stroke-width="1.2"/>
-          <line x1="132" y1="219" x2="132" y2="226" stroke="#5b8a9e" stroke-width="2" stroke-linecap="round"/>
-          <text x="118" y="228" class="door-label" fill="var(--danger)">GARDE BLINDÉ</text>
+          <polygon class="threat-pulse enemy-body" points="115,193 124,198 124,210 115,217 106,210 106,198"
+            fill="var(--enemy)" stroke="var(--enemy-dark)" stroke-width="2"/>
+          <circle class="enemy-helmet" cx="115" cy="188" r="4.2" fill="var(--enemy-dark)"/>
+          <line class="enemy-weapon" x1="115" y1="184" x2="115" y2="177" stroke="var(--enemy-dark)" stroke-width="2.6" stroke-linecap="round"/>
+          <circle class="hostage-mark" cx="132" cy="214" r="6.5" fill="#5b8a9e" stroke="#33586a" stroke-width="1.2"/>
+          <line class="hostage-line" x1="132" y1="219" x2="132" y2="226" stroke="#5b8a9e" stroke-width="2" stroke-linecap="round"/>
+          <text x="118" y="228" class="door-label" fill="var(--enemy)">GARDE BLINDÉ</text>
           <text x="118" y="238" class="door-label" fill="#5b8a9e">+ OTAGE</text>
         </g>
 
@@ -1002,7 +1007,8 @@
       floorWallsSVG: '<rect x="20" y="20" width="260" height="260" fill="var(--floor)" rx="2"/>' +
         '<rect x="20" y="20" width="260" height="260" fill="none" stroke="var(--wall)" stroke-width="6" rx="2"/>' +
         '<rect x="60" y="60" width="40" height="18" fill="#2c301f" stroke="#3a3f2c" stroke-width="1"/>' +
-        '<rect x="200" y="210" width="50" height="22" fill="#2c301f" stroke="#3a3f2c" stroke-width="1"/>',
+        '<rect x="200" y="210" width="50" height="22" fill="#2c301f" stroke="#3a3f2c" stroke-width="1"/>' +
+        '<rect x="95" y="20" width="6" height="55" fill="var(--wall)"/>',
       center: { x: 150, y: 150 },
       doors: { N:{x:150,y:20}, NE:{x:280,y:80}, E:{x:280,y:220}, S:{x:150,y:280}, W:{x:20,y:150}, F:{x:20,y:220} },
       t1: { x: 175, y: 85 }, t2: { x: 115, y: 205 }, bomb: { x: 175, y: 70 },
@@ -1012,7 +1018,8 @@
       floorWallsSVG: '<path d="M20,20 L280,20 L280,160 L160,160 L160,360 L20,360 Z" fill="var(--floor)"/>' +
         '<path d="M20,20 L280,20 L280,160 L160,160 L160,360 L20,360 Z" fill="none" stroke="var(--wall)" stroke-width="6"/>' +
         '<rect x="200" y="50" width="50" height="20" fill="#2c301f" stroke="#3a3f2c" stroke-width="1"/>' +
-        '<rect x="55" y="280" width="40" height="18" fill="#2c301f" stroke="#3a3f2c" stroke-width="1"/>',
+        '<rect x="55" y="280" width="40" height="18" fill="#2c301f" stroke="#3a3f2c" stroke-width="1"/>' +
+        '<rect x="155" y="160" width="50" height="6" fill="var(--wall)"/>',
       center: { x: 150, y: 190 },
       doors: { N:{x:150,y:20}, NE:{x:280,y:60}, E:{x:280,y:120}, S:{x:90,y:360}, W:{x:20,y:260}, F:{x:20,y:80} },
       t1: { x: 220, y: 90 }, t2: { x: 90, y: 280 }, bomb: { x: 220, y: 90 },
@@ -1022,7 +1029,8 @@
       floorWallsSVG: '<rect x="20" y="20" width="460" height="160" fill="var(--floor)" rx="2"/>' +
         '<rect x="20" y="20" width="460" height="160" fill="none" stroke="var(--wall)" stroke-width="6" rx="2"/>' +
         '<rect x="100" y="60" width="40" height="18" fill="#2c301f" stroke="#3a3f2c" stroke-width="1"/>' +
-        '<rect x="350" y="115" width="50" height="22" fill="#2c301f" stroke="#3a3f2c" stroke-width="1"/>',
+        '<rect x="350" y="115" width="50" height="22" fill="#2c301f" stroke="#3a3f2c" stroke-width="1"/>' +
+        '<rect x="170" y="20" width="8" height="50" fill="var(--wall)"/>',
       center: { x: 250, y: 100 },
       doors: { N:{x:140,y:20}, NE:{x:460,y:50}, E:{x:460,y:140}, S:{x:140,y:180}, W:{x:20,y:90}, F:{x:300,y:20} },
       t1: { x: 220, y: 60 }, t2: { x: 400, y: 130 }, bomb: { x: 220, y: 60 },
@@ -1066,20 +1074,27 @@
 
     threats.T1.x = shape.t1.x; threats.T1.y = shape.t1.y;
     const t1g = document.getElementById('t1-g');
-    const t1circles = t1g.querySelectorAll('circle');
-    t1circles[0].setAttribute('cx', shape.t1.x); t1circles[0].setAttribute('cy', shape.t1.y);
-    t1circles[1].setAttribute('cx', shape.t1.x); t1circles[1].setAttribute('cy', shape.t1.y);
+    const t1x = shape.t1.x, t1y = shape.t1.y;
+    t1g.querySelector('.enemy-body').setAttribute('cx', t1x); t1g.querySelector('.enemy-body').setAttribute('cy', t1y);
+    t1g.querySelector('.enemy-helmet').setAttribute('cx', t1x); t1g.querySelector('.enemy-helmet').setAttribute('cy', t1y - 6);
+    const t1weapon = t1g.querySelector('.enemy-weapon');
+    t1weapon.setAttribute('x1', t1x); t1weapon.setAttribute('x2', t1x);
+    t1weapon.setAttribute('y1', t1y - 9); t1weapon.setAttribute('y2', t1y - 16);
     const t1label = t1g.querySelector('text');
-    t1label.setAttribute('x', shape.t1.x); t1label.setAttribute('y', shape.t1.y - 13);
+    t1label.setAttribute('x', t1x); t1label.setAttribute('y', t1y - 20);
 
     threats.T2.x = shape.t2.x; threats.T2.y = shape.t2.y;
     const t2g = document.getElementById('t2-g');
     const cx2 = shape.t2.x, cy2 = shape.t2.y;
     const relPoints = [[0,-12],[9,-7],[9,5],[0,12],[-9,5],[-9,-7]];
     t2g.querySelector('polygon').setAttribute('points', relPoints.map(p => (cx2 + p[0]) + ',' + (cy2 + p[1])).join(' '));
-    const hostageCircle = t2g.querySelector('circle');
+    t2g.querySelector('.enemy-helmet').setAttribute('cx', cx2); t2g.querySelector('.enemy-helmet').setAttribute('cy', cy2 - 17);
+    const t2weapon = t2g.querySelector('.enemy-weapon');
+    t2weapon.setAttribute('x1', cx2); t2weapon.setAttribute('x2', cx2);
+    t2weapon.setAttribute('y1', cy2 - 21); t2weapon.setAttribute('y2', cy2 - 28);
+    const hostageCircle = t2g.querySelector('.hostage-mark');
     hostageCircle.setAttribute('cx', cx2 + 17); hostageCircle.setAttribute('cy', cy2 + 9);
-    const hostageLine = t2g.querySelector('line');
+    const hostageLine = t2g.querySelector('.hostage-line');
     hostageLine.setAttribute('x1', cx2 + 17); hostageLine.setAttribute('x2', cx2 + 17);
     hostageLine.setAttribute('y1', cy2 + 14); hostageLine.setAttribute('y2', cy2 + 21);
     const t2texts = t2g.querySelectorAll('text');
