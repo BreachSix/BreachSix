@@ -998,7 +998,6 @@
       const x = Number(doorEl.getAttribute('data-x'));
       const y = Number(doorEl.getAttribute('data-y'));
       const marker = makeOperatorMarker(op);
-      marker.setAttribute('transform', 'translate(' + x + ',' + y + ')');
       svg.appendChild(marker);
 
       const speed = classData[op.cls].speed;
@@ -1031,9 +1030,17 @@
         targetY = threat.y - uy * standoff + perpY * fan;
       }
 
+      // Oriente la silhouette dans la direction de son déplacement (donc vers
+      // sa cible) : le corps/l'arme sont dessinés pointant vers le haut (nord)
+      // à 0°, d'où le +90 pour aligner sur la convention atan2 standard.
+      const angleDeg = Math.atan2(targetY - y, targetX - x) * 180 / Math.PI + 90;
+      marker.setAttribute('transform', 'translate(' + x + ',' + y + ') rotate(' + angleDeg + ')');
+      const label = marker.querySelector('text');
+      if (label) label.setAttribute('transform', 'rotate(' + (-angleDeg) + ')');
+
       setTimeout(() => {
         marker.style.transition = 'transform ' + duration + 'ms ease-in';
-        marker.setAttribute('transform', 'translate(' + targetX + ',' + targetY + ')');
+        marker.setAttribute('transform', 'translate(' + targetX + ',' + targetY + ') rotate(' + angleDeg + ')');
         if (op.cls !== 'Shadow') {
           setTimeout(() => playClassSound(op.cls), isCasualty ? duration * 0.35 : duration);
         }
