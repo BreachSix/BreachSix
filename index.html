@@ -198,6 +198,12 @@
     position: relative;
   }
   .briefing-image-wrap img#briefing-image { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .briefing-enemy-wrap {
+    flex: 1; min-height: 60px; overflow: hidden; border-radius: 6px;
+    border: 1px solid var(--wall); background: var(--panel); margin-bottom: 10px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .briefing-enemy-wrap img { width: 100%; height: 100%; object-fit: cover; object-position: top center; display: block; }
   .briefing-operator-vignette {
     position: absolute; right: 6px; bottom: 0; height: 100%; width: auto;
     object-fit: contain; object-position: bottom right;
@@ -328,7 +334,10 @@
     </div>
     <div class="mission-tag" id="briefing-title" style="margin-bottom:8px;"></div>
     <div class="brief" id="briefing-text" style="max-height:40%; overflow-y:auto; margin-bottom:10px;"></div>
-    <button class="go-btn ready" id="briefing-start-btn" style="margin-top:auto;">LANCER LA MISSION →</button>
+    <div class="briefing-enemy-wrap">
+      <img id="briefing-enemy-img" src="" alt="">
+    </div>
+    <button class="go-btn ready" id="briefing-start-btn">LANCER LA MISSION →</button>
   </div>
 
   <!-- MISSION SCREEN -->
@@ -960,6 +969,12 @@
     jungle: './op-jungle.png',
     arctique: './op-arctique.png',
   };
+  const ENV_ENEMY_IMG = {
+    urbain: './enemy-urbain.jpg',
+    desert: './enemy-desert.jpg',
+    jungle: './enemy-jungle.jpg',
+    arctique: './enemy-arctique.jpg',
+  };
   const CLASS_ENV_OPERATOR_IMG = {
     Assault: ENV_OPERATOR_IMG,
     Heavy: { urbain: './op-heavy-urbain.png', desert: './op-heavy-desert.png', jungle: './op-heavy-jungle.png', arctique: './op-heavy-arctique.png' },
@@ -1178,6 +1193,8 @@
     document.getElementById('briefing-image').alt = def.name;
     document.getElementById('briefing-operator').src = ENV_OPERATOR_IMG[def.env] || '';
     document.getElementById('briefing-operator').alt = 'Opérateur Assault';
+    document.getElementById('briefing-enemy-img').src = ENV_ENEMY_IMG[def.env] || '';
+    document.getElementById('briefing-enemy-img').alt = 'Ennemi';
     document.getElementById('briefing-title').textContent = def.name;
     document.getElementById('briefing-text').textContent = def.brief || '';
     showScreen('briefing');
