@@ -360,7 +360,7 @@
         <g id="t1-g">
           <circle class="threat-pulse enemy-body" cx="175" cy="85" r="9" fill="var(--enemy)" stroke="var(--enemy-dark)" stroke-width="1.5"/>
           <circle class="enemy-helmet" cx="175" cy="79" r="4" fill="var(--enemy-dark)"/>
-          <line class="enemy-weapon" x1="175" y1="76" x2="175" y2="69" stroke="var(--enemy-dark)" stroke-width="2.4" stroke-linecap="round"/>
+          <rect class="enemy-weapon" x="173.7" y="69" width="2.6" height="7" fill="var(--enemy-dark)"/>
           <text x="175" y="65" class="door-label" fill="var(--enemy)">GARDE</text>
         </g>
 
@@ -369,11 +369,19 @@
           <polygon class="threat-pulse enemy-body" points="115,193 124,198 124,210 115,217 106,210 106,198"
             fill="var(--enemy)" stroke="var(--enemy-dark)" stroke-width="2"/>
           <circle class="enemy-helmet" cx="115" cy="188" r="4.2" fill="var(--enemy-dark)"/>
-          <line class="enemy-weapon" x1="115" y1="184" x2="115" y2="177" stroke="var(--enemy-dark)" stroke-width="2.6" stroke-linecap="round"/>
+          <rect class="enemy-weapon" x="113.7" y="177" width="2.6" height="7" fill="var(--enemy-dark)"/>
           <circle class="hostage-mark" cx="132" cy="214" r="6.5" fill="#5b8a9e" stroke="#33586a" stroke-width="1.2"/>
           <line class="hostage-line" x1="132" y1="219" x2="132" y2="226" stroke="#5b8a9e" stroke-width="2" stroke-linecap="round"/>
           <text x="118" y="228" class="door-label" fill="var(--enemy)">GARDE BLINDÉ</text>
           <text x="118" y="238" class="door-label" fill="#5b8a9e">+ OTAGE</text>
+        </g>
+
+        <!-- Threat 3: second standard guard, added to force squad-splitting on tougher rooms -->
+        <g id="t3-g" style="display:none;">
+          <circle class="threat-pulse enemy-body" cx="230" cy="150" r="9" fill="var(--enemy)" stroke="var(--enemy-dark)" stroke-width="1.5"/>
+          <circle class="enemy-helmet" cx="230" cy="144" r="4" fill="var(--enemy-dark)"/>
+          <rect class="enemy-weapon" x="228.7" y="134" width="2.6" height="7" fill="var(--enemy-dark)"/>
+          <text x="230" y="130" class="door-label" fill="var(--enemy)">GARDE</text>
         </g>
 
         <!-- Threat 3: bomb with a defusal timer -->
@@ -507,6 +515,30 @@
     } catch (e) {}
   }
 
+  // Éclat visuel orange-jaune, utilisé à la fois pour l'explosion de la
+  // bombe et pour le déclenchement d'une porte piégée.
+  function spawnExplosionBurst(parent, cx, cy) {
+    const ns = 'http://www.w3.org/2000/svg';
+    const g = document.createElementNS(ns, 'g');
+    g.setAttribute('transform', 'translate(' + cx + ',' + cy + ') scale(0.3)');
+    g.style.opacity = '1';
+    g.style.transition = 'transform 380ms ease-out, opacity 380ms ease-out';
+    g.style.pointerEvents = 'none';
+    const outer = document.createElementNS(ns, 'circle');
+    outer.setAttribute('r', '11'); outer.setAttribute('fill', '#ff8c1a'); outer.setAttribute('opacity', '0.55');
+    const inner = document.createElementNS(ns, 'circle');
+    inner.setAttribute('r', '5.5'); inner.setAttribute('fill', '#ffe066');
+    g.appendChild(outer); g.appendChild(inner);
+    parent.appendChild(g);
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        g.setAttribute('transform', 'translate(' + cx + ',' + cy + ') scale(2.2)');
+        g.style.opacity = '0';
+      });
+    });
+    setTimeout(() => g.remove(), 420);
+  }
+
   function playClassSound(cls) {
     const src = isNight ? NIGHT_SOUND_SRC : CLASS_SOUND_SRC[cls];
     if (!src) return; // Shadow : pas de son
@@ -537,6 +569,7 @@
   const threats = {
     T1: { x: 175, y: 85, doors: ['N', 'NE'] },
     T2: { x: 115, y: 204, doors: ['E', 'S', 'W'] },
+    T3: { x: 230, y: 150, doors: ['N', 'NE', 'E'] },
   };
   const doorThreatMap = { N: 'T1', NE: 'T1', E: 'T2', S: 'T2', W: 'T2', F: 'T2' };
   const trappedDoor = 'S';   // hidden from the player, as in the real game
@@ -760,7 +793,7 @@
            { doors: ['N', 'NE', 'E', 'S'], threats: ['T1'], trap: false },
            { doors: ['N', 'NE', 'E', 'S'], threats: ['T1'], trap: true },
            { doors: ['N', 'NE', 'E', 'S'], threats: ['T1', 'T2'], trap: false },
-           { doors: ['N', 'NE', 'E', 'S'], threats: ['T1', 'T2'], trap: true },
+           { doors: ['N', 'NE', 'E', 'S'], threats: ['T1', 'T2', 'T3'], trap: true },
          ] },
     17: { name: 'Niveau 17 · Banque', sub: 'Modéré · 4 points d\'entrée · 4 pièces enchaînées', env: 'urbain', roomShape: 'square',
          briefImg: './brief-banque.jpg',
@@ -769,7 +802,7 @@
            { doors: ['N', 'NE', 'E', 'S'], threats: ['T1'], trap: false },
            { doors: ['N', 'NE', 'E', 'S'], threats: ['T1'], trap: true },
            { doors: ['N', 'NE', 'E', 'S'], threats: ['T1', 'T2'], trap: false },
-           { doors: ['N', 'NE', 'E', 'S'], threats: ['T1', 'T2'], trap: true },
+           { doors: ['N', 'NE', 'E', 'S'], threats: ['T1', 'T2', 'T3'], trap: true },
          ] },
     18: { name: 'Niveau 18 · Hôtel', sub: 'Modéré · 4 points d\'entrée · 4 pièces enchaînées', env: 'urbain', roomShape: 'square',
          briefImg: './brief-hotel.jpg',
@@ -778,7 +811,7 @@
            { doors: ['N', 'NE', 'E', 'S'], threats: ['T1'], trap: false },
            { doors: ['N', 'NE', 'E', 'S'], threats: ['T1'], trap: true },
            { doors: ['N', 'NE', 'E', 'S'], threats: ['T1', 'T2'], trap: false },
-           { doors: ['N', 'NE', 'E', 'S'], threats: ['T1', 'T2'], trap: true },
+           { doors: ['N', 'NE', 'E', 'S'], threats: ['T1', 'T2', 'T3'], trap: true },
          ] },
     19: { name: 'Niveau 19 · Station de métro', sub: 'Modéré · 4 points d\'entrée · 4 pièces enchaînées', env: 'urbain', roomShape: 'elongated',
          briefImg: './brief-station.jpg',
@@ -787,7 +820,7 @@
            { doors: ['N', 'NE', 'E', 'S'], threats: ['T1'], trap: false },
            { doors: ['N', 'NE', 'E', 'S'], threats: ['T1'], trap: true },
            { doors: ['N', 'NE', 'E', 'S'], threats: ['T1', 'T2'], trap: false },
-           { doors: ['N', 'NE', 'E', 'S'], threats: ['T1', 'T2'], trap: true },
+           { doors: ['N', 'NE', 'E', 'S'], threats: ['T1', 'T2', 'T3'], trap: true },
          ] },
     20: { name: 'Niveau 20 · Train', sub: 'Modéré · 4 points d\'entrée · 4 pièces enchaînées', env: 'urbain', roomShape: 'elongated',
          briefImg: './brief-train.jpg',
@@ -796,7 +829,7 @@
            { doors: ['N', 'NE', 'E', 'S'], threats: ['T1'], trap: false },
            { doors: ['N', 'NE', 'E', 'S'], threats: ['T1'], trap: true },
            { doors: ['N', 'NE', 'E', 'S'], threats: ['T1', 'T2'], trap: false },
-           { doors: ['N', 'NE', 'E', 'S'], threats: ['T1', 'T2'], trap: true },
+           { doors: ['N', 'NE', 'E', 'S'], threats: ['T1', 'T2', 'T3'], trap: true },
          ] },
     21: { name: 'Niveau 21 · Cargo portuaire', sub: 'Modéré · 4 points d\'entrée · 4 pièces enchaînées', env: 'urbain', roomShape: 'elongated',
          briefImg: './brief-cargo.jpg',
@@ -805,7 +838,7 @@
            { doors: ['N', 'NE', 'E', 'S'], threats: ['T1'], trap: false },
            { doors: ['N', 'NE', 'E', 'S'], threats: ['T1'], trap: true },
            { doors: ['N', 'NE', 'E', 'S'], threats: ['T1', 'T2'], trap: false },
-           { doors: ['N', 'NE', 'E', 'S'], threats: ['T1', 'T2'], trap: true },
+           { doors: ['N', 'NE', 'E', 'S'], threats: ['T1', 'T2', 'T3'], trap: true },
          ] },
     22: { name: 'Niveau 22 · Hangar', sub: 'Modéré · 4 points d\'entrée · 4 pièces enchaînées', env: 'urbain', roomShape: 'L',
          briefImg: './brief-hangar.jpg',
@@ -814,7 +847,7 @@
            { doors: ['N', 'NE', 'E', 'S'], threats: ['T1'], trap: false },
            { doors: ['N', 'NE', 'E', 'S'], threats: ['T1'], trap: true },
            { doors: ['N', 'NE', 'E', 'S'], threats: ['T1', 'T2'], trap: false },
-           { doors: ['N', 'NE', 'E', 'S'], threats: ['T1', 'T2'], trap: true },
+           { doors: ['N', 'NE', 'E', 'S'], threats: ['T1', 'T2', 'T3'], trap: true },
          ] },
     23: { name: 'Niveau 23 · Village isolé (désert)', sub: 'Modéré · 4 points d\'entrée · 4 pièces enchaînées', env: 'desert', roomShape: 'square',
          briefImg: './brief-desert.jpg',
@@ -823,7 +856,7 @@
            { doors: ['N', 'NE', 'E', 'S'], threats: ['T1'], trap: false },
            { doors: ['N', 'NE', 'E', 'S'], threats: ['T1'], trap: true },
            { doors: ['N', 'NE', 'E', 'S'], threats: ['T1', 'T2'], trap: false },
-           { doors: ['N', 'NE', 'E', 'S'], threats: ['T1', 'T2'], trap: true },
+           { doors: ['N', 'NE', 'E', 'S'], threats: ['T1', 'T2', 'T3'], trap: true },
          ] },
     24: { name: 'Niveau 24 · Village isolé (jungle)', sub: 'Modéré · 4 points d\'entrée · 4 pièces enchaînées', env: 'jungle', roomShape: 'square',
          briefImg: './brief-jungle.jpg',
@@ -832,7 +865,7 @@
            { doors: ['N', 'NE', 'E', 'S'], threats: ['T1'], trap: false },
            { doors: ['N', 'NE', 'E', 'S'], threats: ['T1'], trap: true },
            { doors: ['N', 'NE', 'E', 'S'], threats: ['T1', 'T2'], trap: false },
-           { doors: ['N', 'NE', 'E', 'S'], threats: ['T1', 'T2'], trap: true },
+           { doors: ['N', 'NE', 'E', 'S'], threats: ['T1', 'T2', 'T3'], trap: true },
          ] },
     25: { name: 'Niveau 25 · Base arctique', sub: 'Modéré · 4 points d\'entrée · Nuit · 4 pièces enchaînées', env: 'arctique', roomShape: 'square', night: true,
          briefImg: './brief-arctique.jpg',
@@ -841,7 +874,7 @@
            { doors: ['N', 'NE', 'E', 'S'], threats: ['T1'], trap: false },
            { doors: ['N', 'NE', 'E', 'S'], threats: ['T1'], trap: true },
            { doors: ['N', 'NE', 'E', 'S'], threats: ['T1', 'T2'], trap: false },
-           { doors: ['N', 'NE', 'E', 'S'], threats: ['T1', 'T2'], trap: true },
+           { doors: ['N', 'NE', 'E', 'S'], threats: ['T1', 'T2', 'T3'], trap: true },
          ] },
   };
   const BOMB_THRESHOLD_MS = 1750; // fastest assigned operator must arrive within this
@@ -867,6 +900,7 @@
     const isBomb = room.type === 'bomb';
     document.getElementById('t1-g').style.display = (!isBomb && room.threats.includes('T1')) ? '' : 'none';
     document.getElementById('t2-g').style.display = (!isBomb && room.threats.includes('T2')) ? '' : 'none';
+    document.getElementById('t3-g').style.display = (!isBomb && room.threats.includes('T3')) ? '' : 'none';
     document.getElementById('bomb-g').style.display = isBomb ? '' : 'none';
   }
 
@@ -874,8 +908,9 @@
     document.querySelectorAll('#room-svg .op-marker').forEach(m => m.remove());
     document.getElementById('t1-g').style.opacity = '';
     document.getElementById('t2-g').style.opacity = '';
+    document.getElementById('t3-g').style.opacity = '';
     document.getElementById('bomb-g').style.opacity = '';
-    const hostageCircle = document.getElementById('t2-g').querySelector('circle');
+    const hostageCircle = document.getElementById('t2-g').querySelector('.hostage-mark');
     hostageCircle.setAttribute('fill', '#5b8a9e');
     const timerFill = document.getElementById('bomb-timer-fill');
     timerFill.style.transition = 'none';
@@ -1011,7 +1046,7 @@
         '<rect x="95" y="20" width="6" height="55" fill="var(--wall)"/>',
       center: { x: 150, y: 150 },
       doors: { N:{x:150,y:20}, NE:{x:280,y:80}, E:{x:280,y:220}, S:{x:150,y:280}, W:{x:20,y:150}, F:{x:20,y:220} },
-      t1: { x: 175, y: 85 }, t2: { x: 115, y: 205 }, bomb: { x: 175, y: 70 },
+      t1: { x: 175, y: 85 }, t2: { x: 115, y: 205 }, t3: { x: 230, y: 150 }, bomb: { x: 175, y: 70 },
     },
     L: {
       viewBox: '-16 -16 380 400',
@@ -1022,7 +1057,13 @@
         '<rect x="155" y="160" width="50" height="6" fill="var(--wall)"/>',
       center: { x: 150, y: 190 },
       doors: { N:{x:150,y:20}, NE:{x:280,y:60}, E:{x:280,y:120}, S:{x:90,y:360}, W:{x:20,y:260}, F:{x:20,y:80} },
-      t1: { x: 220, y: 90 }, t2: { x: 90, y: 280 }, bomb: { x: 220, y: 90 },
+      t1: { x: 220, y: 90 }, t2: { x: 90, y: 280 }, t3: { x: 150, y: 60 }, bomb: { x: 220, y: 90 },
+      // Coude de la forme en L : les portes du bras du bas (S, W) doivent
+      // passer par ce point avant de rejoindre T1/T3 (situés dans le bras
+      // du haut), et inversement pour NE/E vers T2 — sinon le trajet en
+      // ligne droite couperait à travers le vide de l'encoche du L.
+      waypoint: { x: 140, y: 145 },
+      waypointDoors: { T1: ['S', 'W'], T3: ['S', 'W'], T2: ['NE', 'E'] },
     },
     elongated: {
       viewBox: '-16 -16 500 200',
@@ -1033,7 +1074,7 @@
         '<rect x="170" y="20" width="8" height="50" fill="var(--wall)"/>',
       center: { x: 250, y: 100 },
       doors: { N:{x:140,y:20}, NE:{x:460,y:50}, E:{x:460,y:140}, S:{x:140,y:180}, W:{x:20,y:90}, F:{x:300,y:20} },
-      t1: { x: 220, y: 60 }, t2: { x: 400, y: 130 }, bomb: { x: 220, y: 60 },
+      t1: { x: 220, y: 60 }, t2: { x: 400, y: 130 }, t3: { x: 300, y: 150 }, bomb: { x: 220, y: 60 },
     },
   };
 
@@ -1078,8 +1119,7 @@
     t1g.querySelector('.enemy-body').setAttribute('cx', t1x); t1g.querySelector('.enemy-body').setAttribute('cy', t1y);
     t1g.querySelector('.enemy-helmet').setAttribute('cx', t1x); t1g.querySelector('.enemy-helmet').setAttribute('cy', t1y - 6);
     const t1weapon = t1g.querySelector('.enemy-weapon');
-    t1weapon.setAttribute('x1', t1x); t1weapon.setAttribute('x2', t1x);
-    t1weapon.setAttribute('y1', t1y - 9); t1weapon.setAttribute('y2', t1y - 16);
+    t1weapon.setAttribute('x', t1x - 1.3); t1weapon.setAttribute('y', t1y - 16);
     const t1label = t1g.querySelector('text');
     t1label.setAttribute('x', t1x); t1label.setAttribute('y', t1y - 20);
 
@@ -1090,8 +1130,7 @@
     t2g.querySelector('polygon').setAttribute('points', relPoints.map(p => (cx2 + p[0]) + ',' + (cy2 + p[1])).join(' '));
     t2g.querySelector('.enemy-helmet').setAttribute('cx', cx2); t2g.querySelector('.enemy-helmet').setAttribute('cy', cy2 - 17);
     const t2weapon = t2g.querySelector('.enemy-weapon');
-    t2weapon.setAttribute('x1', cx2); t2weapon.setAttribute('x2', cx2);
-    t2weapon.setAttribute('y1', cy2 - 21); t2weapon.setAttribute('y2', cy2 - 28);
+    t2weapon.setAttribute('x', cx2 - 1.3); t2weapon.setAttribute('y', cy2 - 28);
     const hostageCircle = t2g.querySelector('.hostage-mark');
     hostageCircle.setAttribute('cx', cx2 + 17); hostageCircle.setAttribute('cy', cy2 + 9);
     const hostageLine = t2g.querySelector('.hostage-line');
@@ -1100,6 +1139,18 @@
     const t2texts = t2g.querySelectorAll('text');
     t2texts[0].setAttribute('x', cx2 + 3); t2texts[0].setAttribute('y', cy2 + 23);
     t2texts[1].setAttribute('x', cx2 + 3); t2texts[1].setAttribute('y', cy2 + 33);
+
+    if (shape.t3) {
+      threats.T3.x = shape.t3.x; threats.T3.y = shape.t3.y;
+      const t3g = document.getElementById('t3-g');
+      const t3x = shape.t3.x, t3y = shape.t3.y;
+      t3g.querySelector('.enemy-body').setAttribute('cx', t3x); t3g.querySelector('.enemy-body').setAttribute('cy', t3y);
+      t3g.querySelector('.enemy-helmet').setAttribute('cx', t3x); t3g.querySelector('.enemy-helmet').setAttribute('cy', t3y - 6);
+      const t3weapon = t3g.querySelector('.enemy-weapon');
+      t3weapon.setAttribute('x', t3x - 1.3); t3weapon.setAttribute('y', t3y - 16);
+      const t3label = t3g.querySelector('text');
+      t3label.setAttribute('x', t3x); t3label.setAttribute('y', t3y - 20);
+    }
 
     const bombG = document.getElementById('bomb-g');
     const bx = shape.bomb.x, by = shape.bomb.y;
@@ -1381,14 +1432,16 @@
     // Smart target assignment: the squad splits up inside the room based on
     // class strengths, regardless of which door each operator came through.
     // Heavy/Shadow are best suited for the armored guard (T2); anyone can
-    // handle the standard guard (T1). If only one threat is active in this
-    // room, everyone converges on it.
+    // handle a standard guard (T1/T3). If only one non-T2 threat is active,
+    // everyone else converges on it.
     const t2Rank = { Heavy: 0, Shadow: 1, Assault: 2, Light: 2 };
     const targets = []; // { doorId, op, targetThreatId }
     const hasT2 = room.threats.includes('T2');
+    const hasT3 = room.threats.includes('T3');
+    const otherThreats = hasT3 ? ['T1', 'T3'] : ['T1'];
 
     if (!hasT2) {
-      survivors.forEach(([doorId, op]) => targets.push({ doorId, op, targetThreatId: 'T1' }));
+      survivors.forEach(([doorId, op], idx) => targets.push({ doorId, op, targetThreatId: otherThreats[idx % otherThreats.length] }));
     } else if (survivors.length === 1) {
       const [doorId, op] = survivors[0];
       const t = (op.cls === 'Heavy' || op.cls === 'Shadow') ? 'T2' : 'T1';
@@ -1399,16 +1452,16 @@
       const bestForT2 = pool[0];
       const rest = pool.slice(1);
       targets.push({ ...bestForT2, targetThreatId: 'T2' });
-      // first remaining operator covers the standard guard, any extras
-      // reinforce whichever threat best matches their class
+      // Remaining survivors split evenly across the other active threats,
+      // so a room with T1+T3 genuinely requires more than one extra operator.
       rest.forEach((entry, idx) => {
-        const t = idx === 0 ? 'T1' : ((entry.op.cls === 'Heavy' || entry.op.cls === 'Shadow') ? 'T2' : 'T1');
-        targets.push({ ...entry, targetThreatId: t });
+        targets.push({ ...entry, targetThreatId: otherThreats[idx % otherThreats.length] });
       });
     }
 
     const byThreat = { T1: targets.filter(t => t.targetThreatId === 'T1').map(t => t.op),
-                        T2: targets.filter(t => t.targetThreatId === 'T2').map(t => t.op) };
+                        T2: targets.filter(t => t.targetThreatId === 'T2').map(t => t.op),
+                        T3: targets.filter(t => t.targetThreatId === 'T3').map(t => t.op) };
 
     function fastestOf(list) {
       let f = list[0];
@@ -1418,11 +1471,21 @@
 
     const t1Cleared = byThreat.T1.length > 0;
     const t2Cleared = !hasT2 || byThreat.T2.length > 0;
+    const t3Cleared = !hasT3 || byThreat.T3.length > 0;
     // Heavy and Shadow (karambit, up close) both handle the armored guard cleanly.
     function isCleanT2Handler(op) {
       return op.cls === 'Heavy' || op.cls === 'Shadow';
     }
     const hostageSafe = !hasT2 || (t2Cleared && byThreat.T2.some(isCleanT2Handler));
+
+    // L'ennemi riposte : envoyer un opérateur mal adapté (ni Heavy ni
+    // Shadow) seul contre le garde blindé lui coûte la vie, pas seulement
+    // la sécurité de l'otage — une vraie conséquence à une mauvaise
+    // répartition de l'escouade.
+    if (hasT2 && t2Cleared && !byThreat.T2.some(isCleanT2Handler)) {
+      const strickenOp = byThreat.T2.find(op => op.cls === 'Light') || byThreat.T2[0];
+      casualtyIds.add(strickenOp.id);
+    }
 
     // Purely cosmetic: the failure message when the hostage is hurt.
     let hostageFailReason = null;
@@ -1440,7 +1503,7 @@
       bombFastDefuse = fastestArrivalMs !== null && fastestArrivalMs <= BOMB_FAST_MS;
     }
 
-    const primarySuccess = isBombRoom ? (t1Cleared && bombDefused) : (t1Cleared && t2Cleared);
+    const primarySuccess = isBombRoom ? (t1Cleared && bombDefused) : (t1Cleared && t2Cleared && t3Cleared);
     const noOperatorLost = casualtyIds.size === 0;
     // At night, every weapon is fitted with a silencer regardless of class,
     // so gunfire never gives the squad away. A bomb-only room has no enemy to
@@ -1549,36 +1612,40 @@
         g.appendChild(brim);
       }
 
-      // Arme : ligne + chargeur, absente pour Shadow (karambit visible à la place).
+      // Arme : rectangle net (rectiligne) + chargeur, absente pour Shadow (karambit visible à la place).
       if (op.cls !== 'Shadow') {
         const weaponWidth = op.cls === 'Heavy' ? 3.4 : (op.cls === 'Light' ? 2 : 2.6);
         const weaponLen = op.cls === 'Heavy' ? 9 : (op.cls === 'Light' ? 6 : 7.5);
-        const weapon = document.createElementNS(ns, 'line');
-        weapon.setAttribute('x1', '0'); weapon.setAttribute('y1', '-9');
-        weapon.setAttribute('x2', '0'); weapon.setAttribute('y2', String(-9 - weaponLen));
-        weapon.setAttribute('stroke', camo.outline);
-        weapon.setAttribute('stroke-width', String(weaponWidth));
-        weapon.setAttribute('stroke-linecap', 'round');
+        const weapon = document.createElementNS(ns, 'rect');
+        weapon.setAttribute('x', String(-weaponWidth / 2));
+        weapon.setAttribute('y', String(-9 - weaponLen));
+        weapon.setAttribute('width', String(weaponWidth));
+        weapon.setAttribute('height', String(weaponLen));
+        weapon.setAttribute('fill', camo.outline);
         g.appendChild(weapon);
+        g.dataset.weaponTipY = String(-9 - weaponLen);
 
-        // Chargeur : petit rectangle sombre près de la garde de l'arme.
+        // Chargeur : petit rectangle net près de la garde de l'arme.
         const mag = document.createElementNS(ns, 'rect');
         mag.setAttribute('x', '-3.4'); mag.setAttribute('y', '-11');
         mag.setAttribute('width', '2.6'); mag.setAttribute('height', op.cls === 'Heavy' ? '6.5' : '5');
-        mag.setAttribute('rx', '0.8');
         mag.setAttribute('fill', '#1a1a1a');
         mag.setAttribute('stroke', camo.outline);
         mag.setAttribute('stroke-width', '0.6');
         g.appendChild(mag);
       } else {
-        // Karambit : petite lame courbée visible au côté, avec son anneau.
+        // Karambit : petite lame nette avec pointe angulaire, et son anneau.
         const blade = document.createElementNS(ns, 'line');
         blade.setAttribute('x1', '4'); blade.setAttribute('y1', '2');
-        blade.setAttribute('x2', '9'); blade.setAttribute('y2', '7');
+        blade.setAttribute('x2', '8.5'); blade.setAttribute('y2', '6.5');
         blade.setAttribute('stroke', '#2c2c2c');
-        blade.setAttribute('stroke-width', '2.2');
-        blade.setAttribute('stroke-linecap', 'round');
+        blade.setAttribute('stroke-width', '1.8');
+        blade.setAttribute('stroke-linecap', 'square');
         g.appendChild(blade);
+        const tip = document.createElementNS(ns, 'polygon');
+        tip.setAttribute('points', '8.5,6.5 10.2,6.9 9.4,8.2');
+        tip.setAttribute('fill', '#2c2c2c');
+        g.appendChild(tip);
         const ring = document.createElementNS(ns, 'circle');
         ring.setAttribute('cx', '4'); ring.setAttribute('cy', '2'); ring.setAttribute('r', '1.4');
         ring.setAttribute('fill', 'none');
@@ -1606,6 +1673,10 @@
       return g;
     }
 
+    // Minuterie de bombe : moment fixe (indépendant de la vitesse des
+    // opérateurs) où la bombe détone si personne ne l'a désamorcée à temps.
+    const bombExplodeAt = 300 + BOMB_THRESHOLD_MS;
+
     assignedList.forEach(([doorId, op], i) => {
       const doorEl = document.querySelector('.door[data-door="' + doorId + '"]');
       const x = Number(doorEl.getAttribute('data-x'));
@@ -1623,7 +1694,17 @@
       // casualties never reach a target; they fall partway toward whichever
       // threat their door was nearest to, purely for visual direction
       const fallbackThreat = threats[doorThreatMap[doorId]];
-      const threat = assignedTarget ? threats[assignedTarget.targetThreatId] : fallbackThreat;
+      const threatId = assignedTarget ? assignedTarget.targetThreatId : doorThreatMap[doorId];
+      const threat = threats[threatId];
+
+      // Si la bombe ne sera pas désamorcée à temps, l'opérateur le plus
+      // lent ne doit pas visuellement "arriver" après l'explosion — son
+      // trajet est écourté pour s'arrêter net au moment de la détonation.
+      const departureAt = 300 + i * 220;
+      let travelDuration = duration;
+      if (isBombRoom && !bombDefused) {
+        travelDuration = Math.max(150, Math.min(duration, bombExplodeAt - departureAt));
+      }
 
       let targetX, targetY;
       if (isCasualty) {
@@ -1643,21 +1724,60 @@
         targetY = threat.y - uy * standoff + perpY * fan;
       }
 
-      // Oriente la silhouette dans la direction de son déplacement (donc vers
-      // sa cible) : le corps/l'arme sont dessinés pointant vers le haut (nord)
+      // Certaines formes de pièce (ex. le L) exigent un détour par un point
+      // de passage pour ne pas couper à travers un mur ou le vide entre
+      // deux sections de la pièce.
+      const shapeCfg = ROOM_SHAPES[levelDefs[currentLevel].roomShape] || ROOM_SHAPES.square;
+      const wpDoors = shapeCfg.waypointDoors && shapeCfg.waypointDoors[threatId];
+      const needsWaypoint = !isCasualty && wpDoors && wpDoors.includes(doorId);
+
+      // Oriente la silhouette dans la direction de son premier déplacement
+      // (vers le point de passage s'il y en a un, sinon directement vers la
+      // cible) : le corps/l'arme sont dessinés pointant vers le haut (nord)
       // à 0°, d'où le +90 pour aligner sur la convention atan2 standard.
-      const angleDeg = Math.atan2(targetY - y, targetX - x) * 180 / Math.PI + 90;
+      const firstAimX = needsWaypoint ? shapeCfg.waypoint.x : targetX;
+      const firstAimY = needsWaypoint ? shapeCfg.waypoint.y : targetY;
+      const angleDeg = Math.atan2(firstAimY - y, firstAimX - x) * 180 / Math.PI + 90;
       marker.setAttribute('transform', 'translate(' + x + ',' + y + ') rotate(' + angleDeg + ')');
       const label = marker.querySelector('text');
       if (label) label.setAttribute('transform', 'rotate(' + (-angleDeg) + ')');
 
-      setTimeout(() => {
-        marker.style.transition = 'transform ' + duration + 'ms ease-in';
-        marker.setAttribute('transform', 'translate(' + targetX + ',' + targetY + ') rotate(' + angleDeg + ')');
-        if (doorId === 'F') playSfx('glassBreak');
-        if (op.cls !== 'Shadow') {
-          setTimeout(() => playClassSound(op.cls), isCasualty ? duration * 0.35 : duration);
+      function fireEffectsAndCasualty() {
+        if (op.cls !== 'Shadow' && !isBombRoom) {
+          playClassSound(op.cls);
+          const tipY = parseFloat(marker.dataset.weaponTipY || '-16');
+          const flash = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+          flash.setAttribute('cx', '0'); flash.setAttribute('cy', tipY);
+          flash.setAttribute('r', '3.2'); flash.setAttribute('fill', '#ffe066');
+          flash.setAttribute('opacity', '0.95');
+          marker.appendChild(flash);
+          setTimeout(() => flash.remove(), 90);
         }
+      }
+
+      setTimeout(() => {
+        if (doorId === 'F') playSfx('glassBreak');
+
+        if (needsWaypoint) {
+          const wp = shapeCfg.waypoint;
+          const d1 = Math.hypot(wp.x - x, wp.y - y);
+          const d2 = Math.hypot(targetX - wp.x, targetY - wp.y);
+          const totalDist = d1 + d2 || 1;
+          const dur1 = Math.max(80, travelDuration * (d1 / totalDist));
+          const dur2 = Math.max(80, travelDuration - dur1);
+          marker.style.transition = 'transform ' + dur1 + 'ms ease-in';
+          marker.setAttribute('transform', 'translate(' + wp.x + ',' + wp.y + ') rotate(' + angleDeg + ')');
+          setTimeout(() => {
+            const angle2 = Math.atan2(targetY - wp.y, targetX - wp.x) * 180 / Math.PI + 90;
+            if (label) label.setAttribute('transform', 'rotate(' + (-angle2) + ')');
+            marker.style.transition = 'transform ' + dur2 + 'ms ease-in';
+            marker.setAttribute('transform', 'translate(' + targetX + ',' + targetY + ') rotate(' + angle2 + ')');
+          }, dur1);
+        } else {
+          marker.style.transition = 'transform ' + travelDuration + 'ms ease-in';
+          marker.setAttribute('transform', 'translate(' + targetX + ',' + targetY + ') rotate(' + angleDeg + ')');
+        }
+
         if (isCasualty) {
           setTimeout(() => {
             marker.querySelector('.op-body').setAttribute('fill', 'var(--danger)');
@@ -1666,10 +1786,18 @@
             if (!trapSoundPlayed) {
               trapSoundPlayed = true;
               playSfx('explosion');
+              spawnExplosionBurst(marker, 0, 0);
             }
-          }, duration * 0.35);
+          }, travelDuration * 0.35);
+          if (op.cls !== 'Shadow' && !isBombRoom) {
+            setTimeout(fireEffectsAndCasualty, travelDuration * 0.35);
+          }
+        } else if (!(isBombRoom && !bombDefused)) {
+          // Pas de tir sur une bombe désamorcée avec succès ou sans bombe :
+          // seul un échec de désamorçage empêche complètement l'arrivée.
+          setTimeout(fireEffectsAndCasualty, travelDuration);
         }
-      }, 300 + i * 220);
+      }, departureAt);
     });
 
     if (isBombRoom) {
@@ -1680,26 +1808,37 @@
       }, 300);
     }
 
-    const maxDelay = 300 + assignedList.length * 220 + slowestDuration + 700;
-    setTimeout(() => {
-      if (isBombRoom) {
+    const maxDelay = (isBombRoom && !bombDefused)
+      ? bombExplodeAt + 900
+      : 300 + assignedList.length * 220 + slowestDuration + 700;
+
+    if (isBombRoom) {
+      const revealAt = bombDefused ? (maxDelay - 500) : bombExplodeAt;
+      setTimeout(() => {
         const timerFill = document.getElementById('bomb-timer-fill');
         timerFill.style.transition = 'opacity 0.3s ease';
         timerFill.setAttribute('fill', bombDefused ? 'var(--ok)' : 'var(--danger)');
         document.getElementById('bomb-g').style.opacity = bombDefused ? '0.4' : '1';
-        if (!bombDefused) playSfx('explosion');
-      } else {
+        if (!bombDefused) {
+          playSfx('explosion');
+          const bombShapeCfg = ROOM_SHAPES[levelDefs[currentLevel].roomShape] || ROOM_SHAPES.square;
+          spawnExplosionBurst(svg, bombShapeCfg.bomb.x, bombShapeCfg.bomb.y);
+        }
+      }, revealAt);
+    } else {
+      setTimeout(() => {
         if (t1Cleared) document.getElementById('t1-g').style.opacity = '0.15';
+        if (t3Cleared && hasT3) document.getElementById('t3-g').style.opacity = '0.15';
         if (t2Cleared) {
           document.getElementById('t2-g').style.transition = 'opacity 0.3s ease';
           document.getElementById('t2-g').style.opacity = hostageSafe ? '0.15' : '0.5';
-          if (!hostageSafe) document.getElementById('t2-g').querySelector('circle').setAttribute('fill', 'var(--danger)');
+          if (!hostageSafe) document.getElementById('t2-g').querySelector('.hostage-mark').setAttribute('fill', 'var(--danger)');
         }
-      }
-    }, maxDelay - 500);
+      }, maxDelay - 500);
+    }
 
     setTimeout(() => {
-      showResult({ primarySuccess, noOperatorLost, hostageSafe, hostageFailReason, stealthSuccess, t1Cleared, t2Cleared, hasT2, casualtyIds, isBombRoom, bombDefused, bombFastDefuse });
+      showResult({ primarySuccess, noOperatorLost, hostageSafe, hostageFailReason, stealthSuccess, t1Cleared, t2Cleared, hasT2, t3Cleared, hasT3, casualtyIds, isBombRoom, bombDefused, bombFastDefuse });
     }, maxDelay);
   }
 
@@ -1732,6 +1871,7 @@
       } else {
         if (!r.t1Cleared) missed.push('Le garde n\'a pas été neutralisé (aucun opérateur envoyé de ce côté)');
         if (r.hasT2 && !r.t2Cleared) missed.push('Le garde blindé n\'a pas été neutralisé (aucun opérateur envoyé de ce côté)');
+        if (r.hasT3 && !r.t3Cleared) missed.push('Un second garde n\'a pas été neutralisé (aucun opérateur envoyé de ce côté)');
       }
       missed.forEach(m => {
         const li = document.createElement('li');
