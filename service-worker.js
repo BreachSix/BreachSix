@@ -1,4 +1,4 @@
-const CACHE_VERSION = 'v3';
+const CACHE_VERSION = 'v4';
 const CACHE_NAME = 'breachsix-' + CACHE_VERSION;
 const ASSETS = [
   './',
@@ -9,6 +9,7 @@ const ASSETS = [
   './sound-assault.mp3',
   './sound-heavy.mp3',
   './sound-light.mp3',
+  './sound-night.mp3',
 ];
 
 self.addEventListener('install', (event) => {

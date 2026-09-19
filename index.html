@@ -403,18 +403,29 @@
   };
   const classOrder = ['Assault', 'Light', 'Heavy', 'Shadow'];
 
-  // Sons d'armes par classe. Shadow n'a pas d'entrée : toujours silencieux (karambit).
+  // Sons d'armes par classe (jour). Shadow n'a pas d'entrée : toujours silencieux (karambit).
   const CLASS_SOUND_SRC = {
     Assault: './sound-assault.mp3',
     Heavy: './sound-heavy.mp3',
     Light: './sound-light.mp3',
   };
+  // La nuit, toutes les armes sont équipées d'un silencieux : un seul fichier
+  // partagé, dont la cadence de lecture varie par classe pour garder une
+  // distinction sonore (plus vif/aigu pour Light, plus lent/grave pour Heavy).
+  const NIGHT_SOUND_SRC = './sound-night.mp3';
+  const CLASS_PLAYBACK_RATE = { Assault: 1.0, Heavy: 0.85, Light: 1.25 };
+
   function playClassSound(cls) {
-    const src = CLASS_SOUND_SRC[cls];
-    if (!src) return;
+    const src = isNight ? NIGHT_SOUND_SRC : CLASS_SOUND_SRC[cls];
+    if (!src) return; // Shadow : pas de son
     try {
       const audio = new Audio(src);
-      audio.play().catch(() => {}); // ignore si le navigateur bloque l'autoplay
+      const rate = isNight ? (CLASS_PLAYBACK_RATE[cls] || 1.0) : 1.0;
+      audio.playbackRate = rate;
+      audio.preservesPitch = false;
+      audio.mozPreservesPitch = false;
+      audio.webkitPreservesPitch = false;
+      audio.play().catch(() => {});
     } catch (e) {}
   }
 
