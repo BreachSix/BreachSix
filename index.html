@@ -234,7 +234,12 @@
   }
   .skin-chip .sc-name { font-family: var(--font-head); font-weight: 700; font-size: 0.66rem; }
   .skin-chip .sc-req { font-size: 0.56rem; margin-top: 1px; }
+  .skin-chip .sc-img {
+    width: 100%; aspect-ratio: 1.4; object-fit: contain; display: block; margin-bottom: 2px;
+    filter: brightness(0.35) saturate(0); transition: filter 0.2s ease;
+  }
   .skin-chip.unlocked { border-color: var(--amber); background: var(--panel-2); color: var(--text); }
+  .skin-chip.unlocked .sc-img { filter: none; }
   .skin-chip.unlocked .sc-name { color: var(--amber); }
   .watch-ad-btn { width: 100%; border-color: var(--squad-b); color: var(--squad-b); }
   .watch-ad-btn:disabled { opacity: 0.6; }
@@ -805,12 +810,12 @@
 
   // --- Ad-based cosmetic skin unlocks (simulated) ---
   const skinDefs = [
-    { name: 'Cuivre', req: 5 },
-    { name: 'Argent', req: 10 },
-    { name: 'Or', req: 15 },
-    { name: 'Damas', req: 25 },
-    { name: 'Platine', req: 35 },
-    { name: 'Diamant', req: 50 },
+    { name: 'Cuivre', req: 5, img: './skin-cuivre.jpg' },
+    { name: 'Argent', req: 10, img: './skin-argent.jpg' },
+    { name: 'Or', req: 15, img: './skin-or.jpg' },
+    { name: 'Damas', req: 25, img: './skin-damas.jpg' },
+    { name: 'Platine', req: 35, img: './skin-platine.jpg' },
+    { name: 'Diamant', req: 50, img: './skin-diamant.jpg' },
   ];
   let adsWatched = 0;
   let watchingAd = false;
@@ -823,7 +828,8 @@
       const unlocked = adsWatched >= s.req;
       const chip = document.createElement('div');
       chip.className = 'skin-chip' + (unlocked ? ' unlocked' : '');
-      chip.innerHTML = '<div class="sc-name">' + s.name + '</div><div class="sc-req">' + (unlocked ? 'Débloqué' : s.req + ' pubs') + '</div>';
+      chip.innerHTML = '<img class="sc-img" src="' + s.img + '" alt="' + s.name + '">' +
+        '<div class="sc-name">' + s.name + '</div><div class="sc-req">' + (unlocked ? 'Débloqué' : s.req + ' pubs') + '</div>';
       track.appendChild(chip);
     });
   }
