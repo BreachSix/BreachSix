@@ -489,6 +489,19 @@
   const NIGHT_SOUND_SRC = './sound-night.mp3';
   const CLASS_PLAYBACK_RATE = { Assault: 1.0, Heavy: 0.85, Light: 1.25 };
 
+  const SFX = {
+    glassBreak: './sound-glass-break.mp3',
+    explosion: './sound-explosion.mp3',
+  };
+  function playSfx(key) {
+    const src = SFX[key];
+    if (!src) return;
+    try {
+      const audio = new Audio(src);
+      audio.play().catch(() => {});
+    } catch (e) {}
+  }
+
   function playClassSound(cls) {
     const src = isNight ? NIGHT_SOUND_SRC : CLASS_SOUND_SRC[cls];
     if (!src) return; // Shadow : pas de son
@@ -1331,6 +1344,7 @@
     resolved = true;
     renderAll();
     hint.textContent = 'Assaut en cours...';
+    let trapSoundPlayed = false;
 
     const room = currentRoom();
     const svg = document.getElementById('room-svg');
@@ -1625,6 +1639,7 @@
       setTimeout(() => {
         marker.style.transition = 'transform ' + duration + 'ms ease-in';
         marker.setAttribute('transform', 'translate(' + targetX + ',' + targetY + ') rotate(' + angleDeg + ')');
+        if (doorId === 'F') playSfx('glassBreak');
         if (op.cls !== 'Shadow') {
           setTimeout(() => playClassSound(op.cls), isCasualty ? duration * 0.35 : duration);
         }
@@ -1633,6 +1648,10 @@
             marker.querySelector('.op-body').setAttribute('fill', 'var(--danger)');
             marker.style.transition += ', opacity 0.4s ease';
             marker.style.opacity = '0.15';
+            if (!trapSoundPlayed) {
+              trapSoundPlayed = true;
+              playSfx('explosion');
+            }
           }, duration * 0.35);
         }
       }, 300 + i * 220);
@@ -1653,6 +1672,7 @@
         timerFill.style.transition = 'opacity 0.3s ease';
         timerFill.setAttribute('fill', bombDefused ? 'var(--ok)' : 'var(--danger)');
         document.getElementById('bomb-g').style.opacity = bombDefused ? '0.4' : '1';
+        if (!bombDefused) playSfx('explosion');
       } else {
         if (t1Cleared) document.getElementById('t1-g').style.opacity = '0.15';
         if (t2Cleared) {
