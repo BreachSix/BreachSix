@@ -512,6 +512,11 @@
   // distinction sonore (plus vif/aigu pour Light, plus lent/grave pour Heavy).
   const NIGHT_SOUND_SRC = './sound-night.mp3';
   const CLASS_PLAYBACK_RATE = { Assault: 1.0, Heavy: 0.85, Light: 1.25 };
+  // Distance de tir et nombre de coups par classe : Light se bat de près
+  // mais son calibre plus faible demande plus de coups ; Heavy tire de plus
+  // loin mais compense son manque de précision par davantage de tirs.
+  const CLASS_STANDOFF = { Assault: 50, Heavy: 75, Light: 25 };
+  const CLASS_SHOT_COUNT = { Assault: 2, Heavy: 3, Light: 4 };
 
   const SFX = {
     glassBreak: './sound-glass-break.mp3',
@@ -588,30 +593,49 @@
   }
 
   // Éclat de tir en forme d'étoile (plus reconnaissable qu'un simple point),
-  // déclenché deux fois en succession rapide pour évoquer une rafale.
+  // synchronisé le plus étroitement possible avec le son.
   function spawnMuzzleFlash(marker, tipY) {
     const ns = 'http://www.w3.org/2000/svg';
-    function oneFlash() {
-      const g = document.createElementNS(ns, 'g');
-      g.setAttribute('transform', 'translate(0,' + tipY + ')');
-      g.style.pointerEvents = 'none';
-      const halo = document.createElementNS(ns, 'circle');
-      halo.setAttribute('r', '4.5'); halo.setAttribute('fill', '#ff8c1a'); halo.setAttribute('opacity', '0.5');
-      const star = document.createElementNS(ns, 'polygon');
-      const pts = [];
-      for (let k = 0; k < 8; k++) {
-        const ang = k * Math.PI / 4;
-        const rad = k % 2 === 0 ? 3.6 : 1.5;
-        pts.push((Math.cos(ang) * rad).toFixed(2) + ',' + (Math.sin(ang) * rad).toFixed(2));
-      }
-      star.setAttribute('points', pts.join(' '));
-      star.setAttribute('fill', '#ffe066');
-      g.appendChild(halo); g.appendChild(star);
-      marker.appendChild(g);
-      setTimeout(() => g.remove(), 80);
+    const g = document.createElementNS(ns, 'g');
+    g.setAttribute('transform', 'translate(0,' + tipY + ')');
+    g.style.pointerEvents = 'none';
+    const halo = document.createElementNS(ns, 'circle');
+    halo.setAttribute('r', '5'); halo.setAttribute('fill', '#ff8c1a'); halo.setAttribute('opacity', '0.55');
+    const star = document.createElementNS(ns, 'polygon');
+    const pts = [];
+    for (let k = 0; k < 8; k++) {
+      const ang = k * Math.PI / 4;
+      const rad = k % 2 === 0 ? 4.2 : 1.7;
+      pts.push((Math.cos(ang) * rad).toFixed(2) + ',' + (Math.sin(ang) * rad).toFixed(2));
     }
-    oneFlash();
-    setTimeout(oneFlash, 60);
+    star.setAttribute('points', pts.join(' '));
+    star.setAttribute('fill', '#ffe066');
+    g.appendChild(halo); g.appendChild(star);
+    marker.appendChild(g);
+    setTimeout(() => g.remove(), 90);
+  }
+
+  // Même éclat, mais positionné en coordonnées absolues de la pièce plutôt
+  // que relatif à un opérateur — utilisé pour la riposte ennemie.
+  function spawnEnemyMuzzleFlash(svg, x, y) {
+    const ns = 'http://www.w3.org/2000/svg';
+    const g = document.createElementNS(ns, 'g');
+    g.setAttribute('transform', 'translate(' + x + ',' + y + ')');
+    g.style.pointerEvents = 'none';
+    const halo = document.createElementNS(ns, 'circle');
+    halo.setAttribute('r', '5'); halo.setAttribute('fill', '#ff8c1a'); halo.setAttribute('opacity', '0.55');
+    const star = document.createElementNS(ns, 'polygon');
+    const pts = [];
+    for (let k = 0; k < 8; k++) {
+      const ang = k * Math.PI / 4;
+      const rad = k % 2 === 0 ? 4.2 : 1.7;
+      pts.push((Math.cos(ang) * rad).toFixed(2) + ',' + (Math.sin(ang) * rad).toFixed(2));
+    }
+    star.setAttribute('points', pts.join(' '));
+    star.setAttribute('fill', '#ffe066');
+    g.appendChild(halo); g.appendChild(star);
+    svg.appendChild(g);
+    setTimeout(() => g.remove(), 90);
   }
 
   function playClassSound(cls) {
@@ -1804,7 +1828,7 @@
         // Ranged classes hold back at a standoff distance; Shadow (karambit)
         // always closes in to melee range.
         // Defusing a bomb always requires direct contact, regardless of class.
-        const standoff = isBombRoom ? 8 : (op.cls === 'Shadow' ? 6 : 50);
+        const standoff = isBombRoom ? 8 : (op.cls === 'Shadow' ? 6 : (CLASS_STANDOFF[op.cls] || 50));
         const dx = threat.x - x, dy = threat.y - y;
         const dist = Math.hypot(dx, dy) || 1;
         const ux = dx / dist, uy = dy / dist;
@@ -1821,6 +1845,11 @@
       const wpDoors = shapeCfg.waypointDoors && shapeCfg.waypointDoors[threatId];
       const needsWaypoint = !isCasualty && wpDoors && wpDoors.includes(doorId);
 
+      // Angle de VISÉE une fois arrivé : pointe vraiment vers la menace,
+      // pas vers le point d'arrêt (qui est décalé en cas d'éventail pour
+      // plusieurs opérateurs) — sinon l'arme semble viser à côté.
+      const aimAngle = Math.atan2(threat.y - targetY, threat.x - targetX) * 180 / Math.PI + 90;
+
       // Oriente la silhouette dans la direction de son premier déplacement
       // (vers le point de passage s'il y en a un, sinon directement vers la
       // cible) : le corps/l'arme sont dessinés pointant vers le haut (nord)
@@ -1834,9 +1863,14 @@
 
       function fireEffectsAndCasualty() {
         if (op.cls !== 'Shadow' && !isBombRoom) {
-          playClassSound(op.cls);
+          const shots = CLASS_SHOT_COUNT[op.cls] || 1;
           const tipY = parseFloat(marker.dataset.weaponTipY || '-16');
-          spawnMuzzleFlash(marker, tipY);
+          for (let s = 0; s < shots; s++) {
+            setTimeout(() => {
+              playClassSound(op.cls);
+              spawnMuzzleFlash(marker, tipY);
+            }, s * 70);
+          }
         }
       }
 
@@ -1853,20 +1887,28 @@
           marker.style.transition = 'transform ' + dur1 + 'ms ease-in';
           marker.setAttribute('transform', 'translate(' + wp.x + ',' + wp.y + ') rotate(' + angleDeg + ')');
           setTimeout(() => {
-            const angle2 = Math.atan2(targetY - wp.y, targetX - wp.x) * 180 / Math.PI + 90;
-            if (label) label.setAttribute('transform', 'rotate(' + (-angle2) + ')');
+            if (label) label.setAttribute('transform', 'rotate(' + (-aimAngle) + ')');
             marker.style.transition = 'transform ' + dur2 + 'ms ease-in';
-            marker.setAttribute('transform', 'translate(' + targetX + ',' + targetY + ') rotate(' + angle2 + ')');
+            marker.setAttribute('transform', 'translate(' + targetX + ',' + targetY + ') rotate(' + aimAngle + ')');
           }, dur1);
         } else {
           marker.style.transition = 'transform ' + travelDuration + 'ms ease-in';
-          marker.setAttribute('transform', 'translate(' + targetX + ',' + targetY + ') rotate(' + angleDeg + ')');
+          marker.setAttribute('transform', 'translate(' + targetX + ',' + targetY + ') rotate(' + aimAngle + ')');
+          if (label) label.setAttribute('transform', 'rotate(' + (-aimAngle) + ')');
         }
 
         if (isCasualty) {
           setTimeout(() => {
+            // Fige la position exacte interpolée à cet instant — sans ça,
+            // l'opérateur continuait de glisser vers sa destination pendant
+            // qu'il s'estompait, ce qui n'est pas cohérent avec une mort
+            // instantanée.
+            const frozen = getComputedStyle(marker).transform;
+            marker.style.transition = 'none';
+            if (frozen && frozen !== 'none') marker.style.transform = frozen;
             marker.querySelector('.op-body').setAttribute('fill', 'var(--danger)');
-            marker.style.transition += ', opacity 0.4s ease';
+            void marker.offsetWidth;
+            marker.style.transition = 'opacity 0.4s ease';
             marker.style.opacity = '0.15';
             if (!trapSoundPlayed) {
               trapSoundPlayed = true;
@@ -1884,6 +1926,33 @@
         }
       }, departureAt);
     });
+
+    // Riposte ennemie : un éclat + un son depuis chaque menace encore active
+    // au moment de l'échange, pour donner l'impression d'un vrai échange de
+    // tirs plutôt qu'un seul camp qui tire. Purement cosmétique — l'issue de
+    // la pièce reste déterminée par la logique ci-dessus, pas par ceci.
+    if (!isBombRoom && assignedList.length) {
+      let avgX = 0, avgY = 0;
+      assignedList.forEach(([doorId]) => {
+        const de = document.querySelector('.door[data-door="' + doorId + '"]');
+        avgX += Number(de.getAttribute('data-x'));
+        avgY += Number(de.getAttribute('data-y'));
+      });
+      avgX /= assignedList.length; avgY /= assignedList.length;
+      setTimeout(() => {
+        [
+          [t1Cleared, threats.T1],
+          [hasT2 && t2Cleared, threats.T2],
+          [hasT3 && t3Cleared, threats.T3],
+        ].forEach(([active, pos]) => {
+          if (!active) return;
+          const angle = Math.atan2(avgY - pos.y, avgX - pos.x);
+          const fx = pos.x + Math.cos(angle) * 14, fy = pos.y + Math.sin(angle) * 14;
+          spawnEnemyMuzzleFlash(svg, fx, fy);
+          if (!isNight) playPreloaded('class-Assault', 0.75);
+        });
+      }, 900);
+    }
 
     if (isBombRoom) {
       const timerFill = document.getElementById('bomb-timer-fill');
