@@ -83,9 +83,10 @@
 
   body.night {
     --amber-dim: #6b5822;
+    --wall: #747a5a;
   }
   body.night .room-wrap::after {
-    content: ''; position: absolute; inset: 0; background: radial-gradient(circle at 50% 40%, rgba(120,140,90,0.04), rgba(0,0,0,0.55));
+    content: ''; position: absolute; inset: 0; background: radial-gradient(circle at 50% 40%, rgba(120,140,90,0.04), rgba(0,0,0,0.4));
     pointer-events: none; border-radius: 4px;
   }
   .door-hit { cursor: pointer; }
@@ -157,9 +158,9 @@
     width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; display: inline-block;
     border: 1px solid rgba(0,0,0,0.25);
   }
-  .legend-op { background: var(--squad-a); }
-  .legend-enemy { background: var(--enemy); }
-  .legend-hostage { background: #5b8a9e; }
+  .legend-op { background: linear-gradient(90deg, var(--squad-a) 50%, var(--squad-b) 50%); }
+  .legend-icon { flex-shrink: 0; display: block; }
+  .legend-hostage { background: #c9c4b0; }
   .legend-bomb { background: var(--danger); border-radius: 2px; }
 
   .go-btn {
@@ -407,8 +408,8 @@
             fill="var(--enemy)" stroke="var(--enemy-dark)" stroke-width="2"/>
           <circle class="enemy-helmet" cx="115" cy="188" r="4.2" fill="var(--enemy-dark)"/>
           <rect class="enemy-weapon" x="113.7" y="177" width="2.6" height="7" fill="var(--enemy-dark)"/>
-          <circle class="hostage-mark" cx="132" cy="214" r="6.5" fill="#5b8a9e" stroke="#33586a" stroke-width="1.2"/>
-          <line class="hostage-line" x1="132" y1="219" x2="132" y2="226" stroke="#5b8a9e" stroke-width="2" stroke-linecap="round"/>
+          <circle class="hostage-mark" cx="132" cy="214" r="6.5" fill="#c9c4b0" stroke="#7d7863" stroke-width="1.2"/>
+          <line class="hostage-line" x1="132" y1="219" x2="132" y2="226" stroke="#c9c4b0" stroke-width="2" stroke-linecap="round"/>
         </g>
 
         <!-- Threat 3: second standard guard, added to force squad-splitting on tougher rooms -->
@@ -484,7 +485,14 @@
 
     <div class="legend">
       <span class="legend-item"><span class="legend-swatch legend-op"></span>Opérateur</span>
-      <span class="legend-item"><span class="legend-swatch legend-enemy"></span>Garde ennemi</span>
+      <span class="legend-item">
+        <svg class="legend-icon" viewBox="-7 -7 14 14" width="11" height="11" aria-hidden="true"><circle cx="0" cy="0" r="6" fill="var(--enemy)" stroke="var(--enemy-dark)" stroke-width="1"/></svg>
+        Garde ennemi
+      </span>
+      <span class="legend-item">
+        <svg class="legend-icon" viewBox="-9 -12 18 24" width="11" height="14" aria-hidden="true"><polygon points="0,-12 9,-7 9,5 0,12 -9,5 -9,-7" fill="var(--enemy)" stroke="var(--enemy-dark)" stroke-width="1.5"/></svg>
+        Garde blindé
+      </span>
       <span class="legend-item"><span class="legend-swatch legend-hostage"></span>Otage</span>
       <span class="legend-item"><span class="legend-swatch legend-bomb"></span>Bombe</span>
     </div>
@@ -671,19 +679,19 @@
     g.setAttribute('transform', 'translate(' + x + ',' + y + ')');
     g.style.pointerEvents = 'none';
     const halo = document.createElementNS(ns, 'circle');
-    halo.setAttribute('r', '7'); halo.setAttribute('fill', '#ff8c1a'); halo.setAttribute('opacity', '0.6');
+    halo.setAttribute('r', '9'); halo.setAttribute('fill', '#ff8c1a'); halo.setAttribute('opacity', '0.65');
     const star = document.createElementNS(ns, 'polygon');
     const pts = [];
     for (let k = 0; k < 8; k++) {
       const ang = k * Math.PI / 4;
-      const rad = k % 2 === 0 ? 5.8 : 2.3;
+      const rad = k % 2 === 0 ? 7.2 : 2.9;
       pts.push((Math.cos(ang) * rad).toFixed(2) + ',' + (Math.sin(ang) * rad).toFixed(2));
     }
     star.setAttribute('points', pts.join(' '));
     star.setAttribute('fill', '#ffe066');
     g.appendChild(halo); g.appendChild(star);
     svg.appendChild(g);
-    setTimeout(() => g.remove(), 140);
+    setTimeout(() => g.remove(), 220);
   }
 
   function playClassSound(cls) {
@@ -1060,7 +1068,7 @@
     document.getElementById('t6-g').style.opacity = '';
     document.getElementById('bomb-g').style.opacity = '';
     const hostageCircle = document.getElementById('t2-g').querySelector('.hostage-mark');
-    hostageCircle.setAttribute('fill', '#5b8a9e');
+    hostageCircle.setAttribute('fill', '#c9c4b0');
     const timerFill = document.getElementById('bomb-timer-fill');
     timerFill.style.transition = 'none';
     timerFill.setAttribute('width', '80');
@@ -2250,6 +2258,13 @@
           // Pas de tir sur une bombe désamorcée avec succès ou sans bombe :
           // seul un échec de désamorçage empêche complètement l'arrivée.
           setTimeout(fireEffectsAndCasualty, travelDuration);
+          // Deuxième rafale un peu plus tard : donne l'impression d'un vrai
+          // échange soutenu plutôt qu'un tir unique suivi d'un silence —
+          // reste déterministe (le résultat est déjà fixé), seule la mise
+          // en scène s'étire.
+          if (op.cls !== 'Shadow' && !isBombRoom) {
+            setTimeout(fireEffectsAndCasualty, travelDuration + 550);
+          }
           if (!isBombRoom) earliestEngageEnd = Math.min(earliestEngageEnd, departureAt + travelDuration);
         }
       }, departureAt);
@@ -2265,23 +2280,30 @@
     if (!isBombRoom && assignedList.length && earliestEngageEnd < Infinity) {
       setTimeout(() => {
         [
-          [t1Cleared, threats.T1.x, threats.T1.y - 16],
-          [hasT2 && t2Cleared, threats.T2.x, threats.T2.y - 28],
-          [hasT3 && t3Cleared, threats.T3.x, threats.T3.y - 16],
-          [hasT4 && t4Cleared, threats.T4.x, threats.T4.y - 16],
-          [hasT5 && t5Cleared, threats.T5.x, threats.T5.y - 16],
-          [hasT6 && t6Cleared, threats.T6.x, threats.T6.y - 16],
-        ].forEach(([active, fx, fy]) => {
+          [t1Cleared, threats.T1.x, threats.T1.y - 16, 'class-Assault'],
+          [hasT2 && t2Cleared, threats.T2.x, threats.T2.y - 28, 'class-Heavy'],
+          [hasT3 && t3Cleared, threats.T3.x, threats.T3.y - 16, 'class-Assault'],
+          [hasT4 && t4Cleared, threats.T4.x, threats.T4.y - 16, 'class-Assault'],
+          [hasT5 && t5Cleared, threats.T5.x, threats.T5.y - 16, 'class-Assault'],
+          [hasT6 && t6Cleared, threats.T6.x, threats.T6.y - 16, 'class-Assault'],
+        ].forEach(([active, fx, fy, soundKey], threatIdx) => {
           if (!active) return;
-          for (let shot = 0; shot < 2; shot++) {
+          // Chaque garde ouvre le feu avec un léger décalage plutôt que tous
+          // en même temps — sur plusieurs gardes, ça se lit comme un vrai
+          // échange de tirs qui dure, pas un seul flash instantané qu'on
+          // peut manquer en clignant des yeux.
+          const threatDelay = threatIdx * 260;
+          for (let shot = 0; shot < 3; shot++) {
             setTimeout(() => {
               spawnEnemyMuzzleFlash(svg, fx, fy);
               // La nuit, les gardes sont armés du même silencieux que
               // l'escouade — son étouffé au lieu d'un silence total, pour
-              // rester cohérent avec le tir des opérateurs.
-              if (isNight) playPreloaded('night', 0.85, 1.2);
-              else playPreloaded('class-Assault', 0.7, 1.5);
-            }, shot * 90);
+              // rester cohérent avec le tir des opérateurs. Le garde blindé
+              // (T2) utilise le son Heavy (arme plus lourde), les gardes
+              // standards le son Assault.
+              if (isNight) playPreloaded('night', soundKey === 'class-Heavy' ? 0.7 : 0.85, 1.2);
+              else playPreloaded(soundKey, soundKey === 'class-Heavy' ? 0.55 : 0.7, 1.5);
+            }, threatDelay + shot * 90);
           }
         });
       }, earliestEngageEnd + 200);
@@ -2295,9 +2317,17 @@
       }, 300);
     }
 
+    // La riposte ennemie est étalée dans le temps (un garde après l'autre,
+    // 3 tirs chacun) et les opérateurs ont maintenant une seconde rafale —
+    // la fin de mission doit attendre que tout ça ait eu le temps de se jouer.
+    const retaliatingCount = [t1Cleared, hasT2 && t2Cleared, hasT3 && t3Cleared, hasT4 && t4Cleared, hasT5 && t5Cleared, hasT6 && t6Cleared].filter(Boolean).length;
+    const retaliationSpan = retaliatingCount > 0 ? (retaliatingCount - 1) * 260 + 2 * 90 + 220 : 0;
     const maxDelay = (isBombRoom && !bombDefused)
       ? bombExplodeAt + 900
-      : 300 + assignedList.length * 220 + slowestDuration + 1200;
+      : Math.max(
+          300 + assignedList.length * 220 + slowestDuration + 1700,
+          (earliestEngageEnd < Infinity ? earliestEngageEnd : 0) + 200 + retaliationSpan + 600
+        );
 
     if (isBombRoom) {
       const revealAt = bombDefused ? (maxDelay - 500) : bombExplodeAt;
