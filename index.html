@@ -400,6 +400,11 @@
           <circle class="threat-pulse enemy-body" cx="175" cy="85" r="9" fill="var(--enemy)" stroke="var(--enemy-dark)" stroke-width="1.5"/>
           <circle class="enemy-helmet" cx="175" cy="79" r="4" fill="var(--enemy-dark)"/>
           <rect class="enemy-weapon" x="173.7" y="69" width="2.6" height="7" fill="var(--enemy-dark)"/>
+          <g class="sniper-mark" style="display:none;">
+            <circle cx="175" cy="66" r="4" fill="none" stroke="var(--danger)" stroke-width="1.3"/>
+            <line x1="175" y1="61" x2="175" y2="71" stroke="var(--danger)" stroke-width="1"/>
+            <line x1="170" y1="66" x2="180" y2="66" stroke="var(--danger)" stroke-width="1"/>
+          </g>
         </g>
 
         <!-- Threat 2: armored guard holding hostage as shield -->
@@ -417,6 +422,11 @@
           <circle class="threat-pulse enemy-body" cx="230" cy="150" r="9" fill="var(--enemy)" stroke="var(--enemy-dark)" stroke-width="1.5"/>
           <circle class="enemy-helmet" cx="230" cy="144" r="4" fill="var(--enemy-dark)"/>
           <rect class="enemy-weapon" x="228.7" y="134" width="2.6" height="7" fill="var(--enemy-dark)"/>
+          <g class="sniper-mark" style="display:none;">
+            <circle cx="230" cy="131" r="4" fill="none" stroke="var(--danger)" stroke-width="1.3"/>
+            <line x1="230" y1="126" x2="230" y2="136" stroke="var(--danger)" stroke-width="1"/>
+            <line x1="225" y1="131" x2="235" y2="131" stroke="var(--danger)" stroke-width="1"/>
+          </g>
         </g>
 
         <!-- Threats 4-6: additional standard guards for tougher, more crowded rooms -->
@@ -424,16 +434,31 @@
           <circle class="threat-pulse enemy-body" cx="150" cy="235" r="9" fill="var(--enemy)" stroke="var(--enemy-dark)" stroke-width="1.5"/>
           <circle class="enemy-helmet" cx="150" cy="229" r="4" fill="var(--enemy-dark)"/>
           <rect class="enemy-weapon" x="148.7" y="219" width="2.6" height="7" fill="var(--enemy-dark)"/>
+          <g class="sniper-mark" style="display:none;">
+            <circle cx="150" cy="216" r="4" fill="none" stroke="var(--danger)" stroke-width="1.3"/>
+            <line x1="150" y1="211" x2="150" y2="221" stroke="var(--danger)" stroke-width="1"/>
+            <line x1="145" y1="216" x2="155" y2="216" stroke="var(--danger)" stroke-width="1"/>
+          </g>
         </g>
         <g id="t5-g" style="display:none;">
           <circle class="threat-pulse enemy-body" cx="70" cy="150" r="9" fill="var(--enemy)" stroke="var(--enemy-dark)" stroke-width="1.5"/>
           <circle class="enemy-helmet" cx="70" cy="144" r="4" fill="var(--enemy-dark)"/>
           <rect class="enemy-weapon" x="68.7" y="134" width="2.6" height="7" fill="var(--enemy-dark)"/>
+          <g class="sniper-mark" style="display:none;">
+            <circle cx="70" cy="131" r="4" fill="none" stroke="var(--danger)" stroke-width="1.3"/>
+            <line x1="70" y1="126" x2="70" y2="136" stroke="var(--danger)" stroke-width="1"/>
+            <line x1="65" y1="131" x2="75" y2="131" stroke="var(--danger)" stroke-width="1"/>
+          </g>
         </g>
         <g id="t6-g" style="display:none;">
           <circle class="threat-pulse enemy-body" cx="75" cy="215" r="9" fill="var(--enemy)" stroke="var(--enemy-dark)" stroke-width="1.5"/>
           <circle class="enemy-helmet" cx="75" cy="209" r="4" fill="var(--enemy-dark)"/>
           <rect class="enemy-weapon" x="73.7" y="199" width="2.6" height="7" fill="var(--enemy-dark)"/>
+          <g class="sniper-mark" style="display:none;">
+            <circle cx="75" cy="196" r="4" fill="none" stroke="var(--danger)" stroke-width="1.3"/>
+            <line x1="75" y1="191" x2="75" y2="201" stroke="var(--danger)" stroke-width="1"/>
+            <line x1="70" y1="196" x2="80" y2="196" stroke="var(--danger)" stroke-width="1"/>
+          </g>
         </g>
 
         <!-- Threat 3: bomb with a defusal timer -->
@@ -492,6 +517,10 @@
       <span class="legend-item">
         <svg class="legend-icon" viewBox="-9 -12 18 24" width="11" height="14" aria-hidden="true"><polygon points="0,-12 9,-7 9,5 0,12 -9,5 -9,-7" fill="var(--enemy)" stroke="var(--enemy-dark)" stroke-width="1.5"/></svg>
         Garde blindé
+      </span>
+      <span class="legend-item">
+        <svg class="legend-icon" viewBox="-7 -7 14 14" width="11" height="11" aria-hidden="true"><circle cx="0" cy="0" r="6" fill="var(--enemy)" stroke="var(--enemy-dark)" stroke-width="1"/><circle cx="0" cy="0" r="5.2" fill="none" stroke="var(--danger)" stroke-width="1.3"/></svg>
+        Tireur d'élite (Shadow exposé)
       </span>
       <span class="legend-item"><span class="legend-swatch legend-hostage"></span>Otage</span>
       <span class="legend-item"><span class="legend-swatch legend-bomb"></span>Bombe</span>
@@ -1523,7 +1552,7 @@
            { doors: ['N', 'E', 'S'], threats: ['T1', 'T2', 'T3'], trap: false },
            { doors: ['N', 'E', 'S'], threats: ['T1', 'T2', 'T3', 'T4'], trap: false },
            { doors: ['N', 'E', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5'], trap: false },
-           { doors: ['N', 'E', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6'], trap: true },
+           { doors: ['N', 'E', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6'], trap: true, sniper: 'T6' },
          ] },
     77: { name: 'Niveau 77 · Baraquement fortifié', sub: 'Expert · Désamorçage — la vitesse compte · 3 points d\'entrée · 6 pièces enchaînées', env: 'arctique', roomShape: 'L',
          briefImg: './brief-arctique.jpg',
@@ -1534,7 +1563,7 @@
            { doors: ['N', 'E', 'S'], threats: ['T1'], trap: false, type: 'bomb' },
            { doors: ['N', 'E', 'S'], threats: ['T1', 'T2', 'T3'], trap: false },
            { doors: ['N', 'E', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5'], trap: false },
-           { doors: ['N', 'E', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6'], trap: true },
+           { doors: ['N', 'E', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6'], trap: true, sniper: 'T6' },
          ] },
     78: { name: 'Niveau 78 · Ligne de ravitaillement', sub: 'Expert · 3 points d\'entrée · Nuit · 6 pièces enchaînées', env: 'urbain', roomShape: 'elongated', night: true,
          briefImg: './brief-hangar.jpg',
@@ -1545,7 +1574,7 @@
            { doors: ['N', 'E', 'S'], threats: ['T1', 'T2', 'T3'], trap: false },
            { doors: ['N', 'E', 'S'], threats: ['T1', 'T2', 'T3', 'T4'], trap: false },
            { doors: ['N', 'E', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5'], trap: false },
-           { doors: ['N', 'E', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6'], trap: true },
+           { doors: ['N', 'E', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6'], trap: true, sniper: 'T6' },
          ] },
     79: { name: 'Niveau 79 · Réserve technique', sub: 'Expert · 3 points d\'entrée · 6 pièces enchaînées', env: 'desert', roomShape: 'hourglass',
          briefImg: './brief-desert.jpg',
@@ -1556,7 +1585,7 @@
            { doors: ['N', 'E', 'S'], threats: ['T1', 'T2', 'T3'], trap: false },
            { doors: ['N', 'E', 'S'], threats: ['T1', 'T2', 'T3', 'T4'], trap: false },
            { doors: ['N', 'E', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5'], trap: false },
-           { doors: ['N', 'E', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6'], trap: true },
+           { doors: ['N', 'E', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6'], trap: true, sniper: 'T6' },
          ] },
     80: { name: 'Niveau 80 · Bunker blindé', sub: 'Expert · Désamorçage — la vitesse compte · 3 points d\'entrée · 6 pièces enchaînées', env: 'jungle', roomShape: 'arch',
          briefImg: './brief-jungle.jpg',
@@ -1567,7 +1596,7 @@
            { doors: ['N', 'E', 'S'], threats: ['T1'], trap: false, type: 'bomb' },
            { doors: ['N', 'E', 'S'], threats: ['T1', 'T2', 'T3'], trap: false },
            { doors: ['N', 'E', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5'], trap: false },
-           { doors: ['N', 'E', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6'], trap: true },
+           { doors: ['N', 'E', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6'], trap: true, sniper: 'T6' },
          ] },
     81: { name: 'Niveau 81 · Nœud de communication', sub: 'Expert · 3 points d\'entrée · 6 pièces enchaînées', env: 'arctique', roomShape: 'cross',
          briefImg: './brief-arctique.jpg',
@@ -1578,7 +1607,7 @@
            { doors: ['N', 'E', 'S'], threats: ['T1', 'T2', 'T3'], trap: false },
            { doors: ['N', 'E', 'S'], threats: ['T1', 'T2', 'T3', 'T4'], trap: false },
            { doors: ['N', 'E', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5'], trap: false },
-           { doors: ['N', 'E', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6'], trap: true },
+           { doors: ['N', 'E', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6'], trap: true, sniper: 'T6' },
          ] },
     82: { name: 'Niveau 82 · Réservoir circulaire', sub: 'Expert · 3 points d\'entrée · 6 pièces enchaînées', env: 'urbain', roomShape: 'ring',
          briefImg: './brief-hangar.jpg',
@@ -1589,7 +1618,7 @@
            { doors: ['N', 'E', 'S'], threats: ['T1', 'T2', 'T3'], trap: false },
            { doors: ['N', 'E', 'S'], threats: ['T1', 'T2', 'T3', 'T4'], trap: false },
            { doors: ['N', 'E', 'S'], threats: ['T1', 'T2', 'T3', 'T4'], trap: false },
-           { doors: ['N', 'E', 'S'], threats: ['T1', 'T2', 'T3', 'T4'], trap: true },
+           { doors: ['N', 'E', 'S'], threats: ['T1', 'T2', 'T3', 'T4'], trap: true, sniper: 'T4' },
          ] },
     83: { name: 'Niveau 83 · Terrain d\'exercice', sub: 'Expert · Désamorçage — la vitesse compte · 3 points d\'entrée · 6 pièces enchaînées', env: 'desert', roomShape: 'courtyard',
          briefImg: './brief-desert.jpg',
@@ -1600,7 +1629,7 @@
            { doors: ['N', 'E', 'S'], threats: ['T1'], trap: false, type: 'bomb' },
            { doors: ['N', 'E', 'S'], threats: ['T1', 'T2', 'T3'], trap: false },
            { doors: ['N', 'E', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5'], trap: false },
-           { doors: ['N', 'E', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6'], trap: true },
+           { doors: ['N', 'E', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6'], trap: true, sniper: 'T6' },
          ] },
     84: { name: 'Niveau 84 · Salle des serveurs', sub: 'Expert · 3 points d\'entrée · Nuit · 6 pièces enchaînées', env: 'jungle', roomShape: 'invertedT', night: true,
          briefImg: './brief-jungle.jpg',
@@ -1611,7 +1640,7 @@
            { doors: ['N', 'E', 'S'], threats: ['T1', 'T2', 'T3'], trap: false },
            { doors: ['N', 'E', 'S'], threats: ['T1', 'T2', 'T3', 'T4'], trap: false },
            { doors: ['N', 'E', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5'], trap: false },
-           { doors: ['N', 'E', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6'], trap: true },
+           { doors: ['N', 'E', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6'], trap: true, sniper: 'T6' },
          ] },
     85: { name: 'Niveau 85 · Bloc résidentiel excentré', sub: 'Expert · 3 points d\'entrée · 6 pièces enchaînées', env: 'arctique', roomShape: 'zshape',
          briefImg: './brief-arctique.jpg',
@@ -1622,7 +1651,7 @@
            { doors: ['N', 'E', 'S'], threats: ['T1', 'T2', 'T3'], trap: false },
            { doors: ['N', 'E', 'S'], threats: ['T1', 'T2', 'T3', 'T4'], trap: false },
            { doors: ['N', 'E', 'S'], threats: ['T1', 'T2', 'T3', 'T4'], trap: false },
-           { doors: ['N', 'E', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T6'], trap: true },
+           { doors: ['N', 'E', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T6'], trap: true, sniper: 'T6' },
          ] },
     86: { name: 'Niveau 86 · Zone de confinement', sub: 'Expert · Désamorçage — la vitesse compte · 3 points d\'entrée · 6 pièces enchaînées', env: 'urbain', roomShape: 'square',
          briefImg: './brief-station.jpg',
@@ -1633,7 +1662,7 @@
            { doors: ['N', 'E', 'S'], threats: ['T1'], trap: false, type: 'bomb' },
            { doors: ['N', 'E', 'S'], threats: ['T1', 'T2', 'T3'], trap: false },
            { doors: ['N', 'E', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5'], trap: false },
-           { doors: ['N', 'E', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6'], trap: true },
+           { doors: ['N', 'E', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6'], trap: true, sniper: 'T6' },
          ] },
     87: { name: 'Niveau 87 · Baraquement fortifié', sub: 'Expert · 3 points d\'entrée · 6 pièces enchaînées', env: 'desert', roomShape: 'L',
          briefImg: './brief-desert.jpg',
@@ -1644,7 +1673,7 @@
            { doors: ['N', 'E', 'S'], threats: ['T1', 'T2', 'T3'], trap: false },
            { doors: ['N', 'E', 'S'], threats: ['T1', 'T2', 'T3', 'T4'], trap: false },
            { doors: ['N', 'E', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5'], trap: false },
-           { doors: ['N', 'E', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6'], trap: true },
+           { doors: ['N', 'E', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6'], trap: true, sniper: 'T6' },
          ] },
     88: { name: 'Niveau 88 · Ligne de ravitaillement', sub: 'Expert · 3 points d\'entrée · 6 pièces enchaînées', env: 'jungle', roomShape: 'elongated',
          briefImg: './brief-jungle.jpg',
@@ -1655,7 +1684,7 @@
            { doors: ['N', 'E', 'S'], threats: ['T1', 'T2', 'T3'], trap: false },
            { doors: ['N', 'E', 'S'], threats: ['T1', 'T2', 'T3', 'T4'], trap: false },
            { doors: ['N', 'E', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5'], trap: false },
-           { doors: ['N', 'E', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6'], trap: true },
+           { doors: ['N', 'E', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6'], trap: true, sniper: 'T6' },
          ] },
     89: { name: 'Niveau 89 · Réserve technique', sub: 'Expert · Désamorçage — la vitesse compte · 3 points d\'entrée · 6 pièces enchaînées', env: 'arctique', roomShape: 'hourglass',
          briefImg: './brief-arctique.jpg',
@@ -1666,7 +1695,7 @@
            { doors: ['N', 'E', 'S'], threats: ['T1'], trap: false, type: 'bomb' },
            { doors: ['N', 'E', 'S'], threats: ['T1', 'T2', 'T3'], trap: false },
            { doors: ['N', 'E', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5'], trap: false },
-           { doors: ['N', 'E', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6'], trap: true },
+           { doors: ['N', 'E', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6'], trap: true, sniper: 'T6' },
          ] },
     90: { name: 'Niveau 90 · Bunker blindé', sub: 'Expert · 3 points d\'entrée · Nuit · 6 pièces enchaînées', env: 'urbain', roomShape: 'arch', night: true,
          briefImg: './brief-station.jpg',
@@ -1677,7 +1706,7 @@
            { doors: ['N', 'E', 'S'], threats: ['T1', 'T2', 'T3'], trap: false },
            { doors: ['N', 'E', 'S'], threats: ['T1', 'T2', 'T3', 'T4'], trap: false },
            { doors: ['N', 'E', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5'], trap: false },
-           { doors: ['N', 'E', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6'], trap: true },
+           { doors: ['N', 'E', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6'], trap: true, sniper: 'T6' },
          ] },
     91: { name: 'Niveau 91 · Nœud de communication', sub: 'Expert · 3 points d\'entrée · 6 pièces enchaînées', env: 'desert', roomShape: 'cross',
          briefImg: './brief-desert.jpg',
@@ -1688,7 +1717,7 @@
            { doors: ['N', 'E', 'S'], threats: ['T1', 'T2', 'T3'], trap: false },
            { doors: ['N', 'E', 'S'], threats: ['T1', 'T2', 'T3', 'T4'], trap: false },
            { doors: ['N', 'E', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5'], trap: false },
-           { doors: ['N', 'E', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6'], trap: true },
+           { doors: ['N', 'E', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6'], trap: true, sniper: 'T6' },
          ] },
     92: { name: 'Niveau 92 · Réservoir circulaire', sub: 'Expert · Désamorçage — la vitesse compte · 3 points d\'entrée · 6 pièces enchaînées', env: 'jungle', roomShape: 'ring',
          briefImg: './brief-jungle.jpg',
@@ -1699,7 +1728,7 @@
            { doors: ['N', 'E', 'S'], threats: ['T1'], trap: false, type: 'bomb' },
            { doors: ['N', 'E', 'S'], threats: ['T1', 'T2', 'T3'], trap: false },
            { doors: ['N', 'E', 'S'], threats: ['T1', 'T2', 'T3', 'T4'], trap: false },
-           { doors: ['N', 'E', 'S'], threats: ['T1', 'T2', 'T3', 'T4'], trap: true },
+           { doors: ['N', 'E', 'S'], threats: ['T1', 'T2', 'T3', 'T4'], trap: true, sniper: 'T4' },
          ] },
     93: { name: 'Niveau 93 · Terrain d\'exercice', sub: 'Expert · 3 points d\'entrée · 6 pièces enchaînées', env: 'arctique', roomShape: 'courtyard',
          briefImg: './brief-arctique.jpg',
@@ -1710,7 +1739,7 @@
            { doors: ['N', 'E', 'S'], threats: ['T1', 'T2', 'T3'], trap: false },
            { doors: ['N', 'E', 'S'], threats: ['T1', 'T2', 'T3', 'T4'], trap: false },
            { doors: ['N', 'E', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5'], trap: false },
-           { doors: ['N', 'E', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6'], trap: true },
+           { doors: ['N', 'E', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6'], trap: true, sniper: 'T6' },
          ] },
     94: { name: 'Niveau 94 · Salle des serveurs', sub: 'Expert · 3 points d\'entrée · 6 pièces enchaînées', env: 'urbain', roomShape: 'invertedT',
          briefImg: './brief-station.jpg',
@@ -1721,7 +1750,7 @@
            { doors: ['N', 'E', 'S'], threats: ['T1', 'T2', 'T3'], trap: false },
            { doors: ['N', 'E', 'S'], threats: ['T1', 'T2', 'T3', 'T4'], trap: false },
            { doors: ['N', 'E', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5'], trap: false },
-           { doors: ['N', 'E', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6'], trap: true },
+           { doors: ['N', 'E', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6'], trap: true, sniper: 'T6' },
          ] },
     95: { name: 'Niveau 95 · Bloc résidentiel excentré', sub: 'Expert · Désamorçage — la vitesse compte · 3 points d\'entrée · 6 pièces enchaînées', env: 'desert', roomShape: 'zshape',
          briefImg: './brief-desert.jpg',
@@ -1732,7 +1761,7 @@
            { doors: ['N', 'E', 'S'], threats: ['T1'], trap: false, type: 'bomb' },
            { doors: ['N', 'E', 'S'], threats: ['T1', 'T2', 'T3'], trap: false },
            { doors: ['N', 'E', 'S'], threats: ['T1', 'T2', 'T3', 'T4'], trap: false },
-           { doors: ['N', 'E', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T6'], trap: true },
+           { doors: ['N', 'E', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T6'], trap: true, sniper: 'T6' },
          ] },
     96: { name: 'Niveau 96 · Zone de confinement', sub: 'Expert · 3 points d\'entrée · Nuit · 6 pièces enchaînées', env: 'jungle', roomShape: 'square', night: true,
          briefImg: './brief-jungle.jpg',
@@ -1743,7 +1772,7 @@
            { doors: ['N', 'E', 'S'], threats: ['T1', 'T2', 'T3'], trap: false },
            { doors: ['N', 'E', 'S'], threats: ['T1', 'T2', 'T3', 'T4'], trap: false },
            { doors: ['N', 'E', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5'], trap: false },
-           { doors: ['N', 'E', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6'], trap: true },
+           { doors: ['N', 'E', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6'], trap: true, sniper: 'T6' },
          ] },
     97: { name: 'Niveau 97 · Baraquement fortifié', sub: 'Expert · 3 points d\'entrée · 6 pièces enchaînées', env: 'arctique', roomShape: 'L',
          briefImg: './brief-arctique.jpg',
@@ -1754,7 +1783,7 @@
            { doors: ['N', 'E', 'S'], threats: ['T1', 'T2', 'T3'], trap: false },
            { doors: ['N', 'E', 'S'], threats: ['T1', 'T2', 'T3', 'T4'], trap: false },
            { doors: ['N', 'E', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5'], trap: false },
-           { doors: ['N', 'E', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6'], trap: true },
+           { doors: ['N', 'E', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6'], trap: true, sniper: 'T6' },
          ] },
     98: { name: 'Niveau 98 · Ligne de ravitaillement', sub: 'Expert · Désamorçage — la vitesse compte · 3 points d\'entrée · 6 pièces enchaînées', env: 'urbain', roomShape: 'elongated',
          briefImg: './brief-hotel.jpg',
@@ -1765,7 +1794,7 @@
            { doors: ['N', 'E', 'S'], threats: ['T1'], trap: false, type: 'bomb' },
            { doors: ['N', 'E', 'S'], threats: ['T1', 'T2', 'T3'], trap: false },
            { doors: ['N', 'E', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5'], trap: false },
-           { doors: ['N', 'E', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6'], trap: true },
+           { doors: ['N', 'E', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6'], trap: true, sniper: 'T6' },
          ] },
     99: { name: 'Niveau 99 · Réserve technique', sub: 'Expert · 3 points d\'entrée · 6 pièces enchaînées', env: 'desert', roomShape: 'hourglass',
          briefImg: './brief-desert.jpg',
@@ -1776,7 +1805,7 @@
            { doors: ['N', 'E', 'S'], threats: ['T1', 'T2', 'T3'], trap: false },
            { doors: ['N', 'E', 'S'], threats: ['T1', 'T2', 'T3', 'T4'], trap: false },
            { doors: ['N', 'E', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5'], trap: false },
-           { doors: ['N', 'E', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6'], trap: true },
+           { doors: ['N', 'E', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6'], trap: true, sniper: 'T6' },
          ] },
     100: { name: 'Niveau 100 · Bunker blindé', sub: 'Expert · 3 points d\'entrée · Nuit · 6 pièces enchaînées', env: 'jungle', roomShape: 'arch', night: true,
          briefImg: './brief-jungle.jpg',
@@ -1787,7 +1816,7 @@
            { doors: ['N', 'E', 'S'], threats: ['T1', 'T2', 'T3'], trap: false },
            { doors: ['N', 'E', 'S'], threats: ['T1', 'T2', 'T3', 'T4'], trap: false },
            { doors: ['N', 'E', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5'], trap: false },
-           { doors: ['N', 'E', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6'], trap: true },
+           { doors: ['N', 'E', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6'], trap: true, sniper: 'T6' },
          ] },
     101: { name: 'Niveau 101 · Nœud de communication', sub: 'Vétéran · 2 points d\'entrée · 5 pièces enchaînées', env: 'arctique', roomShape: 'cross',
          briefImg: './brief-arctique.jpg',
@@ -1797,7 +1826,7 @@
            { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3'], trap: true },
            { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4'], trap: false },
            { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5'], trap: false },
-           { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6'], trap: true },
+           { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6'], trap: true, sniper: 'T6' },
          ] },
     102: { name: 'Niveau 102 · Réservoir circulaire', sub: 'Vétéran · 2 points d\'entrée · 5 pièces enchaînées', env: 'urbain', roomShape: 'ring',
          briefImg: './brief-hangar.jpg',
@@ -1807,7 +1836,7 @@
            { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3'], trap: true },
            { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4'], trap: false },
            { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4'], trap: false },
-           { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4'], trap: true },
+           { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4'], trap: true, sniper: 'T4' },
          ] },
     103: { name: 'Niveau 103 · Terrain d\'exercice', sub: 'Vétéran · 2 points d\'entrée · Nuit · 5 pièces enchaînées', env: 'desert', roomShape: 'courtyard', night: true,
          briefImg: './brief-desert.jpg',
@@ -1817,7 +1846,7 @@
            { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3'], trap: true },
            { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4'], trap: false },
            { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5'], trap: false },
-           { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6'], trap: true },
+           { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6'], trap: true, sniper: 'T6' },
          ] },
     104: { name: 'Niveau 104 · Salle des serveurs', sub: 'Vétéran · 2 points d\'entrée · 5 pièces enchaînées', env: 'jungle', roomShape: 'invertedT',
          briefImg: './brief-jungle.jpg',
@@ -1827,7 +1856,7 @@
            { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3'], trap: true },
            { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4'], trap: false },
            { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5'], trap: false },
-           { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6'], trap: true },
+           { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6'], trap: true, sniper: 'T6' },
          ] },
     105: { name: 'Niveau 105 · Bloc résidentiel excentré', sub: 'Vétéran · 2 points d\'entrée · 5 pièces enchaînées', env: 'arctique', roomShape: 'zshape',
          briefImg: './brief-arctique.jpg',
@@ -1837,7 +1866,7 @@
            { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3'], trap: true },
            { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4'], trap: false },
            { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T6'], trap: false },
-           { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T6'], trap: true },
+           { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T6'], trap: true, sniper: 'T6' },
          ] },
     106: { name: 'Niveau 106 · Zone de confinement', sub: 'Vétéran · 2 points d\'entrée · 5 pièces enchaînées', env: 'urbain', roomShape: 'square',
          briefImg: './brief-hangar.jpg',
@@ -1847,7 +1876,7 @@
            { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3'], trap: true },
            { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4'], trap: false },
            { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5'], trap: false },
-           { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6'], trap: true },
+           { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6'], trap: true, sniper: 'T6' },
          ] },
     107: { name: 'Niveau 107 · Baraquement fortifié', sub: 'Vétéran · 2 points d\'entrée · 5 pièces enchaînées', env: 'desert', roomShape: 'L',
          briefImg: './brief-desert.jpg',
@@ -1857,7 +1886,7 @@
            { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3'], trap: true },
            { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4'], trap: false },
            { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5'], trap: false },
-           { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6'], trap: true },
+           { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6'], trap: true, sniper: 'T6' },
          ] },
     108: { name: 'Niveau 108 · Ligne de ravitaillement', sub: 'Vétéran · 2 points d\'entrée · Nuit · 5 pièces enchaînées', env: 'jungle', roomShape: 'elongated', night: true,
          briefImg: './brief-jungle.jpg',
@@ -1867,7 +1896,7 @@
            { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3'], trap: true },
            { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4'], trap: false },
            { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5'], trap: false },
-           { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6'], trap: true },
+           { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6'], trap: true, sniper: 'T6' },
          ] },
     109: { name: 'Niveau 109 · Réserve technique', sub: 'Vétéran · 2 points d\'entrée · 5 pièces enchaînées', env: 'arctique', roomShape: 'hourglass',
          briefImg: './brief-arctique.jpg',
@@ -1877,7 +1906,7 @@
            { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3'], trap: true },
            { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4'], trap: false },
            { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5'], trap: false },
-           { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6'], trap: true },
+           { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6'], trap: true, sniper: 'T6' },
          ] },
     110: { name: 'Niveau 110 · Bunker blindé', sub: 'Vétéran · 2 points d\'entrée · 5 pièces enchaînées', env: 'urbain', roomShape: 'arch',
          briefImg: './brief-hangar.jpg',
@@ -1887,7 +1916,7 @@
            { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3'], trap: true },
            { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4'], trap: false },
            { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5'], trap: false },
-           { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6'], trap: true },
+           { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6'], trap: true, sniper: 'T6' },
          ] },
     111: { name: 'Niveau 111 · Nœud de communication', sub: 'Vétéran · 2 points d\'entrée · 5 pièces enchaînées', env: 'desert', roomShape: 'cross',
          briefImg: './brief-desert.jpg',
@@ -1897,7 +1926,7 @@
            { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3'], trap: true },
            { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4'], trap: false },
            { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5'], trap: false },
-           { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6'], trap: true },
+           { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6'], trap: true, sniper: 'T6' },
          ] },
     112: { name: 'Niveau 112 · Réservoir circulaire', sub: 'Vétéran · 2 points d\'entrée · 5 pièces enchaînées', env: 'jungle', roomShape: 'ring',
          briefImg: './brief-jungle.jpg',
@@ -1907,7 +1936,7 @@
            { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3'], trap: true },
            { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4'], trap: false },
            { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4'], trap: false },
-           { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4'], trap: true },
+           { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4'], trap: true, sniper: 'T4' },
          ] },
     113: { name: 'Niveau 113 · Terrain d\'exercice', sub: 'Vétéran · 2 points d\'entrée · Nuit · 5 pièces enchaînées', env: 'arctique', roomShape: 'courtyard', night: true,
          briefImg: './brief-arctique.jpg',
@@ -1917,7 +1946,7 @@
            { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3'], trap: true },
            { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4'], trap: false },
            { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5'], trap: false },
-           { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6'], trap: true },
+           { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6'], trap: true, sniper: 'T6' },
          ] },
     114: { name: 'Niveau 114 · Salle des serveurs', sub: 'Vétéran · 2 points d\'entrée · 5 pièces enchaînées', env: 'urbain', roomShape: 'invertedT',
          briefImg: './brief-station.jpg',
@@ -1927,7 +1956,7 @@
            { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3'], trap: true },
            { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4'], trap: false },
            { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5'], trap: false },
-           { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6'], trap: true },
+           { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6'], trap: true, sniper: 'T6' },
          ] },
     115: { name: 'Niveau 115 · Bloc résidentiel excentré', sub: 'Vétéran · 2 points d\'entrée · 5 pièces enchaînées', env: 'desert', roomShape: 'zshape',
          briefImg: './brief-desert.jpg',
@@ -1937,7 +1966,7 @@
            { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3'], trap: true },
            { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4'], trap: false },
            { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T6'], trap: false },
-           { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T6'], trap: true },
+           { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T6'], trap: true, sniper: 'T6' },
          ] },
     116: { name: 'Niveau 116 · Zone de confinement', sub: 'Vétéran · 2 points d\'entrée · 5 pièces enchaînées', env: 'jungle', roomShape: 'square',
          briefImg: './brief-jungle.jpg',
@@ -1947,7 +1976,7 @@
            { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3'], trap: true },
            { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4'], trap: false },
            { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5'], trap: false },
-           { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6'], trap: true },
+           { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6'], trap: true, sniper: 'T6' },
          ] },
     117: { name: 'Niveau 117 · Baraquement fortifié', sub: 'Vétéran · 2 points d\'entrée · 5 pièces enchaînées', env: 'arctique', roomShape: 'L',
          briefImg: './brief-arctique.jpg',
@@ -1957,7 +1986,7 @@
            { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3'], trap: true },
            { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4'], trap: false },
            { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5'], trap: false },
-           { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6'], trap: true },
+           { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6'], trap: true, sniper: 'T6' },
          ] },
     118: { name: 'Niveau 118 · Ligne de ravitaillement', sub: 'Vétéran · 2 points d\'entrée · Nuit · 5 pièces enchaînées', env: 'urbain', roomShape: 'elongated', night: true,
          briefImg: './brief-station.jpg',
@@ -1967,7 +1996,7 @@
            { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3'], trap: true },
            { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4'], trap: false },
            { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5'], trap: false },
-           { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6'], trap: true },
+           { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6'], trap: true, sniper: 'T6' },
          ] },
     119: { name: 'Niveau 119 · Réserve technique', sub: 'Vétéran · 2 points d\'entrée · 5 pièces enchaînées', env: 'desert', roomShape: 'hourglass',
          briefImg: './brief-desert.jpg',
@@ -1977,7 +2006,7 @@
            { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3'], trap: true },
            { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4'], trap: false },
            { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5'], trap: false },
-           { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6'], trap: true },
+           { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6'], trap: true, sniper: 'T6' },
          ] },
     120: { name: 'Niveau 120 · Bunker blindé', sub: 'Vétéran · 2 points d\'entrée · 5 pièces enchaînées', env: 'jungle', roomShape: 'arch',
          briefImg: './brief-jungle.jpg',
@@ -1987,7 +2016,7 @@
            { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3'], trap: true },
            { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4'], trap: false },
            { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5'], trap: false },
-           { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6'], trap: true },
+           { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6'], trap: true, sniper: 'T6' },
          ] },
     121: { name: 'Niveau 121 · Nœud de communication', sub: 'Vétéran · 2 points d\'entrée · 5 pièces enchaînées', env: 'arctique', roomShape: 'cross',
          briefImg: './brief-arctique.jpg',
@@ -1997,7 +2026,7 @@
            { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3'], trap: true },
            { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4'], trap: false },
            { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5'], trap: false },
-           { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6'], trap: true },
+           { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6'], trap: true, sniper: 'T6' },
          ] },
     122: { name: 'Niveau 122 · Réservoir circulaire', sub: 'Vétéran · 2 points d\'entrée · 5 pièces enchaînées', env: 'urbain', roomShape: 'ring',
          briefImg: './brief-hotel.jpg',
@@ -2007,7 +2036,7 @@
            { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3'], trap: true },
            { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4'], trap: false },
            { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4'], trap: false },
-           { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4'], trap: true },
+           { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4'], trap: true, sniper: 'T4' },
          ] },
     123: { name: 'Niveau 123 · Terrain d\'exercice', sub: 'Vétéran · 2 points d\'entrée · Nuit · 5 pièces enchaînées', env: 'desert', roomShape: 'courtyard', night: true,
          briefImg: './brief-desert.jpg',
@@ -2017,7 +2046,7 @@
            { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3'], trap: true },
            { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4'], trap: false },
            { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5'], trap: false },
-           { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6'], trap: true },
+           { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6'], trap: true, sniper: 'T6' },
          ] },
     124: { name: 'Niveau 124 · Salle des serveurs', sub: 'Vétéran · 2 points d\'entrée · 5 pièces enchaînées', env: 'jungle', roomShape: 'invertedT',
          briefImg: './brief-jungle.jpg',
@@ -2027,7 +2056,7 @@
            { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3'], trap: true },
            { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4'], trap: false },
            { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5'], trap: false },
-           { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6'], trap: true },
+           { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6'], trap: true, sniper: 'T6' },
          ] },
     125: { name: 'Niveau 125 · Bloc résidentiel excentré', sub: 'Vétéran · 2 points d\'entrée · 5 pièces enchaînées', env: 'arctique', roomShape: 'zshape',
          briefImg: './brief-arctique.jpg',
@@ -2037,7 +2066,7 @@
            { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3'], trap: true },
            { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4'], trap: false },
            { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T6'], trap: false },
-           { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T6'], trap: true },
+           { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T6'], trap: true, sniper: 'T6' },
          ] },
     126: { name: 'Niveau 126 · Zone de confinement', sub: 'Confrontation finale · 2 points d\'entrée · 6 pièces enchaînées', env: 'urbain', roomShape: 'square',
          briefImg: './brief-hangar.jpg',
@@ -2048,7 +2077,7 @@
            { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5'], trap: false },
            { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6'], trap: false },
            { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6'], trap: false },
-           { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6'], trap: true },
+           { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6'], trap: true, sniper: 'T6' },
          ] },
     127: { name: 'Niveau 127 · Baraquement fortifié', sub: 'Confrontation finale · Désamorçage — la vitesse compte · 2 points d\'entrée · Nuit · 6 pièces enchaînées', env: 'desert', roomShape: 'L', night: true,
          briefImg: './brief-desert.jpg',
@@ -2059,7 +2088,7 @@
            { doors: ['N', 'S'], threats: ['T1'], trap: false, type: 'bomb' },
            { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6'], trap: false },
            { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6'], trap: false },
-           { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6'], trap: true },
+           { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6'], trap: true, sniper: 'T6' },
          ] },
     128: { name: 'Niveau 128 · Ligne de ravitaillement', sub: 'Confrontation finale · 2 points d\'entrée · 6 pièces enchaînées', env: 'jungle', roomShape: 'elongated',
          briefImg: './brief-jungle.jpg',
@@ -2070,7 +2099,7 @@
            { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5'], trap: false },
            { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6'], trap: false },
            { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6'], trap: false },
-           { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6'], trap: true },
+           { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6'], trap: true, sniper: 'T6' },
          ] },
     129: { name: 'Niveau 129 · Réserve technique', sub: 'Confrontation finale · 2 points d\'entrée · 6 pièces enchaînées', env: 'arctique', roomShape: 'hourglass',
          briefImg: './brief-arctique.jpg',
@@ -2081,7 +2110,7 @@
            { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5'], trap: false },
            { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6'], trap: false },
            { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6'], trap: false },
-           { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6'], trap: true },
+           { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6'], trap: true, sniper: 'T6' },
          ] },
     130: { name: 'Niveau 130 · Bunker blindé', sub: 'Confrontation finale · Désamorçage — la vitesse compte · 2 points d\'entrée · Nuit · 6 pièces enchaînées', env: 'urbain', roomShape: 'arch', night: true,
          briefImg: './brief-hangar.jpg',
@@ -2092,7 +2121,7 @@
            { doors: ['N', 'S'], threats: ['T1'], trap: false, type: 'bomb' },
            { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6'], trap: false },
            { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6'], trap: false },
-           { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6'], trap: true },
+           { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6'], trap: true, sniper: 'T6' },
          ] },
     131: { name: 'Niveau 131 · Nœud de communication', sub: 'Confrontation finale · 2 points d\'entrée · 6 pièces enchaînées', env: 'desert', roomShape: 'cross',
          briefImg: './brief-desert.jpg',
@@ -2103,7 +2132,7 @@
            { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5'], trap: false },
            { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6'], trap: false },
            { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6'], trap: false },
-           { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6'], trap: true },
+           { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6'], trap: true, sniper: 'T6' },
          ] },
     132: { name: 'Niveau 132 · Réservoir circulaire', sub: 'Confrontation finale · 2 points d\'entrée · 6 pièces enchaînées', env: 'jungle', roomShape: 'ring',
          briefImg: './brief-jungle.jpg',
@@ -2114,7 +2143,7 @@
            { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4'], trap: false },
            { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4'], trap: false },
            { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4'], trap: false },
-           { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4'], trap: true },
+           { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4'], trap: true, sniper: 'T4' },
          ] },
     133: { name: 'Niveau 133 · Terrain d\'exercice', sub: 'Confrontation finale · Désamorçage — la vitesse compte · 2 points d\'entrée · Nuit · 6 pièces enchaînées', env: 'arctique', roomShape: 'courtyard', night: true,
          briefImg: './brief-arctique.jpg',
@@ -2125,7 +2154,7 @@
            { doors: ['N', 'S'], threats: ['T1'], trap: false, type: 'bomb' },
            { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6'], trap: false },
            { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6'], trap: false },
-           { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6'], trap: true },
+           { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6'], trap: true, sniper: 'T6' },
          ] },
     134: { name: 'Niveau 134 · Salle des serveurs', sub: 'Confrontation finale · 2 points d\'entrée · 6 pièces enchaînées', env: 'urbain', roomShape: 'invertedT',
          briefImg: './brief-hangar.jpg',
@@ -2136,7 +2165,7 @@
            { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5'], trap: false },
            { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6'], trap: false },
            { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6'], trap: false },
-           { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6'], trap: true },
+           { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6'], trap: true, sniper: 'T6' },
          ] },
     135: { name: 'Niveau 135 · Bloc résidentiel excentré', sub: 'Confrontation finale · 2 points d\'entrée · 6 pièces enchaînées', env: 'desert', roomShape: 'zshape',
          briefImg: './brief-desert.jpg',
@@ -2147,7 +2176,7 @@
            { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4'], trap: false },
            { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T6'], trap: false },
            { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T6'], trap: false },
-           { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T6'], trap: true },
+           { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T6'], trap: true, sniper: 'T6' },
          ] },
     136: { name: 'Niveau 136 · Zone de confinement', sub: 'Confrontation finale · Désamorçage — la vitesse compte · 2 points d\'entrée · Nuit · 6 pièces enchaînées', env: 'jungle', roomShape: 'square', night: true,
          briefImg: './brief-jungle.jpg',
@@ -2158,7 +2187,7 @@
            { doors: ['N', 'S'], threats: ['T1'], trap: false, type: 'bomb' },
            { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6'], trap: false },
            { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6'], trap: false },
-           { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6'], trap: true },
+           { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6'], trap: true, sniper: 'T6' },
          ] },
     137: { name: 'Niveau 137 · Baraquement fortifié', sub: 'Confrontation finale · 2 points d\'entrée · 6 pièces enchaînées', env: 'arctique', roomShape: 'L',
          briefImg: './brief-arctique.jpg',
@@ -2169,7 +2198,7 @@
            { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5'], trap: false },
            { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6'], trap: false },
            { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6'], trap: false },
-           { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6'], trap: true },
+           { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6'], trap: true, sniper: 'T6' },
          ] },
     138: { name: 'Niveau 138 · Ligne de ravitaillement', sub: 'Confrontation finale · 2 points d\'entrée · 6 pièces enchaînées', env: 'urbain', roomShape: 'elongated',
          briefImg: './brief-station.jpg',
@@ -2180,7 +2209,7 @@
            { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5'], trap: false },
            { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6'], trap: false },
            { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6'], trap: false },
-           { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6'], trap: true },
+           { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6'], trap: true, sniper: 'T6' },
          ] },
     139: { name: 'Niveau 139 · Réserve technique', sub: 'Confrontation finale · Désamorçage — la vitesse compte · 2 points d\'entrée · Nuit · 6 pièces enchaînées', env: 'desert', roomShape: 'hourglass', night: true,
          briefImg: './brief-desert.jpg',
@@ -2191,7 +2220,7 @@
            { doors: ['N', 'S'], threats: ['T1'], trap: false, type: 'bomb' },
            { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6'], trap: false },
            { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6'], trap: false },
-           { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6'], trap: true },
+           { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6'], trap: true, sniper: 'T6' },
          ] },
     140: { name: 'Niveau 140 · Bunker blindé', sub: 'Confrontation finale · 2 points d\'entrée · 6 pièces enchaînées', env: 'jungle', roomShape: 'arch',
          briefImg: './brief-jungle.jpg',
@@ -2202,7 +2231,7 @@
            { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5'], trap: false },
            { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6'], trap: false },
            { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6'], trap: false },
-           { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6'], trap: true },
+           { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6'], trap: true, sniper: 'T6' },
          ] },
     141: { name: 'Niveau 141 · Nœud de communication', sub: 'Confrontation finale · 2 points d\'entrée · Nuit · 6 pièces enchaînées', env: 'arctique', roomShape: 'cross', night: true,
          briefImg: './brief-arctique.jpg',
@@ -2213,7 +2242,7 @@
            { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5'], trap: false },
            { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6'], trap: false },
            { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6'], trap: false },
-           { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6'], trap: true },
+           { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6'], trap: true, sniper: 'T6' },
          ] },
     142: { name: 'Niveau 142 · Réservoir circulaire', sub: 'Confrontation finale · Désamorçage — la vitesse compte · 2 points d\'entrée · 6 pièces enchaînées', env: 'urbain', roomShape: 'ring',
          briefImg: './brief-station.jpg',
@@ -2224,7 +2253,7 @@
            { doors: ['N', 'S'], threats: ['T1'], trap: false, type: 'bomb' },
            { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4'], trap: false },
            { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4'], trap: false },
-           { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4'], trap: true },
+           { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4'], trap: true, sniper: 'T4' },
          ] },
     143: { name: 'Niveau 143 · Terrain d\'exercice', sub: 'Confrontation finale · 2 points d\'entrée · 6 pièces enchaînées', env: 'desert', roomShape: 'courtyard',
          briefImg: './brief-desert.jpg',
@@ -2235,7 +2264,7 @@
            { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5'], trap: false },
            { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6'], trap: false },
            { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6'], trap: false },
-           { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6'], trap: true },
+           { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6'], trap: true, sniper: 'T6' },
          ] },
     144: { name: 'Niveau 144 · Salle des serveurs', sub: 'Confrontation finale · 2 points d\'entrée · Nuit · 6 pièces enchaînées', env: 'jungle', roomShape: 'invertedT', night: true,
          briefImg: './brief-jungle.jpg',
@@ -2246,7 +2275,7 @@
            { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5'], trap: false },
            { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6'], trap: false },
            { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6'], trap: false },
-           { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6'], trap: true },
+           { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6'], trap: true, sniper: 'T6' },
          ] },
     145: { name: 'Niveau 145 · Bloc résidentiel excentré', sub: 'Confrontation finale · Désamorçage — la vitesse compte · 2 points d\'entrée · 6 pièces enchaînées', env: 'arctique', roomShape: 'zshape',
          briefImg: './brief-arctique.jpg',
@@ -2257,7 +2286,7 @@
            { doors: ['N', 'S'], threats: ['T1'], trap: false, type: 'bomb' },
            { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T6'], trap: false },
            { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T6'], trap: false },
-           { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T6'], trap: true },
+           { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T6'], trap: true, sniper: 'T6' },
          ] },
     146: { name: 'Niveau 146 · Zone de confinement', sub: 'Confrontation finale · 2 points d\'entrée · Nuit · 6 pièces enchaînées', env: 'urbain', roomShape: 'square', night: true,
          briefImg: './brief-hotel.jpg',
@@ -2268,7 +2297,7 @@
            { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5'], trap: false },
            { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6'], trap: false },
            { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6'], trap: false },
-           { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6'], trap: true },
+           { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6'], trap: true, sniper: 'T6' },
          ] },
     147: { name: 'Niveau 147 · Baraquement fortifié', sub: 'Confrontation finale · 2 points d\'entrée · 6 pièces enchaînées', env: 'desert', roomShape: 'L',
          briefImg: './brief-desert.jpg',
@@ -2279,7 +2308,7 @@
            { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5'], trap: false },
            { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6'], trap: false },
            { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6'], trap: false },
-           { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6'], trap: true },
+           { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6'], trap: true, sniper: 'T6' },
          ] },
     148: { name: 'Niveau 148 · Ligne de ravitaillement', sub: 'Confrontation finale · Désamorçage — la vitesse compte · 2 points d\'entrée · Nuit · 6 pièces enchaînées', env: 'jungle', roomShape: 'elongated', night: true,
          briefImg: './brief-jungle.jpg',
@@ -2290,7 +2319,7 @@
            { doors: ['N', 'S'], threats: ['T1'], trap: false, type: 'bomb' },
            { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6'], trap: false },
            { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6'], trap: false },
-           { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6'], trap: true },
+           { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6'], trap: true, sniper: 'T6' },
          ] },
     149: { name: 'Niveau 149 · Réserve technique', sub: 'Confrontation finale · 2 points d\'entrée · 6 pièces enchaînées', env: 'arctique', roomShape: 'hourglass',
          briefImg: './brief-arctique.jpg',
@@ -2301,7 +2330,7 @@
            { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5'], trap: false },
            { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6'], trap: false },
            { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6'], trap: false },
-           { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6'], trap: true },
+           { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6'], trap: true, sniper: 'T6' },
          ] },
     150: { name: 'Niveau 150 · Siège de Combine Ashgard', sub: 'Confrontation finale · 2 points d\'entrée · Nuit · 6 pièces enchaînées', env: 'urbain', roomShape: 'cross', night: true,
          briefImg: './brief-hangar.jpg',
@@ -2312,7 +2341,7 @@
            { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5'], trap: false },
            { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6'], trap: false },
            { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6'], trap: false },
-           { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6'], trap: true },
+           { doors: ['N', 'S'], threats: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6'], trap: true, sniper: 'T6' },
          ] },
   };
   const BOMB_THRESHOLD_MS = 1750; // fastest assigned operator must arrive within this
@@ -2347,6 +2376,12 @@
     document.getElementById('t5-g').style.display = (!isBomb && room.threats.includes('T5')) ? '' : 'none';
     document.getElementById('t6-g').style.display = (!isBomb && room.threats.includes('T6')) ? '' : 'none';
     document.getElementById('bomb-g').style.display = isBomb ? '' : 'none';
+    // Tireur d'élite : viseur affiché uniquement sur la menace désignée par
+    // room.sniper (jamais T2, protégé par sa propre mécanique de bouclier).
+    ['T1', 'T3', 'T4', 'T5', 'T6'].forEach(id => {
+      const mark = document.getElementById(id.toLowerCase() + '-g').querySelector('.sniper-mark');
+      if (mark) mark.style.display = (!isBomb && room.sniper === id) ? '' : 'none';
+    });
   }
 
   function resetRoomVisuals() {
@@ -2798,6 +2833,7 @@
     t1g.querySelector('.enemy-helmet').setAttribute('cx', t1x); t1g.querySelector('.enemy-helmet').setAttribute('cy', t1y - 6);
     const t1weapon = t1g.querySelector('.enemy-weapon');
     t1weapon.setAttribute('x', t1x - 1.3); t1weapon.setAttribute('y', t1y - 16);
+    repositionSniperMark(t1g, t1x, t1y);
 
     threats.T2.x = shape.t2.x; threats.T2.y = shape.t2.y;
     const t2g = document.getElementById('t2-g');
@@ -2813,6 +2849,21 @@
     hostageLine.setAttribute('x1', cx2 + 17); hostageLine.setAttribute('x2', cx2 + 17);
     hostageLine.setAttribute('y1', cy2 + 14); hostageLine.setAttribute('y2', cy2 + 21);
 
+    // Repositionne le viseur du tireur d'élite (sous-élément caché par
+    // défaut) au-dessus du casque d'un garde, quelle que soit sa position
+    // réelle dans la forme de pièce active.
+    function repositionSniperMark(g, x, y) {
+      const mark = g.querySelector('.sniper-mark');
+      if (!mark) return;
+      const cy = y - 19;
+      mark.querySelector('circle').setAttribute('cx', x); mark.querySelector('circle').setAttribute('cy', cy);
+      const lines = mark.querySelectorAll('line');
+      lines[0].setAttribute('x1', x); lines[0].setAttribute('x2', x);
+      lines[0].setAttribute('y1', cy - 5); lines[0].setAttribute('y2', cy + 5);
+      lines[1].setAttribute('y1', cy); lines[1].setAttribute('y2', cy);
+      lines[1].setAttribute('x1', x - 5); lines[1].setAttribute('x2', x + 5);
+    }
+
     // Repositionne un garde "simple" (même structure que T3-T6) — évite de
     // répéter ce bloc pour chaque nouveau garde ajouté.
     function repositionSimpleGuard(threatId, pos) {
@@ -2822,6 +2873,7 @@
       g.querySelector('.enemy-helmet').setAttribute('cx', pos.x); g.querySelector('.enemy-helmet').setAttribute('cy', pos.y - 6);
       const weapon = g.querySelector('.enemy-weapon');
       weapon.setAttribute('x', pos.x - 1.3); weapon.setAttribute('y', pos.y - 16);
+      repositionSniperMark(g, pos.x, pos.y);
     }
     ['t3', 't4', 't5', 't6'].forEach(key => {
       if (shape[key]) repositionSimpleGuard(key.toUpperCase(), shape[key]);
@@ -3243,18 +3295,30 @@
     // plus au total, tous types confondus) — mal accompagné, il est exposé
     // sur son flanc pendant que le reste de l'escouade se bat ailleurs.
     // Assault (fusil, gilet) et Heavy (blindage) tiennent seuls sans
-    // risque ; Shadow reste protégé par la discrétion du corps-à-corps.
-    // Seul Light, le moins protégé, est exposé dans ce cas — exactement
-    // comme pour le garde blindé, où Light est déjà la première victime.
+    // risque. Light (peu protégé) ET Shadow (corps-à-corps, doit s'exposer
+    // pour approcher) sont tous deux vulnérables dans ce cas — la
+    // discrétion du karambit ne protège plus contre le feu croisé d'une
+    // pièce bondée, seulement contre le déclenchement de l'alerte.
     const standardThreatFlags = { T1: true, T3: hasT3, T4: hasT4, T5: hasT5, T6: hasT6 };
     const activeStandardThreatCount = Object.keys(standardThreatFlags).filter(id => standardThreatFlags[id]).length;
     if (activeStandardThreatCount >= 3) {
       Object.keys(standardThreatFlags).forEach(id => {
         if (!standardThreatFlags[id]) return;
         const assignedHere = byThreat[id];
-        if (assignedHere.length === 1 && assignedHere[0].cls === 'Light' && !casualtyIds.has(assignedHere[0].id)) {
+        if (assignedHere.length === 1 && (assignedHere[0].cls === 'Light' || assignedHere[0].cls === 'Shadow') && !casualtyIds.has(assignedHere[0].id)) {
           casualtyIds.add(assignedHere[0].id);
         }
+      });
+    }
+
+    // Tireur d'élite (paliers avancés) : certaines menaces visent à
+    // distance et abattent Shadow avant qu'il ait pu fermer la distance
+    // pour son corps-à-corps — peu importe s'il est seul ou accompagné, la
+    // discrétion ne sert à rien contre quelqu'un qui l'a déjà repéré de
+    // loin. Jamais appliqué à T2 (déjà régi par sa propre mécanique).
+    if (room.sniper && room.sniper !== 'T2' && room.threats.includes(room.sniper)) {
+      (byThreat[room.sniper] || []).forEach(op => {
+        if (op.cls === 'Shadow' && !casualtyIds.has(op.id)) casualtyIds.add(op.id);
       });
     }
 
