@@ -376,8 +376,8 @@
         <!-- walls -->
         <rect x="20" y="20" width="260" height="260" fill="none" stroke="var(--wall)" stroke-width="6" rx="2"/>
         <!-- interior clutter -->
-        <rect x="60" y="60" width="40" height="18" fill="#2c301f" stroke="#3a3f2c" stroke-width="1"/>
-        <rect x="200" y="210" width="50" height="22" fill="#2c301f" stroke="#3a3f2c" stroke-width="1"/>
+        <rect x="60" y="60" width="40" height="18" fill="var(--wall)"/>
+        <rect x="245" y="245" width="25" height="25" fill="var(--wall)"/>
         </g>
 
         <!-- Threat 1: standard guard -->
@@ -867,7 +867,7 @@
            { doors: ['N', 'NE', 'E', 'S', 'W'], threats: ['T1'], trap: true },
            { doors: ['N', 'NE', 'E', 'S', 'W'], threats: ['T1', 'T2'], trap: true },
          ] },
-    10: { name: 'Niveau 10 · Banque', sub: 'Facile · 5 entrées · 3 pièces enchaînées', env: 'urbain', roomShape: 'square',
+    10: { name: 'Niveau 10 · Banque', sub: 'Facile · 5 entrées · 3 pièces enchaînées', env: 'urbain', roomShape: 'arch',
          briefImg: './brief-banque.jpg',
          brief: 'Une prise d\'otages est en cours dans une banque du quartier financier de Corvane. Le hall a déjà subi des dégâts — progressez avec prudence.',
          rooms: [
@@ -1192,8 +1192,8 @@
       viewBox: '-20 -20 340 340',
       floorWallsSVG: '<rect x="20" y="20" width="260" height="260" fill="var(--floor)" rx="2"/>' +
         '<rect x="20" y="20" width="260" height="260" fill="none" stroke="var(--wall)" stroke-width="6" rx="2"/>' +
-        '<rect x="60" y="60" width="40" height="18" fill="#2c301f" stroke="#3a3f2c" stroke-width="1"/>' +
-        '<rect x="200" y="210" width="50" height="22" fill="#2c301f" stroke="#3a3f2c" stroke-width="1"/>' +
+        '<rect x="60" y="60" width="40" height="18" fill="var(--wall)"/>' +
+        '<rect x="245" y="245" width="25" height="25" fill="var(--wall)"/>' +
         '<rect x="95" y="20" width="6" height="55" fill="var(--wall)"/>' +
         COMPASS_ROSE_SVG,
       center: { x: 150, y: 150 },
@@ -1205,9 +1205,8 @@
       viewBox: '-20 -20 400 420',
       floorWallsSVG: '<path d="M20,20 L280,20 L280,160 L160,160 L160,360 L20,360 Z" fill="var(--floor)"/>' +
         '<path d="M20,20 L280,20 L280,160 L160,160 L160,360 L20,360 Z" fill="none" stroke="var(--wall)" stroke-width="6"/>' +
-        '<rect x="200" y="50" width="50" height="20" fill="#2c301f" stroke="#3a3f2c" stroke-width="1"/>' +
-        '<rect x="55" y="280" width="40" height="18" fill="#2c301f" stroke="#3a3f2c" stroke-width="1"/>' +
-        '<rect x="155" y="160" width="50" height="6" fill="var(--wall)"/>' +
+        '<rect x="200" y="50" width="50" height="20" fill="var(--wall)"/>' +
+        '<rect x="55" y="280" width="40" height="18" fill="var(--wall)"/>' +
         COMPASS_ROSE_SVG,
       center: { x: 150, y: 190 },
       doors: { N:{x:150,y:20}, NE:{x:280,y:60}, E:{x:280,y:120}, S:{x:90,y:360}, W:{x:20,y:260}, F:{x:20,y:80} },
@@ -1223,8 +1222,8 @@
       viewBox: '-20 -20 540 240',
       floorWallsSVG: '<rect x="20" y="20" width="460" height="160" fill="var(--floor)" rx="2"/>' +
         '<rect x="20" y="20" width="460" height="160" fill="none" stroke="var(--wall)" stroke-width="6" rx="2"/>' +
-        '<rect x="100" y="60" width="40" height="18" fill="#2c301f" stroke="#3a3f2c" stroke-width="1"/>' +
-        '<rect x="350" y="115" width="50" height="22" fill="#2c301f" stroke="#3a3f2c" stroke-width="1"/>' +
+        '<rect x="100" y="60" width="40" height="18" fill="var(--wall)"/>' +
+        '<rect x="400" y="150" width="40" height="18" fill="var(--wall)"/>' +
         '<rect x="170" y="20" width="8" height="50" fill="var(--wall)"/>' +
         COMPASS_ROSE_SVG,
       center: { x: 250, y: 100 },
@@ -1239,8 +1238,8 @@
       viewBox: '-20 -20 340 420',
       floorWallsSVG: '<path d="M20,20 L280,20 L280,140 L210,140 L210,220 L280,220 L280,340 L20,340 L20,220 L90,220 L90,140 L20,140 Z" fill="var(--floor)"/>' +
         '<path d="M20,20 L280,20 L280,140 L210,140 L210,220 L280,220 L280,340 L20,340 L20,220 L90,220 L90,140 L20,140 Z" fill="none" stroke="var(--wall)" stroke-width="6"/>' +
-        '<rect x="55" y="45" width="45" height="20" fill="#2c301f" stroke="#3a3f2c" stroke-width="1"/>' +
-        '<rect x="205" y="290" width="50" height="22" fill="#2c301f" stroke="#3a3f2c" stroke-width="1"/>' +
+        '<rect x="55" y="45" width="45" height="20" fill="var(--wall)"/>' +
+        '<rect x="205" y="290" width="50" height="22" fill="var(--wall)"/>' +
         COMPASS_ROSE_SVG,
       center: { x: 150, y: 180 },
       doors: { N: { x: 150, y: 20 }, NE: { x: 280, y: 80 }, E: { x: 280, y: 280 }, S: { x: 150, y: 340 }, W: { x: 20, y: 280 }, F: { x: 20, y: 80 } },
@@ -1254,6 +1253,29 @@
         T3: { x: 150, y: 140 },
       },
       waypointDoors: { T1: ['E', 'W'], T2: ['NE', 'F'], T3: ['NE', 'F'] },
+    },
+    arch: {
+      // Deux ailes parallèles reliées par une large barre en haut, ouvertes
+      // en bas (inspiré du croquis en Π) — un vide sépare les deux ailes.
+      // Corridors volontairement larges dès le départ (leçon du sablier).
+      viewBox: '-25 -25 380 420',
+      floorWallsSVG: '<path d="M20,20 L320,20 L320,340 L190,340 L190,100 L150,100 L150,340 L20,340 Z" fill="var(--floor)"/>' +
+        '<path d="M20,20 L320,20 L320,340 L190,340 L190,100 L150,100 L150,340 L20,340 Z" fill="none" stroke="var(--wall)" stroke-width="6"/>' +
+        '<rect x="30" y="45" width="40" height="18" fill="var(--wall)"/>' +
+        '<rect x="40" y="300" width="40" height="18" fill="var(--wall)"/>' +
+        COMPASS_ROSE_SVG,
+      center: { x: 170, y: 180 },
+      doors: { N: { x: 170, y: 20 }, NE: { x: 320, y: 60 }, E: { x: 320, y: 280 }, S: { x: 255, y: 340 }, W: { x: 20, y: 280 } },
+      t1: { x: 255, y: 200 }, t2: { x: 85, y: 220 }, t3: { x: 280, y: 300 }, bomb: { x: 255, y: 200 },
+      // Seules les portes déjà situées dans la barre du haut (N, NE) peuvent
+      // traverser vers l'autre aile en toute sécurité ; les portes déjà au
+      // fond d'une aile (E, S, W) restent limitées à leur propre aile.
+      waypoints: {
+        T1: { x: 255, y: 60 },
+        T2: { x: 85, y: 60 },
+        T3: { x: 255, y: 60 },
+      },
+      waypointDoors: { T1: ['N'], T2: ['N', 'NE'], T3: ['N'] },
     },
   };
 
