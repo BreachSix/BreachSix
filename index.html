@@ -1563,6 +1563,10 @@
   function runAssault() {
     if (resolved) return;
     resolved = true;
+    // Sécurité supplémentaire : s'assurer que le contexte audio tourne
+    // vraiment avant que le premier son (bris de vitre, tirs) soit requis.
+    const ac = getAudioCtx();
+    if (ac.state === 'suspended') ac.resume();
     renderAll();
     hint.textContent = 'Assaut en cours...';
     let trapSoundPlayed = false;
@@ -1919,7 +1923,7 @@
       function fireEffectsAndCasualty() {
         if (op.cls !== 'Shadow' && !isBombRoom) {
           const shots = CLASS_SHOT_COUNT[op.cls] || 1;
-          const stagger = op.cls === 'Light' ? 50 : 70;
+          const stagger = op.cls === 'Light' ? 130 : 70;
           const tipY = parseFloat(marker.dataset.weaponTipY || '-16');
           for (let s = 0; s < shots; s++) {
             setTimeout(() => {
