@@ -734,6 +734,19 @@
     { id: 'b2', squad: 'b', cls: 'Light' },
     { id: 'b3', squad: 'b', cls: 'Shadow' },
   ];
+  // Composition d'escouade sauvegardée : sans ça, elle revenait aux classes
+  // par défaut à chaque rechargement, alors qu'elle est censée rester la
+  // même d'une mission à l'autre (et maintenant, d'une session à l'autre).
+  (function restoreSquadComposition() {
+    const saved = loadJSONPref('breachsix-squad-composition', null);
+    if (!saved) return;
+    operators.forEach(op => { if (saved[op.id] && classOrder.includes(saved[op.id])) op.cls = saved[op.id]; });
+  })();
+  function saveSquadComposition() {
+    const map = {};
+    operators.forEach(op => { map[op.id] = op.cls; });
+    saveJSONPref('breachsix-squad-composition', map);
+  }
 
   const doors = ['N', 'NE', 'E', 'S', 'W'];
   const assignments = {}; // doorId -> operator
@@ -796,6 +809,7 @@
   function cycleClass(op) {
     const idx = classOrder.indexOf(op.cls);
     op.cls = classOrder[(idx + 1) % classOrder.length];
+    saveSquadComposition();
     renderAll();
   }
 
@@ -1031,6 +1045,10 @@
   const BOMB_THRESHOLD_MS = 1750; // fastest assigned operator must arrive within this
   const BOMB_FAST_MS = 1650;      // bonus: defused with real speed to spare
   const bestScores = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0, 10: 0, 11: 0, 12: 0, 13: 0, 14: 0, 15: 0, 16: 0, 17: 0, 18: 0, 19: 0, 20: 0, 21: 0, 22: 0, 23: 0, 24: 0, 25: 0 };
+  // Fusionne les meilleurs scores sauvegardés par-dessus les zéros par
+  // défaut — un niveau jamais joué (ou ajouté depuis la dernière visite)
+  // garde 0 plutôt que de planter sur une valeur absente.
+  Object.assign(bestScores, loadJSONPref('breachsix-best-scores', {}));
   let currentLevel = 1;
   let pendingBriefingLevel = null;
   let currentRoomIndex = 0;
@@ -1117,6 +1135,21 @@
     jungle: './op-jungle.png',
     arctique: './op-arctique.png',
   };
+  // Variantes du portrait de briefing par skin d'arme débloqué (Assault
+  // seulement — c'est la seule classe montrée en briefing, et la seule à
+  // porter le M4 skinnable). Retombe sur le portrait de base tant qu'aucun
+  // skin n'est débloqué.
+  const ENV_OPERATOR_IMG_SKINNED = {
+    urbain: { cuivre: './op-urbain-cuivre.png', argent: './op-urbain-argent.png', or: './op-urbain-or.png', damas: './op-urbain-damas.png', platine: './op-urbain-platine.png', diamant: './op-urbain-diamant.png' },
+    desert: { cuivre: './op-desert-cuivre.png', argent: './op-desert-argent.png', or: './op-desert-or.png', damas: './op-desert-damas.png', platine: './op-desert-platine.png', diamant: './op-desert-diamant.png' },
+    jungle: { cuivre: './op-jungle-cuivre.png', argent: './op-jungle-argent.png', or: './op-jungle-or.png', damas: './op-jungle-damas.png', platine: './op-jungle-platine.png', diamant: './op-jungle-diamant.png' },
+    arctique: { cuivre: './op-arctique-cuivre.png', argent: './op-arctique-argent.png', or: './op-arctique-or.png', damas: './op-arctique-damas.png', platine: './op-arctique-platine.png', diamant: './op-arctique-diamant.png' },
+  };
+  function getBriefingOperatorImg(env) {
+    const skin = getEquippedSkin();
+    const bySkin = skin && ENV_OPERATOR_IMG_SKINNED[env] && ENV_OPERATOR_IMG_SKINNED[env][skin.slug];
+    return bySkin || ENV_OPERATOR_IMG[env] || '';
+  }
   const ENV_ENEMY_IMG = {
     urbain: './enemy-urbain.png',
     desert: './enemy-desert.png',
@@ -1545,7 +1578,7 @@
     document.getElementById('celebration-overlay').classList.remove('show');
     document.getElementById('briefing-image').src = def.briefImg || '';
     document.getElementById('briefing-image').alt = def.name;
-    document.getElementById('briefing-operator').src = ENV_OPERATOR_IMG[def.env] || '';
+    document.getElementById('briefing-operator').src = getBriefingOperatorImg(def.env);
     document.getElementById('briefing-operator').alt = 'Opérateur Assault';
     document.getElementById('briefing-enemy-img').src = ENV_ENEMY_IMG[def.env] || '';
     document.getElementById('briefing-enemy-img').alt = 'Ennemi';
@@ -1620,21 +1653,26 @@
 
   // --- Ad-based cosmetic skin unlocks (simulated) ---
   const skinDefs = [
-    { name: 'Cuivre', req: 5, img: './skin-cuivre.jpg', color: '#c17a4a' },
-    { name: 'Argent', req: 10, img: './skin-argent.jpg', color: '#c0c0c8' },
-    { name: 'Or', req: 15, img: './skin-or.jpg', color: '#d4af37' },
-    { name: 'Damas', req: 25, img: './skin-damas.jpg', color: '#7c8896' },
-    { name: 'Platine', req: 35, img: './skin-platine.jpg', color: '#dcdce2' },
-    { name: 'Diamant', req: 50, img: './skin-diamant.jpg', color: '#cdeaf7' },
+    { name: 'Cuivre', slug: 'cuivre', req: 5, img: './skin-cuivre.jpg', color: '#c17a4a' },
+    { name: 'Argent', slug: 'argent', req: 10, img: './skin-argent.jpg', color: '#c0c0c8' },
+    { name: 'Or', slug: 'or', req: 15, img: './skin-or.jpg', color: '#d4af37' },
+    { name: 'Damas', slug: 'damas', req: 25, img: './skin-damas.jpg', color: '#7c8896' },
+    { name: 'Platine', slug: 'platine', req: 35, img: './skin-platine.jpg', color: '#dcdce2' },
+    { name: 'Diamant', slug: 'diamant', req: 50, img: './skin-diamant.jpg', color: '#cdeaf7' },
   ];
   // Le skin M4 le plus haut déjà débloqué s'affiche automatiquement sur l'arme
-  // de l'Assault en mission — pas de sélecteur séparé, comme pour les paliers
-  // de prestige du karambit.
-  function getEquippedSkinColor() {
+  // de l'Assault en mission (couleur) et sur le portrait de briefing (image
+  // dédiée par skin × environnement) — pas de sélecteur séparé, comme pour
+  // les paliers de prestige du karambit.
+  function getEquippedSkin() {
     const unlocked = skinDefs.filter(s => adsWatched >= s.req);
-    return unlocked.length ? unlocked[unlocked.length - 1].color : null;
+    return unlocked.length ? unlocked[unlocked.length - 1] : null;
   }
-  let adsWatched = 0;
+  function getEquippedSkinColor() {
+    const skin = getEquippedSkin();
+    return skin ? skin.color : null;
+  }
+  let adsWatched = loadIntPref('breachsix-ads-watched', 0);
   let watchingAd = false;
 
   function renderSkinTrack() {
@@ -1678,6 +1716,7 @@
     btn.textContent = 'Pub en cours…';
     setTimeout(() => {
       adsWatched++;
+      saveIntPref('breachsix-ads-watched', adsWatched);
       watchingAd = false;
       btn.disabled = false;
       btn.textContent = '▶ Regarder une pub optionnelle';
@@ -2464,6 +2503,7 @@
       scoreEl.textContent = total.toLocaleString('fr-CA') + ' pts';
       if (total > bestScores[currentLevel]) {
         bestScores[currentLevel] = total;
+        saveJSONPref('breachsix-best-scores', bestScores);
         bestNote.textContent = 'Nouveau meilleur score !';
       }
       checkLevelMilestone();
@@ -2503,6 +2543,15 @@
   }
   function saveIntPref(key, value) {
     try { localStorage.setItem(key, String(value)); } catch (e) {}
+  }
+  function loadJSONPref(key, fallback) {
+    try {
+      const v = JSON.parse(localStorage.getItem(key));
+      return v && typeof v === 'object' ? v : fallback;
+    } catch (e) { return fallback; }
+  }
+  function saveJSONPref(key, value) {
+    try { localStorage.setItem(key, JSON.stringify(value)); } catch (e) {}
   }
   let colorblindMode = loadBoolPref('breachsix-colorblind');
   let largeTextMode = loadBoolPref('breachsix-large-text');
