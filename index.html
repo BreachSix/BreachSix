@@ -859,7 +859,7 @@
            { doors: ['N', 'NE', 'E', 'S', 'W', 'F'], threats: ['T1'], trap: true },
            { doors: ['N', 'NE', 'E', 'S', 'W', 'F'], threats: ['T1', 'T2'], trap: true },
          ] },
-    9: { name: 'Niveau 9 · Immeuble de bureaux', sub: 'Facile · 5 entrées + 1 fenêtre · 3 pièces enchaînées', env: 'urbain', roomShape: 'square',
+    9: { name: 'Niveau 9 · Immeuble de bureaux', sub: 'Facile · 5 entrées + 1 fenêtre · 3 pièces enchaînées', env: 'urbain', roomShape: 'hourglass',
          briefImg: './brief-bureaux.jpg',
          brief: 'Un immeuble de bureaux du centre-ville de Corvane a été investi après les heures ouvrables. Sécurisez les étages.',
          rooms: [
@@ -1216,7 +1216,7 @@
       // passer par ce point avant de rejoindre T1/T3 (situés dans le bras
       // du haut), et inversement pour NE/E vers T2 — sinon le trajet en
       // ligne droite couperait à travers le vide de l'encoche du L.
-      waypoint: { x: 140, y: 145 },
+      waypoints: { T1: { x: 140, y: 145 }, T3: { x: 140, y: 145 }, T2: { x: 140, y: 145 } },
       waypointDoors: { T1: ['S', 'W'], T3: ['S', 'W'], T2: ['NE', 'E'] },
     },
     elongated: {
@@ -1230,6 +1230,30 @@
       center: { x: 250, y: 100 },
       doors: { N:{x:140,y:20}, NE:{x:460,y:50}, E:{x:460,y:140}, S:{x:140,y:180}, W:{x:20,y:90}, F:{x:300,y:20} },
       t1: { x: 220, y: 60 }, t2: { x: 400, y: 130 }, t3: { x: 300, y: 150 }, bomb: { x: 220, y: 60 },
+    },
+    hourglass: {
+      // Deux pièces (haut/bas) reliées par un corridor étroit — inspiré des
+      // croquis fournis. Un trajet en ligne droite depuis un point d'entrée
+      // excentré traverserait le vide de part et d'autre du corridor, d'où
+      // les deux points de passage distincts selon la direction.
+      viewBox: '-20 -20 340 420',
+      floorWallsSVG: '<path d="M20,20 L280,20 L280,140 L180,140 L180,220 L280,220 L280,340 L20,340 L20,220 L120,220 L120,140 L20,140 Z" fill="var(--floor)"/>' +
+        '<path d="M20,20 L280,20 L280,140 L180,140 L180,220 L280,220 L280,340 L20,340 L20,220 L120,220 L120,140 L20,140 Z" fill="none" stroke="var(--wall)" stroke-width="6"/>' +
+        '<rect x="55" y="45" width="45" height="20" fill="#2c301f" stroke="#3a3f2c" stroke-width="1"/>' +
+        '<rect x="205" y="290" width="50" height="22" fill="#2c301f" stroke="#3a3f2c" stroke-width="1"/>' +
+        COMPASS_ROSE_SVG,
+      center: { x: 150, y: 180 },
+      doors: { N: { x: 150, y: 20 }, NE: { x: 280, y: 80 }, E: { x: 280, y: 280 }, S: { x: 150, y: 340 }, W: { x: 20, y: 280 }, F: { x: 20, y: 80 } },
+      t1: { x: 175, y: 80 }, t2: { x: 175, y: 280 }, t3: { x: 200, y: 300 }, bomb: { x: 175, y: 80 },
+      // Descendre (vers T2/T3, en bas) passe par l'entrée haute du corridor ;
+      // monter (vers T1, en haut) passe par son entrée basse — deux points
+      // distincts, sinon le trajet dérive hors du corridor à mi-chemin.
+      waypoints: {
+        T1: { x: 150, y: 220 },
+        T2: { x: 150, y: 140 },
+        T3: { x: 150, y: 140 },
+      },
+      waypointDoors: { T1: ['E', 'W'], T2: ['NE', 'F'], T3: ['NE', 'F'] },
     },
   };
 
@@ -1927,8 +1951,8 @@
       // (vers le point de passage s'il y en a un, sinon directement vers la
       // cible) : le corps/l'arme sont dessinés pointant vers le haut (nord)
       // à 0°, d'où le +90 pour aligner sur la convention atan2 standard.
-      const firstAimX = needsWaypoint ? shapeCfg.waypoint.x : targetX;
-      const firstAimY = needsWaypoint ? shapeCfg.waypoint.y : targetY;
+      const firstAimX = needsWaypoint ? shapeCfg.waypoints[threatId].x : targetX;
+      const firstAimY = needsWaypoint ? shapeCfg.waypoints[threatId].y : targetY;
       const angleDeg = Math.atan2(firstAimY - y, firstAimX - x) * 180 / Math.PI + 90;
       marker.setAttribute('transform', 'translate(' + x + ',' + y + ') rotate(' + angleDeg + ')');
       const label = marker.querySelector('text');
@@ -1950,7 +1974,7 @@
 
       setTimeout(() => {
         if (needsWaypoint) {
-          const wp = shapeCfg.waypoint;
+          const wp = shapeCfg.waypoints[threatId];
           const d1 = Math.hypot(wp.x - x, wp.y - y);
           const d2 = Math.hypot(targetX - wp.x, targetY - wp.y);
           const totalDist = d1 + d2 || 1;
