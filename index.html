@@ -1923,7 +1923,7 @@
       function fireEffectsAndCasualty() {
         if (op.cls !== 'Shadow' && !isBombRoom) {
           const shots = CLASS_SHOT_COUNT[op.cls] || 1;
-          const stagger = op.cls === 'Light' ? 130 : 70;
+          const stagger = op.cls === 'Light' ? 190 : 70;
           const tipY = parseFloat(marker.dataset.weaponTipY || '-16');
           for (let s = 0; s < shots; s++) {
             setTimeout(() => {
@@ -1944,15 +1944,15 @@
           const totalDist = d1 + d2 || 1;
           const dur1 = Math.max(80, travelDuration * (d1 / totalDist));
           const dur2 = Math.max(80, travelDuration - dur1);
-          marker.style.transition = 'transform ' + dur1 + 'ms ease-in';
+          marker.style.transition = 'transform ' + dur1 + 'ms ease-out';
           marker.setAttribute('transform', 'translate(' + wp.x + ',' + wp.y + ') rotate(' + angleDeg + ')');
           setTimeout(() => {
             if (label) label.setAttribute('transform', 'rotate(' + (-aimAngle) + ')');
-            marker.style.transition = 'transform ' + dur2 + 'ms ease-in';
+            marker.style.transition = 'transform ' + dur2 + 'ms ease-out';
             marker.setAttribute('transform', 'translate(' + targetX + ',' + targetY + ') rotate(' + aimAngle + ')');
           }, dur1);
         } else {
-          marker.style.transition = 'transform ' + travelDuration + 'ms ease-in';
+          marker.style.transition = 'transform ' + travelDuration + 'ms ease-out';
           marker.setAttribute('transform', 'translate(' + targetX + ',' + targetY + ') rotate(' + aimAngle + ')');
           if (label) label.setAttribute('transform', 'rotate(' + (-aimAngle) + ')');
         }
