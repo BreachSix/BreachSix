@@ -571,7 +571,7 @@
     ['night', NIGHT_SOUND_SRC],
   ].forEach(([key, src]) => loadAudioBuffer(key, src));
 
-  function playPreloaded(key, rate) {
+  function playPreloaded(key, rate, gain) {
     const buf = AUDIO_BUFFERS[key];
     if (!buf) return; // pas encore décodé (rare) : on n'échoue pas, on saute simplement
     try {
@@ -579,7 +579,14 @@
       const node = ctx.createBufferSource();
       node.buffer = buf;
       node.playbackRate.value = rate || 1.0;
-      node.connect(ctx.destination);
+      if (gain && gain !== 1) {
+        const gainNode = ctx.createGain();
+        gainNode.gain.value = gain;
+        node.connect(gainNode);
+        gainNode.connect(ctx.destination);
+      } else {
+        node.connect(ctx.destination);
+      }
       node.start(0);
     } catch (e) {}
   }
@@ -643,19 +650,19 @@
     g.setAttribute('transform', 'translate(' + x + ',' + y + ')');
     g.style.pointerEvents = 'none';
     const halo = document.createElementNS(ns, 'circle');
-    halo.setAttribute('r', '5'); halo.setAttribute('fill', '#ff8c1a'); halo.setAttribute('opacity', '0.55');
+    halo.setAttribute('r', '7'); halo.setAttribute('fill', '#ff8c1a'); halo.setAttribute('opacity', '0.6');
     const star = document.createElementNS(ns, 'polygon');
     const pts = [];
     for (let k = 0; k < 8; k++) {
       const ang = k * Math.PI / 4;
-      const rad = k % 2 === 0 ? 4.2 : 1.7;
+      const rad = k % 2 === 0 ? 5.8 : 2.3;
       pts.push((Math.cos(ang) * rad).toFixed(2) + ',' + (Math.sin(ang) * rad).toFixed(2));
     }
     star.setAttribute('points', pts.join(' '));
     star.setAttribute('fill', '#ffe066');
     g.appendChild(halo); g.appendChild(star);
     svg.appendChild(g);
-    setTimeout(() => g.remove(), 90);
+    setTimeout(() => g.remove(), 140);
   }
 
   function playClassSound(cls) {
@@ -1912,12 +1919,13 @@
       function fireEffectsAndCasualty() {
         if (op.cls !== 'Shadow' && !isBombRoom) {
           const shots = CLASS_SHOT_COUNT[op.cls] || 1;
+          const stagger = op.cls === 'Light' ? 50 : 70;
           const tipY = parseFloat(marker.dataset.weaponTipY || '-16');
           for (let s = 0; s < shots; s++) {
             setTimeout(() => {
               playClassSound(op.cls);
               spawnMuzzleFlash(marker, tipY);
-            }, s * 70);
+            }, s * stagger);
           }
         }
       }
@@ -1994,8 +2002,12 @@
           [hasT6 && t6Cleared, threats.T6.x, threats.T6.y - 16],
         ].forEach(([active, fx, fy]) => {
           if (!active) return;
-          spawnEnemyMuzzleFlash(svg, fx, fy);
-          if (!isNight) playPreloaded('class-Assault', 0.75);
+          for (let shot = 0; shot < 2; shot++) {
+            setTimeout(() => {
+              spawnEnemyMuzzleFlash(svg, fx, fy);
+              if (!isNight) playPreloaded('class-Assault', 0.7, 1.5);
+            }, shot * 90);
+          }
         });
       }, earliestEngageEnd + 200);
     }
