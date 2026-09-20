@@ -1276,6 +1276,23 @@
         T3: { x: 255, y: 60 },
       },
       waypointDoors: { T1: ['N'], T2: ['N', 'NE'], T3: ['N'] },
+      // Portes déjà encastrées dans une aile (pas dans la barre du haut) qui
+      // doivent rejoindre la menace de l'AUTRE aile : un seul point de
+      // passage ne suffit pas ici, car la ligne vers ce point couperait
+      // elle-même le vide central. Il faut un vrai détour en deux temps :
+      // 1) remonter tout droit dans son propre couloir jusqu'à la barre
+      //    (sans danger — le vide ne commence qu'en dessous, à y=100) ;
+      // 2) traverser la barre à l'horizontale jusqu'au-dessus de l'aile
+      //    visée (toujours sans danger, y reste < 100) ; la descente finale
+      //    vers la cible se fait ensuite normalement dans la bonne aile.
+      multiWaypoints: {
+        T1: { W: [{ x: 20, y: 60 }, { x: 255, y: 60 }] },
+        T3: { W: [{ x: 20, y: 60 }, { x: 255, y: 60 }] },
+        T2: {
+          E: [{ x: 320, y: 60 }, { x: 85, y: 60 }],
+          S: [{ x: 255, y: 60 }, { x: 85, y: 60 }],
+        },
+      },
     },
   };
 
@@ -1947,12 +1964,26 @@
         targetY = threat.y - uy * standoff + perpY * fan;
       }
 
-      // Certaines formes de pièce (ex. le L) exigent un détour par un point
-      // de passage pour ne pas couper à travers un mur ou le vide entre
-      // deux sections de la pièce.
+      // Certaines formes de pièce (ex. le L, le sablier, l'arche) exigent un
+      // détour par un ou plusieurs points de passage pour ne pas couper à
+      // travers un mur ou le vide entre deux sections de la pièce. La
+      // plupart des cas n'ont besoin que d'un seul point (waypoints /
+      // waypointDoors) ; certains trajets (ex. une porte déjà encastrée
+      // dans une aile de l'arche, qui doit rejoindre l'autre aile) ont
+      // besoin de deux points successifs (multiWaypoints), sans quoi même
+      // la ligne vers le premier point couperait le vide.
       const shapeCfg = ROOM_SHAPES[levelDefs[currentLevel].roomShape] || ROOM_SHAPES.square;
-      const wpDoors = shapeCfg.waypointDoors && shapeCfg.waypointDoors[threatId];
-      const needsWaypoint = !isCasualty && wpDoors && wpDoors.includes(doorId);
+      let waypointPath = [];
+      if (!isCasualty) {
+        const multi = shapeCfg.multiWaypoints && shapeCfg.multiWaypoints[threatId] && shapeCfg.multiWaypoints[threatId][doorId];
+        if (multi) {
+          waypointPath = multi;
+        } else {
+          const wpDoors = shapeCfg.waypointDoors && shapeCfg.waypointDoors[threatId];
+          if (wpDoors && wpDoors.includes(doorId)) waypointPath = [shapeCfg.waypoints[threatId]];
+        }
+      }
+      const needsWaypoint = waypointPath.length > 0;
 
       // Angle de VISÉE une fois arrivé : pointe vraiment vers la menace,
       // pas vers le point d'arrêt (qui est décalé en cas d'éventail pour
@@ -1960,11 +1991,11 @@
       const aimAngle = Math.atan2(threat.y - targetY, threat.x - targetX) * 180 / Math.PI + 90;
 
       // Oriente la silhouette dans la direction de son premier déplacement
-      // (vers le point de passage s'il y en a un, sinon directement vers la
-      // cible) : le corps/l'arme sont dessinés pointant vers le haut (nord)
-      // à 0°, d'où le +90 pour aligner sur la convention atan2 standard.
-      const firstAimX = needsWaypoint ? shapeCfg.waypoints[threatId].x : targetX;
-      const firstAimY = needsWaypoint ? shapeCfg.waypoints[threatId].y : targetY;
+      // (vers le premier point de passage s'il y en a un, sinon directement
+      // vers la cible) : le corps/l'arme sont dessinés pointant vers le haut
+      // (nord) à 0°, d'où le +90 pour aligner sur la convention atan2 standard.
+      const firstAimX = needsWaypoint ? waypointPath[0].x : targetX;
+      const firstAimY = needsWaypoint ? waypointPath[0].y : targetY;
       const angleDeg = Math.atan2(firstAimY - y, firstAimX - x) * 180 / Math.PI + 90;
       marker.setAttribute('transform', 'translate(' + x + ',' + y + ') rotate(' + angleDeg + ')');
       const label = marker.querySelector('text');
@@ -1986,19 +2017,35 @@
 
       setTimeout(() => {
         if (needsWaypoint) {
-          const wp = shapeCfg.waypoints[threatId];
-          const d1 = Math.hypot(wp.x - x, wp.y - y);
-          const d2 = Math.hypot(targetX - wp.x, targetY - wp.y);
-          const totalDist = d1 + d2 || 1;
-          const dur1 = Math.max(80, travelDuration * (d1 / totalDist));
-          const dur2 = Math.max(80, travelDuration - dur1);
-          marker.style.transition = 'transform ' + dur1 + 'ms ease-out';
-          marker.setAttribute('transform', 'translate(' + wp.x + ',' + wp.y + ') rotate(' + angleDeg + ')');
-          setTimeout(() => {
-            if (label) label.setAttribute('transform', 'rotate(' + (-aimAngle) + ')');
-            marker.style.transition = 'transform ' + dur2 + 'ms ease-out';
-            marker.setAttribute('transform', 'translate(' + targetX + ',' + targetY + ') rotate(' + aimAngle + ')');
-          }, dur1);
+          // Chaîne les segments (1 ou 2 points de passage, puis la cible),
+          // en répartissant la durée totale au prorata de la distance de
+          // chaque segment — généralisation du détour à un seul point pour
+          // supporter aussi les trajets à deux détours (arche).
+          const fullPath = waypointPath.concat([{ x: targetX, y: targetY }]);
+          const segDists = [];
+          let prevPt = { x, y };
+          fullPath.forEach(pt => {
+            segDists.push(Math.hypot(pt.x - prevPt.x, pt.y - prevPt.y));
+            prevPt = pt;
+          });
+          const totalDist = segDists.reduce((a, b) => a + b, 0) || 1;
+          let elapsed = 0;
+          let fromPt = { x, y };
+          fullPath.forEach((pt, idx) => {
+            const isLast = idx === fullPath.length - 1;
+            const dur = Math.max(80, travelDuration * (segDists[idx] / totalDist));
+            // Chaque segment garde sa propre orientation (le 2e détour de
+            // l'arche part à l'horizontale après une montée verticale) ;
+            // seul le dernier segment vise vraiment la menace (aimAngle).
+            const segAngle = isLast ? aimAngle : (Math.atan2(pt.y - fromPt.y, pt.x - fromPt.x) * 180 / Math.PI + 90);
+            setTimeout(() => {
+              if (label) label.setAttribute('transform', 'rotate(' + (-segAngle) + ')');
+              marker.style.transition = 'transform ' + dur + 'ms ease-out';
+              marker.setAttribute('transform', 'translate(' + pt.x + ',' + pt.y + ') rotate(' + segAngle + ')');
+            }, elapsed);
+            elapsed += dur;
+            fromPt = pt;
+          });
         } else {
           marker.style.transition = 'transform ' + travelDuration + 'ms ease-out';
           marker.setAttribute('transform', 'translate(' + targetX + ',' + targetY + ') rotate(' + aimAngle + ')');
