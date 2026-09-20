@@ -795,13 +795,13 @@
 
   // --- Level definitions & menu ---
   const levelDefs = {
-    1: { name: 'Niveau 1 · Résidence', sub: 'Facile · 5 entrées + 1 fenêtre · 3 pièces enchaînées', env: 'urbain', roomShape: 'square',
+    1: { name: 'Niveau 1 · Résidence', sub: 'Facile · 5 entrées · 3 pièces enchaînées', env: 'urbain', roomShape: 'square',
          briefImg: './brief-residence.jpg',
          brief: 'Une cellule de Combine Ashgard utilise cette résidence de Corvane comme planque. Un otage y est retenu — nettoyez la maison et sécurisez-le.',
          rooms: [
-           { doors: ['N', 'NE', 'E', 'S', 'W', 'F'], threats: ['T1', 'T3', 'T4'], trap: false },
-           { doors: ['N', 'NE', 'E', 'S', 'W', 'F'], threats: ['T1', 'T3', 'T4', 'T5'], trap: true },
-           { doors: ['N', 'NE', 'E', 'S', 'W', 'F'], threats: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6'], trap: true },
+           { doors: ['N', 'NE', 'E', 'S', 'W'], threats: ['T1', 'T3', 'T4'], trap: false },
+           { doors: ['N', 'NE', 'E', 'S', 'W'], threats: ['T1', 'T3', 'T4', 'T5'], trap: true },
+           { doors: ['N', 'NE', 'E', 'S', 'W'], threats: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6'], trap: true },
          ] },
     2: { name: 'Niveau 2 · Résidence', sub: 'Difficile · 2 points d\'entrée · 3 pièces enchaînées', env: 'urbain', roomShape: 'square',
          briefImg: './brief-residence.jpg',
@@ -827,93 +827,93 @@
            { doors: ['N', 'NE', 'E', 'S', 'W'], threats: ['T1'], trap: true },
            { doors: ['N', 'NE', 'E', 'S', 'W'], threats: ['T1'], trap: false, type: 'bomb' },
          ] },
-    5: { name: 'Niveau 5 · Village isolé (désert)', sub: 'Facile · 5 entrées + 1 fenêtre · 3 pièces enchaînées', env: 'desert', roomShape: 'square',
+    5: { name: 'Niveau 5 · Village isolé (désert)', sub: 'Facile · 5 entrées · 3 pièces enchaînées', env: 'desert', roomShape: 'square',
          briefImg: './brief-desert.jpg',
          brief: 'Une cellule de Combine Ashgard s\'est retranchée dans un village isolé de Zahrastan. Infiltrez les lieux et neutralisez la menace.',
          rooms: [
-           { doors: ['N', 'NE', 'E', 'S', 'W', 'F'], threats: ['T1'], trap: false },
-           { doors: ['N', 'NE', 'E', 'S', 'W', 'F'], threats: ['T1'], trap: true },
-           { doors: ['N', 'NE', 'E', 'S', 'W', 'F'], threats: ['T1', 'T2'], trap: true },
+           { doors: ['N', 'NE', 'E', 'S', 'W'], threats: ['T1'], trap: false },
+           { doors: ['N', 'NE', 'E', 'S', 'W'], threats: ['T1'], trap: true },
+           { doors: ['N', 'NE', 'E', 'S', 'W'], threats: ['T1', 'T2'], trap: true },
          ] },
-    6: { name: 'Niveau 6 · Village isolé (jungle)', sub: 'Facile · 5 entrées + 1 fenêtre · 3 pièces enchaînées', env: 'jungle', roomShape: 'square',
+    6: { name: 'Niveau 6 · Village isolé (jungle)', sub: 'Facile · 5 entrées · 3 pièces enchaînées', env: 'jungle', roomShape: 'square',
          briefImg: './brief-jungle.jpg',
          brief: 'Au cœur de la jungle de Verdance, un village abandonné sert de cache à l\'organisation. La végétation dense limite la visibilité — restez prudents.',
          rooms: [
-           { doors: ['N', 'NE', 'E', 'S', 'W', 'F'], threats: ['T1'], trap: false },
-           { doors: ['N', 'NE', 'E', 'S', 'W', 'F'], threats: ['T1'], trap: true },
-           { doors: ['N', 'NE', 'E', 'S', 'W', 'F'], threats: ['T1', 'T2'], trap: true },
+           { doors: ['N', 'NE', 'E', 'S', 'W'], threats: ['T1'], trap: false },
+           { doors: ['N', 'NE', 'E', 'S', 'W'], threats: ['T1'], trap: true },
+           { doors: ['N', 'NE', 'E', 'S', 'W'], threats: ['T1', 'T2'], trap: true },
          ] },
-    7: { name: 'Niveau 7 · Base arctique', sub: 'Facile · 5 entrées + 1 fenêtre · 3 pièces enchaînées', env: 'arctique', roomShape: 'square',
+    7: { name: 'Niveau 7 · Base arctique', sub: 'Facile · 5 entrées · 3 pièces enchaînées', env: 'arctique', roomShape: 'square',
          briefImg: './brief-arctique.jpg',
          brief: 'Une base isolée dans les montagnes de la Rive Boréale, sous le couvert de la nuit. Chaque arme est équipée d\'un silencieux — l\'effet de surprise est total.',
          rooms: [
-           { doors: ['N', 'NE', 'E', 'S', 'W', 'F'], threats: ['T1'], trap: false },
-           { doors: ['N', 'NE', 'E', 'S', 'W', 'F'], threats: ['T1'], trap: true },
-           { doors: ['N', 'NE', 'E', 'S', 'W', 'F'], threats: ['T1', 'T2'], trap: true },
+           { doors: ['N', 'NE', 'E', 'S', 'W'], threats: ['T1'], trap: false },
+           { doors: ['N', 'NE', 'E', 'S', 'W'], threats: ['T1'], trap: true },
+           { doors: ['N', 'NE', 'E', 'S', 'W'], threats: ['T1', 'T2'], trap: true },
          ] },
     8: { name: 'Niveau 8 · Résidence', sub: 'Mission de nuit · silencieux imposé · 5 points d\'entrée · 3 pièces enchaînées', env: 'urbain', roomShape: 'square', night: true,
          briefImg: './brief-residence.jpg',
          brief: 'Nouvelle activité nocturne détectée dans le secteur résidentiel de Corvane. Une intervention discrète est requise avant l\'aube.',
          rooms: [
-           { doors: ['N', 'NE', 'E', 'S', 'W', 'F'], threats: ['T1'], trap: false },
-           { doors: ['N', 'NE', 'E', 'S', 'W', 'F'], threats: ['T1'], trap: true },
-           { doors: ['N', 'NE', 'E', 'S', 'W', 'F'], threats: ['T1', 'T2'], trap: true },
+           { doors: ['N', 'NE', 'E', 'S', 'W'], threats: ['T1'], trap: false },
+           { doors: ['N', 'NE', 'E', 'S', 'W'], threats: ['T1'], trap: true },
+           { doors: ['N', 'NE', 'E', 'S', 'W'], threats: ['T1', 'T2'], trap: true },
          ] },
-    9: { name: 'Niveau 9 · Immeuble de bureaux', sub: 'Facile · 5 entrées + 1 fenêtre · 3 pièces enchaînées', env: 'urbain', roomShape: 'hourglass',
+    9: { name: 'Niveau 9 · Immeuble de bureaux', sub: 'Facile · 5 entrées · 3 pièces enchaînées', env: 'urbain', roomShape: 'hourglass',
          briefImg: './brief-bureaux.jpg',
          brief: 'Un immeuble de bureaux du centre-ville de Corvane a été investi après les heures ouvrables. Sécurisez les étages.',
          rooms: [
-           { doors: ['N', 'NE', 'E', 'S', 'W', 'F'], threats: ['T1'], trap: false },
-           { doors: ['N', 'NE', 'E', 'S', 'W', 'F'], threats: ['T1'], trap: true },
-           { doors: ['N', 'NE', 'E', 'S', 'W', 'F'], threats: ['T1', 'T2'], trap: true },
+           { doors: ['N', 'NE', 'E', 'S', 'W'], threats: ['T1'], trap: false },
+           { doors: ['N', 'NE', 'E', 'S', 'W'], threats: ['T1'], trap: true },
+           { doors: ['N', 'NE', 'E', 'S', 'W'], threats: ['T1', 'T2'], trap: true },
          ] },
-    10: { name: 'Niveau 10 · Banque', sub: 'Facile · 5 entrées + 1 fenêtre · 3 pièces enchaînées', env: 'urbain', roomShape: 'square',
+    10: { name: 'Niveau 10 · Banque', sub: 'Facile · 5 entrées · 3 pièces enchaînées', env: 'urbain', roomShape: 'square',
          briefImg: './brief-banque.jpg',
          brief: 'Une prise d\'otages est en cours dans une banque du quartier financier de Corvane. Le hall a déjà subi des dégâts — progressez avec prudence.',
          rooms: [
-           { doors: ['N', 'NE', 'E', 'S', 'W', 'F'], threats: ['T1'], trap: false },
-           { doors: ['N', 'NE', 'E', 'S', 'W', 'F'], threats: ['T1'], trap: true },
-           { doors: ['N', 'NE', 'E', 'S', 'W', 'F'], threats: ['T1', 'T2'], trap: true },
+           { doors: ['N', 'NE', 'E', 'S', 'W'], threats: ['T1'], trap: false },
+           { doors: ['N', 'NE', 'E', 'S', 'W'], threats: ['T1'], trap: true },
+           { doors: ['N', 'NE', 'E', 'S', 'W'], threats: ['T1', 'T2'], trap: true },
          ] },
-    11: { name: 'Niveau 11 · Hôtel', sub: 'Facile · 5 entrées + 1 fenêtre · 3 pièces enchaînées', env: 'urbain', roomShape: 'square',
+    11: { name: 'Niveau 11 · Hôtel', sub: 'Facile · 5 entrées · 3 pièces enchaînées', env: 'urbain', roomShape: 'square',
          briefImg: './brief-hotel.jpg',
          brief: 'Une cellule de Combine Ashgard occupe discrètement un hôtel du centre-ville de Corvane. Sécurisez le hall d\'entrée avant que la situation ne s\'aggrave.',
          rooms: [
-           { doors: ['N', 'NE', 'E', 'S', 'W', 'F'], threats: ['T1'], trap: false },
-           { doors: ['N', 'NE', 'E', 'S', 'W', 'F'], threats: ['T1'], trap: true },
-           { doors: ['N', 'NE', 'E', 'S', 'W', 'F'], threats: ['T1', 'T2'], trap: true },
+           { doors: ['N', 'NE', 'E', 'S', 'W'], threats: ['T1'], trap: false },
+           { doors: ['N', 'NE', 'E', 'S', 'W'], threats: ['T1'], trap: true },
+           { doors: ['N', 'NE', 'E', 'S', 'W'], threats: ['T1', 'T2'], trap: true },
          ] },
-    12: { name: 'Niveau 12 · Station de métro', sub: 'Facile · 5 entrées + 1 fenêtre · 3 pièces enchaînées', env: 'urbain', roomShape: 'elongated',
+    12: { name: 'Niveau 12 · Station de métro', sub: 'Facile · 5 entrées · 3 pièces enchaînées', env: 'urbain', roomShape: 'elongated',
          briefImg: './brief-station.jpg',
          brief: 'Une station de métro désaffectée de Corvane sert de point de passage à l\'organisation. Progressez sur le quai avec prudence.',
          rooms: [
-           { doors: ['N', 'NE', 'E', 'S', 'W', 'F'], threats: ['T1'], trap: false },
-           { doors: ['N', 'NE', 'E', 'S', 'W', 'F'], threats: ['T1'], trap: true },
-           { doors: ['N', 'NE', 'E', 'S', 'W', 'F'], threats: ['T1', 'T2'], trap: true },
+           { doors: ['N', 'NE', 'E', 'S', 'W'], threats: ['T1'], trap: false },
+           { doors: ['N', 'NE', 'E', 'S', 'W'], threats: ['T1'], trap: true },
+           { doors: ['N', 'NE', 'E', 'S', 'W'], threats: ['T1', 'T2'], trap: true },
          ] },
-    13: { name: 'Niveau 13 · Train', sub: 'Facile · 5 entrées + 1 fenêtre · 3 pièces enchaînées', env: 'urbain', roomShape: 'elongated',
+    13: { name: 'Niveau 13 · Train', sub: 'Facile · 5 entrées · 3 pièces enchaînées', env: 'urbain', roomShape: 'elongated',
          briefImg: './brief-train.jpg',
          brief: 'Un train immobilisé en pleine voie près de Corvane a été investi par une cellule ennemie. Fouillez les wagons un à un.',
          rooms: [
-           { doors: ['N', 'NE', 'E', 'S', 'W', 'F'], threats: ['T1'], trap: false },
-           { doors: ['N', 'NE', 'E', 'S', 'W', 'F'], threats: ['T1'], trap: true },
-           { doors: ['N', 'NE', 'E', 'S', 'W', 'F'], threats: ['T1', 'T2'], trap: true },
+           { doors: ['N', 'NE', 'E', 'S', 'W'], threats: ['T1'], trap: false },
+           { doors: ['N', 'NE', 'E', 'S', 'W'], threats: ['T1'], trap: true },
+           { doors: ['N', 'NE', 'E', 'S', 'W'], threats: ['T1', 'T2'], trap: true },
          ] },
-    14: { name: 'Niveau 14 · Cargo portuaire', sub: 'Facile · 5 entrées + 1 fenêtre · 3 pièces enchaînées', env: 'urbain', roomShape: 'elongated',
+    14: { name: 'Niveau 14 · Cargo portuaire', sub: 'Facile · 5 entrées · 3 pièces enchaînées', env: 'urbain', roomShape: 'elongated',
          briefImg: './brief-cargo.jpg',
          brief: 'Un cargo amarré dans le port industriel de Halveigh dissimule une cargaison suspecte. Montez à bord et neutralisez la menace.',
          rooms: [
-           { doors: ['N', 'NE', 'E', 'S', 'W', 'F'], threats: ['T1'], trap: false },
-           { doors: ['N', 'NE', 'E', 'S', 'W', 'F'], threats: ['T1'], trap: true },
-           { doors: ['N', 'NE', 'E', 'S', 'W', 'F'], threats: ['T1', 'T2'], trap: true },
+           { doors: ['N', 'NE', 'E', 'S', 'W'], threats: ['T1'], trap: false },
+           { doors: ['N', 'NE', 'E', 'S', 'W'], threats: ['T1'], trap: true },
+           { doors: ['N', 'NE', 'E', 'S', 'W'], threats: ['T1', 'T2'], trap: true },
          ] },
-    15: { name: 'Niveau 15 · Hangar', sub: 'Facile · 5 entrées + 1 fenêtre · 3 pièces enchaînées', env: 'urbain', roomShape: 'L',
+    15: { name: 'Niveau 15 · Hangar', sub: 'Facile · 5 entrées · 3 pièces enchaînées', env: 'urbain', roomShape: 'L',
          briefImg: './brief-hangar.jpg',
          brief: 'Un hangar désaffecté de l\'aéroport de Halveigh sert d\'entrepôt clandestin à Combine Ashgard. Sécurisez les lieux.',
          rooms: [
-           { doors: ['N', 'NE', 'E', 'S', 'W', 'F'], threats: ['T1'], trap: false },
-           { doors: ['N', 'NE', 'E', 'S', 'W', 'F'], threats: ['T1'], trap: true },
-           { doors: ['N', 'NE', 'E', 'S', 'W', 'F'], threats: ['T1', 'T2'], trap: true },
+           { doors: ['N', 'NE', 'E', 'S', 'W'], threats: ['T1'], trap: false },
+           { doors: ['N', 'NE', 'E', 'S', 'W'], threats: ['T1'], trap: true },
+           { doors: ['N', 'NE', 'E', 'S', 'W'], threats: ['T1', 'T2'], trap: true },
          ] },
     16: { name: 'Niveau 16 · Immeuble de bureaux', sub: 'Modéré · 4 points d\'entrée · 4 pièces enchaînées', env: 'urbain', roomShape: 'square',
          briefImg: './brief-bureaux.jpg',
@@ -1237,8 +1237,8 @@
       // excentré traverserait le vide de part et d'autre du corridor, d'où
       // les deux points de passage distincts selon la direction.
       viewBox: '-20 -20 340 420',
-      floorWallsSVG: '<path d="M20,20 L280,20 L280,140 L180,140 L180,220 L280,220 L280,340 L20,340 L20,220 L120,220 L120,140 L20,140 Z" fill="var(--floor)"/>' +
-        '<path d="M20,20 L280,20 L280,140 L180,140 L180,220 L280,220 L280,340 L20,340 L20,220 L120,220 L120,140 L20,140 Z" fill="none" stroke="var(--wall)" stroke-width="6"/>' +
+      floorWallsSVG: '<path d="M20,20 L280,20 L280,140 L210,140 L210,220 L280,220 L280,340 L20,340 L20,220 L90,220 L90,140 L20,140 Z" fill="var(--floor)"/>' +
+        '<path d="M20,20 L280,20 L280,140 L210,140 L210,220 L280,220 L280,340 L20,340 L20,220 L90,220 L90,140 L20,140 Z" fill="none" stroke="var(--wall)" stroke-width="6"/>' +
         '<rect x="55" y="45" width="45" height="20" fill="#2c301f" stroke="#3a3f2c" stroke-width="1"/>' +
         '<rect x="205" y="290" width="50" height="22" fill="#2c301f" stroke="#3a3f2c" stroke-width="1"/>' +
         COMPASS_ROSE_SVG,
@@ -1889,10 +1889,7 @@
       svg.appendChild(marker);
 
       const speed = classData[op.cls].speed;
-      // Light vaults through the window quickly — a small speed bonus that
-      // rewards using this alternate access with the right class.
-      const windowBonus = (doorId === 'F' && op.cls === 'Light') ? 250 : 0;
-      const duration = 2200 - speed * 300 - windowBonus;
+      const duration = 2200 - speed * 300;
       const isCasualty = casualtyIds.has(op.id);
       const assignedTarget = targets.find(t => t.op.id === op.id);
       // casualties never reach a target; they fall partway toward whichever
@@ -1966,8 +1963,6 @@
       }
 
       setTimeout(() => {
-        if (doorId === 'F') playSfx('glassBreak');
-
         if (needsWaypoint) {
           const wp = shapeCfg.waypoints[threatId];
           const d1 = Math.hypot(wp.x - x, wp.y - y);
