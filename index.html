@@ -198,6 +198,12 @@
     position: relative;
   }
   .briefing-image-wrap img#briefing-image { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .briefing-unit-logo {
+    position: absolute; top: 8px; left: 8px; width: 17%; max-width: 64px; height: auto;
+    aspect-ratio: 1 / 1; object-fit: cover; border-radius: 50%;
+    opacity: 0.6; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.55));
+    pointer-events: none;
+  }
   .briefing-enemy-wrap {
     max-height: 32vh; overflow: hidden; border-radius: 6px;
     border: 1px solid var(--wall); background: var(--panel); margin-bottom: 10px;
@@ -337,6 +343,7 @@
     </header>
     <div class="briefing-image-wrap">
       <img id="briefing-image" src="" alt="">
+      <img class="briefing-unit-logo" src="./unit-logo.jpg" alt="">
       <img id="briefing-operator" class="briefing-operator-vignette" src="" alt="">
     </div>
     <div class="mission-tag" id="briefing-title" style="margin-bottom:8px;"></div>

@@ -1,4 +1,4 @@
-const CACHE_VERSION = 'v18';
+const CACHE_VERSION = 'v19';
 const CACHE_NAME = 'breachsix-' + CACHE_VERSION;
 const ASSETS = [
   './',
@@ -42,6 +42,7 @@ const ASSETS = [
   './enemy-jungle.png',
   './enemy-arctique.png',
   './faction-logo.jpg',
+  './unit-logo.jpg',
   './skin-cuivre.jpg',
   './skin-argent.jpg',
   './skin-or.jpg',
