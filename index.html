@@ -1708,31 +1708,70 @@
     document.getElementById('celebration-overlay').classList.remove('show');
   });
 
+  // --- Pont AdMob natif (TWA PostMessage, Chrome 115+) ---
+  // Si l'app native (wrapper Android autour de la TWA) a établi le canal
+  // postMessage documenté par Google (developer.chrome.com/docs/android/
+  // post-message-twa), on l'utilise pour déclencher une VRAIE pub
+  // récompensée AdMob. Sinon (test dans un navigateur normal, ou app pas
+  // encore mise à jour avec le pont natif), on retombe sur la pub simulée
+  // — ça ne casse jamais le jeu, ça n'active juste pas les vraies pubs.
+  let nativeAdPort = null;
+  window.addEventListener('message', (event) => {
+    const port = event.ports && event.ports[0];
+    if (!port) return;
+    nativeAdPort = port;
+    nativeAdPort.onmessage = (portEvent) => {
+      let msg;
+      try { msg = JSON.parse(portEvent.data); } catch (e) { return; }
+      if (msg && msg.type === 'REWARDED_AD_RESULT') {
+        onAdResult(msg.success === true);
+      }
+    };
+  });
+
+  function requestRewardedAd() {
+    if (nativeAdPort) {
+      // Le natif décide vraiment si la pub a été regardée jusqu'au bout —
+      // onAdResult() n'est appelé qu'à la réception de sa réponse.
+      nativeAdPort.postMessage(JSON.stringify({ type: 'REQUEST_REWARDED_AD' }));
+    } else {
+      // Pas de pont natif détecté : simulation existante, inchangée.
+      setTimeout(() => onAdResult(true), 1400);
+    }
+  }
+
+  function onAdResult(success) {
+    watchingAd = false;
+    const btn = document.getElementById('watch-ad-btn');
+    btn.disabled = false;
+    btn.textContent = '▶ Regarder une pub optionnelle';
+    if (!success) {
+      showToast('Pub non complétée — réessaie pour débloquer un skin.');
+      return;
+    }
+    adsWatched++;
+    saveIntPref('breachsix-ads-watched', adsWatched);
+    const justUnlocked = skinDefs.find(s => s.req === adsWatched);
+    renderSkinTrack();
+    if (justUnlocked) {
+      showCelebration({
+        label: 'Skin débloqué !',
+        img: justUnlocked.img,
+        title: justUnlocked.name,
+        sub: 'Ce skin d\'arme est maintenant disponible.',
+      });
+    } else {
+      showToast('Pub visionnée (' + adsWatched + ')');
+    }
+  }
+
   document.getElementById('watch-ad-btn').addEventListener('click', () => {
     if (watchingAd) return;
     watchingAd = true;
     const btn = document.getElementById('watch-ad-btn');
     btn.disabled = true;
     btn.textContent = 'Pub en cours…';
-    setTimeout(() => {
-      adsWatched++;
-      saveIntPref('breachsix-ads-watched', adsWatched);
-      watchingAd = false;
-      btn.disabled = false;
-      btn.textContent = '▶ Regarder une pub optionnelle';
-      const justUnlocked = skinDefs.find(s => s.req === adsWatched);
-      renderSkinTrack();
-      if (justUnlocked) {
-        showCelebration({
-          label: 'Skin débloqué !',
-          img: justUnlocked.img,
-          title: justUnlocked.name,
-          sub: 'Ce skin d\'arme est maintenant disponible.',
-        });
-      } else {
-        showToast('Pub visionnée (' + adsWatched + ')');
-      }
-    }, 1400);
+    requestRewardedAd();
   });
 
   // Le mode nuit est déterminé par le niveau lui-même (voir levelDefs[].night),
