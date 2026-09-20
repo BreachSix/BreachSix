@@ -1,4 +1,4 @@
-const CACHE_VERSION = 'v31';
+const CACHE_VERSION = 'v33';
 const CACHE_NAME = 'breachsix-' + CACHE_VERSION;
 const ASSETS = [
   './',
@@ -10,7 +10,6 @@ const ASSETS = [
   './sound-heavy.mp3',
   './sound-light.mp3',
   './sound-night.mp3',
-  './sound-glass-break.mp3',
   './sound-explosion.mp3',
   './brief-residence.jpg',
   './brief-entrepot.jpg',
