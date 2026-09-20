@@ -401,6 +401,26 @@
           <text x="230" y="130" class="door-label" fill="var(--enemy)">GARDE</text>
         </g>
 
+        <!-- Threats 4-6: additional standard guards for tougher, more crowded rooms -->
+        <g id="t4-g" style="display:none;">
+          <circle class="threat-pulse enemy-body" cx="150" cy="235" r="9" fill="var(--enemy)" stroke="var(--enemy-dark)" stroke-width="1.5"/>
+          <circle class="enemy-helmet" cx="150" cy="229" r="4" fill="var(--enemy-dark)"/>
+          <rect class="enemy-weapon" x="148.7" y="219" width="2.6" height="7" fill="var(--enemy-dark)"/>
+          <text x="150" y="215" class="door-label" fill="var(--enemy)">GARDE</text>
+        </g>
+        <g id="t5-g" style="display:none;">
+          <circle class="threat-pulse enemy-body" cx="70" cy="150" r="9" fill="var(--enemy)" stroke="var(--enemy-dark)" stroke-width="1.5"/>
+          <circle class="enemy-helmet" cx="70" cy="144" r="4" fill="var(--enemy-dark)"/>
+          <rect class="enemy-weapon" x="68.7" y="134" width="2.6" height="7" fill="var(--enemy-dark)"/>
+          <text x="70" y="130" class="door-label" fill="var(--enemy)">GARDE</text>
+        </g>
+        <g id="t6-g" style="display:none;">
+          <circle class="threat-pulse enemy-body" cx="75" cy="215" r="9" fill="var(--enemy)" stroke="var(--enemy-dark)" stroke-width="1.5"/>
+          <circle class="enemy-helmet" cx="75" cy="209" r="4" fill="var(--enemy-dark)"/>
+          <rect class="enemy-weapon" x="73.7" y="199" width="2.6" height="7" fill="var(--enemy-dark)"/>
+          <text x="75" y="195" class="door-label" fill="var(--enemy)">GARDE</text>
+        </g>
+
         <!-- Threat 3: bomb with a defusal timer -->
         <g id="bomb-g" style="display:none;">
           <rect x="160" y="70" width="30" height="30" rx="4" fill="#3a1a12" stroke="var(--danger)" stroke-width="2"/>
@@ -662,6 +682,9 @@
     T1: { x: 175, y: 85, doors: ['N', 'NE'] },
     T2: { x: 115, y: 204, doors: ['E', 'S', 'W'] },
     T3: { x: 230, y: 150, doors: ['N', 'NE', 'E'] },
+    T4: { x: 150, y: 235, doors: ['S'] },
+    T5: { x: 70, y: 150, doors: ['W'] },
+    T6: { x: 75, y: 215, doors: ['W', 'F'] },
   };
   const doorThreatMap = { N: 'T1', NE: 'T1', E: 'T2', S: 'T2', W: 'T2', F: 'T2' };
   const trappedDoor = 'S';   // hidden from the player, as in the real game
@@ -762,9 +785,9 @@
          briefImg: './brief-residence.jpg',
          brief: 'Une cellule de Combine Ashgard utilise cette résidence de Corvane comme planque. Un otage y est retenu — nettoyez la maison et sécurisez-le.',
          rooms: [
-           { doors: ['N', 'NE', 'E', 'S', 'W', 'F'], threats: ['T1'], trap: false },
-           { doors: ['N', 'NE', 'E', 'S', 'W', 'F'], threats: ['T1'], trap: true },
-           { doors: ['N', 'NE', 'E', 'S', 'W', 'F'], threats: ['T1', 'T2'], trap: true },
+           { doors: ['N', 'NE', 'E', 'S', 'W', 'F'], threats: ['T1', 'T3', 'T4'], trap: false },
+           { doors: ['N', 'NE', 'E', 'S', 'W', 'F'], threats: ['T1', 'T3', 'T4', 'T5'], trap: true },
+           { doors: ['N', 'NE', 'E', 'S', 'W', 'F'], threats: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6'], trap: true },
          ] },
     2: { name: 'Niveau 2 · Résidence', sub: 'Difficile · 2 points d\'entrée · 3 pièces enchaînées', env: 'urbain', roomShape: 'square',
          briefImg: './brief-residence.jpg',
@@ -993,6 +1016,9 @@
     document.getElementById('t1-g').style.display = (!isBomb && room.threats.includes('T1')) ? '' : 'none';
     document.getElementById('t2-g').style.display = (!isBomb && room.threats.includes('T2')) ? '' : 'none';
     document.getElementById('t3-g').style.display = (!isBomb && room.threats.includes('T3')) ? '' : 'none';
+    document.getElementById('t4-g').style.display = (!isBomb && room.threats.includes('T4')) ? '' : 'none';
+    document.getElementById('t5-g').style.display = (!isBomb && room.threats.includes('T5')) ? '' : 'none';
+    document.getElementById('t6-g').style.display = (!isBomb && room.threats.includes('T6')) ? '' : 'none';
     document.getElementById('bomb-g').style.display = isBomb ? '' : 'none';
   }
 
@@ -1001,6 +1027,9 @@
     document.getElementById('t1-g').style.opacity = '';
     document.getElementById('t2-g').style.opacity = '';
     document.getElementById('t3-g').style.opacity = '';
+    document.getElementById('t4-g').style.opacity = '';
+    document.getElementById('t5-g').style.opacity = '';
+    document.getElementById('t6-g').style.opacity = '';
     document.getElementById('bomb-g').style.opacity = '';
     const hostageCircle = document.getElementById('t2-g').querySelector('.hostage-mark');
     hostageCircle.setAttribute('fill', '#5b8a9e');
@@ -1156,6 +1185,7 @@
       center: { x: 150, y: 150 },
       doors: { N:{x:150,y:20}, NE:{x:280,y:80}, E:{x:280,y:220}, S:{x:150,y:280}, W:{x:20,y:150}, F:{x:20,y:220} },
       t1: { x: 175, y: 85 }, t2: { x: 115, y: 205 }, t3: { x: 230, y: 150 }, bomb: { x: 175, y: 70 },
+      t4: { x: 150, y: 235 }, t5: { x: 70, y: 150 }, t6: { x: 75, y: 215 },
     },
     L: {
       viewBox: '-20 -20 400 420',
@@ -1246,17 +1276,21 @@
     t2texts[0].setAttribute('x', cx2 + 3); t2texts[0].setAttribute('y', cy2 + 23);
     t2texts[1].setAttribute('x', cx2 + 3); t2texts[1].setAttribute('y', cy2 + 33);
 
-    if (shape.t3) {
-      threats.T3.x = shape.t3.x; threats.T3.y = shape.t3.y;
-      const t3g = document.getElementById('t3-g');
-      const t3x = shape.t3.x, t3y = shape.t3.y;
-      t3g.querySelector('.enemy-body').setAttribute('cx', t3x); t3g.querySelector('.enemy-body').setAttribute('cy', t3y);
-      t3g.querySelector('.enemy-helmet').setAttribute('cx', t3x); t3g.querySelector('.enemy-helmet').setAttribute('cy', t3y - 6);
-      const t3weapon = t3g.querySelector('.enemy-weapon');
-      t3weapon.setAttribute('x', t3x - 1.3); t3weapon.setAttribute('y', t3y - 16);
-      const t3label = t3g.querySelector('text');
-      t3label.setAttribute('x', t3x); t3label.setAttribute('y', t3y - 20);
+    // Repositionne un garde "simple" (même structure que T3-T6) — évite de
+    // répéter ce bloc pour chaque nouveau garde ajouté.
+    function repositionSimpleGuard(threatId, pos) {
+      threats[threatId].x = pos.x; threats[threatId].y = pos.y;
+      const g = document.getElementById(threatId.toLowerCase() + '-g');
+      g.querySelector('.enemy-body').setAttribute('cx', pos.x); g.querySelector('.enemy-body').setAttribute('cy', pos.y);
+      g.querySelector('.enemy-helmet').setAttribute('cx', pos.x); g.querySelector('.enemy-helmet').setAttribute('cy', pos.y - 6);
+      const weapon = g.querySelector('.enemy-weapon');
+      weapon.setAttribute('x', pos.x - 1.3); weapon.setAttribute('y', pos.y - 16);
+      const label = g.querySelector('text');
+      label.setAttribute('x', pos.x); label.setAttribute('y', pos.y - 20);
     }
+    ['t3', 't4', 't5', 't6'].forEach(key => {
+      if (shape[key]) repositionSimpleGuard(key.toUpperCase(), shape[key]);
+    });
 
     const bombG = document.getElementById('bomb-g');
     const bx = shape.bomb.x, by = shape.bomb.y;
@@ -1552,7 +1586,14 @@
     const targets = []; // { doorId, op, targetThreatId }
     const hasT2 = room.threats.includes('T2');
     const hasT3 = room.threats.includes('T3');
-    const otherThreats = hasT3 ? ['T1', 'T3'] : ['T1'];
+    const hasT4 = room.threats.includes('T4');
+    const hasT5 = room.threats.includes('T5');
+    const hasT6 = room.threats.includes('T6');
+    const otherThreats = ['T1'];
+    if (hasT3) otherThreats.push('T3');
+    if (hasT4) otherThreats.push('T4');
+    if (hasT5) otherThreats.push('T5');
+    if (hasT6) otherThreats.push('T6');
 
     if (!hasT2) {
       survivors.forEach(([doorId, op], idx) => targets.push({ doorId, op, targetThreatId: otherThreats[idx % otherThreats.length] }));
@@ -1567,15 +1608,16 @@
       const rest = pool.slice(1);
       targets.push({ ...bestForT2, targetThreatId: 'T2' });
       // Remaining survivors split evenly across the other active threats,
-      // so a room with T1+T3 genuinely requires more than one extra operator.
+      // so a room with plusieurs gardes exige vraiment plusieurs opérateurs.
       rest.forEach((entry, idx) => {
         targets.push({ ...entry, targetThreatId: otherThreats[idx % otherThreats.length] });
       });
     }
 
-    const byThreat = { T1: targets.filter(t => t.targetThreatId === 'T1').map(t => t.op),
-                        T2: targets.filter(t => t.targetThreatId === 'T2').map(t => t.op),
-                        T3: targets.filter(t => t.targetThreatId === 'T3').map(t => t.op) };
+    const byThreat = {};
+    ['T1', 'T2', 'T3', 'T4', 'T5', 'T6'].forEach(id => {
+      byThreat[id] = targets.filter(t => t.targetThreatId === id).map(t => t.op);
+    });
 
     function fastestOf(list) {
       let f = list[0];
@@ -1586,6 +1628,9 @@
     const t1Cleared = byThreat.T1.length > 0;
     const t2Cleared = !hasT2 || byThreat.T2.length > 0;
     const t3Cleared = !hasT3 || byThreat.T3.length > 0;
+    const t4Cleared = !hasT4 || byThreat.T4.length > 0;
+    const t5Cleared = !hasT5 || byThreat.T5.length > 0;
+    const t6Cleared = !hasT6 || byThreat.T6.length > 0;
     // Heavy and Shadow (karambit, up close) both handle the armored guard cleanly.
     function isCleanT2Handler(op) {
       return op.cls === 'Heavy' || op.cls === 'Shadow';
@@ -1617,7 +1662,7 @@
       bombFastDefuse = fastestArrivalMs !== null && fastestArrivalMs <= BOMB_FAST_MS;
     }
 
-    const primarySuccess = isBombRoom ? (t1Cleared && bombDefused) : (t1Cleared && t2Cleared && t3Cleared);
+    const primarySuccess = isBombRoom ? (t1Cleared && bombDefused) : (t1Cleared && t2Cleared && t3Cleared && t4Cleared && t5Cleared && t6Cleared);
     const noOperatorLost = casualtyIds.size === 0;
     // At night, every weapon is fitted with a silencer regardless of class,
     // so gunfire never gives the squad away. A bomb-only room has no enemy to
@@ -1790,6 +1835,9 @@
     // Minuterie de bombe : moment fixe (indépendant de la vitesse des
     // opérateurs) où la bombe détone si personne ne l'a désamorcée à temps.
     const bombExplodeAt = 300 + BOMB_THRESHOLD_MS;
+    // Moment où le tout premier opérateur (le plus rapide) engage réellement
+    // sa cible — la riposte ennemie se déclenche après ça, jamais avant.
+    let earliestEngageEnd = Infinity;
 
     assignedList.forEach(([doorId, op], i) => {
       const doorEl = document.querySelector('.door[data-door="' + doorId + '"]');
@@ -1923,35 +1971,33 @@
           // Pas de tir sur une bombe désamorcée avec succès ou sans bombe :
           // seul un échec de désamorçage empêche complètement l'arrivée.
           setTimeout(fireEffectsAndCasualty, travelDuration);
+          if (!isBombRoom) earliestEngageEnd = Math.min(earliestEngageEnd, departureAt + travelDuration);
         }
       }, departureAt);
     });
 
-    // Riposte ennemie : un éclat + un son depuis chaque menace encore active
-    // au moment de l'échange, pour donner l'impression d'un vrai échange de
-    // tirs plutôt qu'un seul camp qui tire. Purement cosmétique — l'issue de
-    // la pièce reste déterminée par la logique ci-dessus, pas par ceci.
-    if (!isBombRoom && assignedList.length) {
-      let avgX = 0, avgY = 0;
-      assignedList.forEach(([doorId]) => {
-        const de = document.querySelector('.door[data-door="' + doorId + '"]');
-        avgX += Number(de.getAttribute('data-x'));
-        avgY += Number(de.getAttribute('data-y'));
-      });
-      avgX /= assignedList.length; avgY /= assignedList.length;
+    // Riposte ennemie : un éclat + un son depuis chaque menace encore active,
+    // juste après que le premier opérateur ait réellement engagé sa cible —
+    // jamais avant — pour donner l'impression d'un échange de tirs plutôt
+    // qu'un seul camp qui tire. Le flash part exactement du bout de l'arme
+    // déjà dessinée sur le garde (pas une direction recalculée), pour éviter
+    // qu'il semble tirer dans son propre dos. Purement cosmétique — l'issue
+    // de la pièce reste déterminée par la logique ci-dessus, pas par ceci.
+    if (!isBombRoom && assignedList.length && earliestEngageEnd < Infinity) {
       setTimeout(() => {
         [
-          [t1Cleared, threats.T1],
-          [hasT2 && t2Cleared, threats.T2],
-          [hasT3 && t3Cleared, threats.T3],
-        ].forEach(([active, pos]) => {
+          [t1Cleared, threats.T1.x, threats.T1.y - 16],
+          [hasT2 && t2Cleared, threats.T2.x, threats.T2.y - 28],
+          [hasT3 && t3Cleared, threats.T3.x, threats.T3.y - 16],
+          [hasT4 && t4Cleared, threats.T4.x, threats.T4.y - 16],
+          [hasT5 && t5Cleared, threats.T5.x, threats.T5.y - 16],
+          [hasT6 && t6Cleared, threats.T6.x, threats.T6.y - 16],
+        ].forEach(([active, fx, fy]) => {
           if (!active) return;
-          const angle = Math.atan2(avgY - pos.y, avgX - pos.x);
-          const fx = pos.x + Math.cos(angle) * 14, fy = pos.y + Math.sin(angle) * 14;
           spawnEnemyMuzzleFlash(svg, fx, fy);
           if (!isNight) playPreloaded('class-Assault', 0.75);
         });
-      }, 900);
+      }, earliestEngageEnd + 200);
     }
 
     if (isBombRoom) {
@@ -1983,6 +2029,9 @@
       setTimeout(() => {
         if (t1Cleared) document.getElementById('t1-g').style.opacity = '0.15';
         if (t3Cleared && hasT3) document.getElementById('t3-g').style.opacity = '0.15';
+        if (t4Cleared && hasT4) document.getElementById('t4-g').style.opacity = '0.15';
+        if (t5Cleared && hasT5) document.getElementById('t5-g').style.opacity = '0.15';
+        if (t6Cleared && hasT6) document.getElementById('t6-g').style.opacity = '0.15';
         if (t2Cleared) {
           document.getElementById('t2-g').style.transition = 'opacity 0.3s ease';
           document.getElementById('t2-g').style.opacity = hostageSafe ? '0.15' : '0.5';
@@ -1992,7 +2041,7 @@
     }
 
     setTimeout(() => {
-      showResult({ primarySuccess, noOperatorLost, hostageSafe, hostageFailReason, stealthSuccess, t1Cleared, t2Cleared, hasT2, t3Cleared, hasT3, casualtyIds, isBombRoom, bombDefused, bombFastDefuse });
+      showResult({ primarySuccess, noOperatorLost, hostageSafe, hostageFailReason, stealthSuccess, t1Cleared, t2Cleared, hasT2, t3Cleared, hasT3, t4Cleared, hasT4, t5Cleared, hasT5, t6Cleared, hasT6, casualtyIds, isBombRoom, bombDefused, bombFastDefuse });
     }, maxDelay);
   }
 
@@ -2026,6 +2075,9 @@
         if (!r.t1Cleared) missed.push('Le garde n\'a pas été neutralisé (aucun opérateur envoyé de ce côté)');
         if (r.hasT2 && !r.t2Cleared) missed.push('Le garde blindé n\'a pas été neutralisé (aucun opérateur envoyé de ce côté)');
         if (r.hasT3 && !r.t3Cleared) missed.push('Un second garde n\'a pas été neutralisé (aucun opérateur envoyé de ce côté)');
+        if (r.hasT4 && !r.t4Cleared) missed.push('Un garde n\'a pas été neutralisé (aucun opérateur envoyé de ce côté)');
+        if (r.hasT5 && !r.t5Cleared) missed.push('Un garde n\'a pas été neutralisé (aucun opérateur envoyé de ce côté)');
+        if (r.hasT6 && !r.t6Cleared) missed.push('Un garde n\'a pas été neutralisé (aucun opérateur envoyé de ce côté)');
       }
       missed.forEach(m => {
         const li = document.createElement('li');
