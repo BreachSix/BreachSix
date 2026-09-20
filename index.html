@@ -1620,13 +1620,20 @@
 
   // --- Ad-based cosmetic skin unlocks (simulated) ---
   const skinDefs = [
-    { name: 'Cuivre', req: 5, img: './skin-cuivre.jpg' },
-    { name: 'Argent', req: 10, img: './skin-argent.jpg' },
-    { name: 'Or', req: 15, img: './skin-or.jpg' },
-    { name: 'Damas', req: 25, img: './skin-damas.jpg' },
-    { name: 'Platine', req: 35, img: './skin-platine.jpg' },
-    { name: 'Diamant', req: 50, img: './skin-diamant.jpg' },
+    { name: 'Cuivre', req: 5, img: './skin-cuivre.jpg', color: '#c17a4a' },
+    { name: 'Argent', req: 10, img: './skin-argent.jpg', color: '#c0c0c8' },
+    { name: 'Or', req: 15, img: './skin-or.jpg', color: '#d4af37' },
+    { name: 'Damas', req: 25, img: './skin-damas.jpg', color: '#7c8896' },
+    { name: 'Platine', req: 35, img: './skin-platine.jpg', color: '#dcdce2' },
+    { name: 'Diamant', req: 50, img: './skin-diamant.jpg', color: '#cdeaf7' },
   ];
+  // Le skin M4 le plus haut déjà débloqué s'affiche automatiquement sur l'arme
+  // de l'Assault en mission — pas de sélecteur séparé, comme pour les paliers
+  // de prestige du karambit.
+  function getEquippedSkinColor() {
+    const unlocked = skinDefs.filter(s => adsWatched >= s.req);
+    return unlocked.length ? unlocked[unlocked.length - 1].color : null;
+  }
   let adsWatched = 0;
   let watchingAd = false;
 
@@ -2034,7 +2041,11 @@
         weapon.setAttribute('y', String(-9 - weaponLen));
         weapon.setAttribute('width', String(weaponWidth));
         weapon.setAttribute('height', String(weaponLen));
-        weapon.setAttribute('fill', camo.outline);
+        // Seul l'Assault porte le M4 : le skin le plus haut débloqué colore
+        // son arme directement en mission. Les autres classes (arme
+        // différente, jamais skinnée) gardent le rendu sombre habituel.
+        const equippedSkinColor = op.cls === 'Assault' ? getEquippedSkinColor() : null;
+        weapon.setAttribute('fill', equippedSkinColor || camo.outline);
         g.appendChild(weapon);
         g.dataset.weaponTipY = String(-9 - weaponLen);
 
