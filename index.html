@@ -1609,13 +1609,6 @@
       assignments[doorId].forEach(op => assignedList.push([doorId, op]));
     }
 
-    // Bris de vitre : joué immédiatement au lancement de l'assaut (délai
-    // zéro), pas au moment où l'opérateur assigné à la fenêtre se met en
-    // mouvement — le verre se brise dès qu'on donne l'ordre, pas à mi-chemin.
-    if (assignedList.some(([doorId]) => doorId === 'F')) {
-      playSfx('glassBreak');
-    }
-
     // Determine trap casualties (hidden mechanic: Heavy forcing the trapped door) — only if this room has the trap active
     const casualtyIds = new Set();
     if (room.trap) {
@@ -1973,6 +1966,8 @@
       }
 
       setTimeout(() => {
+        if (doorId === 'F') playSfx('glassBreak');
+
         if (needsWaypoint) {
           const wp = shapeCfg.waypoints[threatId];
           const d1 = Math.hypot(wp.x - x, wp.y - y);
