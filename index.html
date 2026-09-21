@@ -71,6 +71,12 @@
     padding: 5px 10px; border-radius: 4px; cursor: pointer;
   }
   .compose-btn.active { background: var(--amber); color: #2a2410; border-color: var(--amber); }
+  .lang-btn {
+    font-family: var(--font-head); font-size: 0.62rem; letter-spacing: 0.03em;
+    background: transparent; border: 1px solid var(--amber-dim); color: var(--amber);
+    padding: 5px 4px; border-radius: 4px; cursor: pointer;
+  }
+  .lang-btn.active { background: var(--amber); color: #2a2410; border-color: var(--amber); }
   .brief {
     background: var(--panel); border: 1px solid var(--wall); border-radius: 4px;
     padding: 6px 10px; margin-bottom: 6px; font-size: 0.7rem; color: var(--text-dim);
@@ -323,26 +329,32 @@
     <header>
       <h1>Breach<span>Six</span></h1>
     </header>
+    <div class="lang-switcher" style="display:flex; gap:6px; margin-bottom:10px;">
+      <button class="lang-btn active" data-lang="fr" style="flex:1;">FR</button>
+      <button class="lang-btn" data-lang="en" style="flex:1;">EN</button>
+      <button class="lang-btn" data-lang="es" style="flex:1;">ES</button>
+      <button class="lang-btn" data-lang="ptbr" style="flex:1;">PT-BR</button>
+    </div>
     <div class="menu-scroll">
       <div class="brief" style="margin-bottom:14px;">
         Choisis une mission. Ta composition d'escouade reste la même d'une mission à l'autre.
       </div>
       <div class="level-list" id="level-list"></div>
-      <button class="compose-btn" id="menu-compose-btn" style="margin-top:10px;">Composer les escouades</button>
+      <button class="compose-btn" id="menu-compose-btn" data-i18n="composeSquads" style="margin-top:10px;">Composer les escouades</button>
 
       <div class="skins-section">
         <div class="skins-header">
-          <span class="squad-title" style="color:var(--amber);">Accessibilité</span>
+          <span class="squad-title" data-i18n="accessibility" style="color:var(--amber);">Accessibilité</span>
         </div>
         <div style="display:flex; gap:8px;">
-          <button class="compose-btn" id="colorblind-btn" style="flex:1;">Mode daltonien</button>
-          <button class="compose-btn" id="large-text-btn" style="flex:1;">Texte agrandi</button>
+          <button class="compose-btn" id="colorblind-btn" data-i18n="colorblindMode" style="flex:1;">Mode daltonien</button>
+          <button class="compose-btn" id="large-text-btn" data-i18n="largeTextMode" style="flex:1;">Texte agrandi</button>
         </div>
       </div>
 
       <div class="skins-section">
         <div class="skins-header">
-          <span class="squad-title" style="color:var(--amber);">Skins d'armes</span>
+          <span class="squad-title" data-i18n="weaponSkins" style="color:var(--amber);">Skins d'armes</span>
           <span class="ads-count" id="ads-count">0 pub visionnée</span>
         </div>
         <div class="skin-track" id="skin-track"></div>
@@ -374,12 +386,12 @@
   <div id="mission-screen" style="display:none;">
     <header>
       <button class="back-btn" id="back-btn">← Menu</button>
-      <button class="compose-btn" id="compose-btn">Composer</button>
+      <button class="compose-btn" id="compose-btn" data-i18n="compose">Composer</button>
     </header>
     <div class="mission-tag" id="mission-tag">Niveau 1 · Résidence · Jour · 5 points d'entrée</div>
 
     <div class="brief">
-      <strong>Objectif :</strong> <span id="brief-objective">neutraliser la menace et libérer l'otage.</span>
+      <strong data-i18n="objectiveLabel">Objectif :</strong> <span id="brief-objective">neutraliser la menace et libérer l'otage.</span>
       Sélectionne un opérateur, puis touche un point d'entrée pour l'assigner — tu peux en assigner plusieurs au même point. Touche un point sans opérateur sélectionné pour en retirer un.
     </div>
 
@@ -509,32 +521,32 @@
     </div>
 
     <div class="legend">
-      <span class="legend-item"><span class="legend-swatch legend-op"></span>Opérateur</span>
+      <span class="legend-item"><span class="legend-swatch legend-op"></span><span data-i18n="operatorLegend">Opérateur</span></span>
       <span class="legend-item">
         <svg class="legend-icon" viewBox="-7 -7 14 14" width="11" height="11" aria-hidden="true"><circle cx="0" cy="0" r="6" fill="var(--enemy)" stroke="var(--enemy-dark)" stroke-width="1"/></svg>
-        Garde ennemi
+        <span data-i18n="enemyGuardLegend">Garde ennemi</span>
       </span>
       <span class="legend-item">
         <svg class="legend-icon" viewBox="-9 -12 18 24" width="11" height="14" aria-hidden="true"><polygon points="0,-12 9,-7 9,5 0,12 -9,5 -9,-7" fill="var(--enemy)" stroke="var(--enemy-dark)" stroke-width="1.5"/></svg>
-        Garde blindé
+        <span data-i18n="armoredGuardLegend">Garde blindé</span>
       </span>
       <span class="legend-item">
         <svg class="legend-icon" viewBox="-7 -7 14 14" width="11" height="11" aria-hidden="true"><circle cx="0" cy="0" r="6" fill="var(--enemy)" stroke="var(--enemy-dark)" stroke-width="1"/><circle cx="0" cy="0" r="5.2" fill="none" stroke="var(--danger)" stroke-width="1.3"/></svg>
-        Tireur d'élite (Shadow exposé)
+        <span data-i18n="sniperLegend">Tireur d'élite (Shadow exposé)</span>
       </span>
-      <span class="legend-item"><span class="legend-swatch legend-hostage"></span>Otage</span>
-      <span class="legend-item"><span class="legend-swatch legend-bomb"></span>Bombe</span>
+      <span class="legend-item"><span class="legend-swatch legend-hostage"></span><span data-i18n="hostageLegend">Otage</span></span>
+      <span class="legend-item"><span class="legend-swatch legend-bomb"></span><span data-i18n="bombLegend">Bombe</span></span>
     </div>
 
-    <div class="hint" id="hint">Sélectionne un opérateur pour commencer.</div>
+    <div class="hint" id="hint" data-i18n="selectOperatorHint">Sélectionne un opérateur pour commencer.</div>
 
     <div class="roster">
       <div class="squad-row">
-        <div class="squad-title a">Escouade A</div>
+        <div class="squad-title a" data-i18n="squadA">Escouade A</div>
         <div class="chips" id="squad-a"></div>
       </div>
       <div class="squad-row">
-        <div class="squad-title b">Escouade B</div>
+        <div class="squad-title b" data-i18n="squadB">Escouade B</div>
         <div class="chips" id="squad-b"></div>
       </div>
     </div>
@@ -571,6 +583,161 @@
 
 <script>
 (function() {
+  // --- Internationalisation (architecture) ---
+  // Portée actuelle : tout le texte statique de l'interface (menu, légende,
+  // écran de résultat, accessibilité). Le contenu des 150 niveaux (nom,
+  // sous-titre, texte de briefing) et certains messages assemblés
+  // dynamiquement en cours de mission restent en français pour l'instant,
+  // quelle que soit la langue choisie — c'est le prochain chantier.
+  let currentLang = 'fr';
+  try { currentLang = localStorage.getItem('breachsix-lang') || 'fr'; } catch (e) {}
+
+  const STRINGS = {
+    fr: {
+      tagline: 'Unité tactique',
+      composeSquads: 'Composer les escouades',
+      accessibility: 'Accessibilité',
+      colorblindMode: 'Mode daltonien',
+      largeTextMode: 'Texte agrandi',
+      weaponSkins: "Skins d'armes",
+      compose: 'Composer',
+      objectiveLabel: 'Objectif :',
+      operatorLegend: 'Opérateur',
+      hostageLegend: 'Otage',
+      bombLegend: 'Bombe',
+      enemyGuardLegend: 'Garde ennemi',
+      armoredGuardLegend: 'Garde blindé',
+      sniperLegend: "Tireur d'élite (Shadow exposé)",
+      selectOperatorHint: 'Sélectionne un opérateur pour commencer.',
+      squadA: 'Escouade A',
+      squadB: 'Escouade B',
+      missionSuccess: 'Mission réussie',
+      nextRoom: 'Pièce suivante →',
+      nextLevel: 'Niveau suivant →',
+      replayRoom: 'Rejouer la pièce',
+      replayLevel: 'Rejouer le niveau',
+      backToMenu: 'Retour au menu',
+      skinUnlocked: 'Skin débloqué !',
+      continueBtn: 'Continuer',
+      bestScore: 'Meilleur score',
+      roomSecured: 'Pièce sécurisée',
+      newBestScore: 'Nouveau meilleur score !',
+    },
+    en: {
+      tagline: 'Tactical Unit',
+      composeSquads: 'Build your squads',
+      accessibility: 'Accessibility',
+      colorblindMode: 'Colorblind mode',
+      largeTextMode: 'Large text',
+      weaponSkins: 'Weapon skins',
+      compose: 'Build squad',
+      objectiveLabel: 'Objective:',
+      operatorLegend: 'Operator',
+      hostageLegend: 'Hostage',
+      bombLegend: 'Bomb',
+      enemyGuardLegend: 'Enemy guard',
+      armoredGuardLegend: 'Armored guard',
+      sniperLegend: 'Marksman (Shadow exposed)',
+      selectOperatorHint: 'Select an operator to begin.',
+      squadA: 'Squad A',
+      squadB: 'Squad B',
+      missionSuccess: 'Mission successful',
+      nextRoom: 'Next room →',
+      nextLevel: 'Next level →',
+      replayRoom: 'Replay room',
+      replayLevel: 'Replay level',
+      backToMenu: 'Back to menu',
+      skinUnlocked: 'Skin unlocked!',
+      continueBtn: 'Continue',
+      bestScore: 'Best score',
+      roomSecured: 'Room secured',
+      newBestScore: 'New best score!',
+    },
+    es: {
+      tagline: 'Unidad táctica',
+      composeSquads: 'Formar los escuadrones',
+      accessibility: 'Accesibilidad',
+      colorblindMode: 'Modo daltónico',
+      largeTextMode: 'Texto grande',
+      weaponSkins: 'Skins de armas',
+      compose: 'Formar escuadrón',
+      objectiveLabel: 'Objetivo:',
+      operatorLegend: 'Operador',
+      hostageLegend: 'Rehén',
+      bombLegend: 'Bomba',
+      enemyGuardLegend: 'Guardia enemigo',
+      armoredGuardLegend: 'Guardia blindado',
+      sniperLegend: 'Francotirador (Shadow expuesto)',
+      selectOperatorHint: 'Selecciona un operador para empezar.',
+      squadA: 'Escuadrón A',
+      squadB: 'Escuadrón B',
+      missionSuccess: 'Misión exitosa',
+      nextRoom: 'Siguiente sala →',
+      nextLevel: 'Siguiente nivel →',
+      replayRoom: 'Repetir sala',
+      replayLevel: 'Repetir nivel',
+      backToMenu: 'Volver al menú',
+      skinUnlocked: '¡Skin desbloqueado!',
+      continueBtn: 'Continuar',
+      bestScore: 'Mejor puntaje',
+      roomSecured: 'Sala asegurada',
+      newBestScore: '¡Nuevo mejor puntaje!',
+    },
+    ptbr: {
+      tagline: 'Unidade tática',
+      composeSquads: 'Montar os esquadrões',
+      accessibility: 'Acessibilidade',
+      colorblindMode: 'Modo daltônico',
+      largeTextMode: 'Texto grande',
+      weaponSkins: 'Skins de armas',
+      compose: 'Montar esquadrão',
+      objectiveLabel: 'Objetivo:',
+      operatorLegend: 'Operador',
+      hostageLegend: 'Refém',
+      bombLegend: 'Bomba',
+      enemyGuardLegend: 'Guarda inimigo',
+      armoredGuardLegend: 'Guarda blindado',
+      sniperLegend: 'Atirador de elite (Shadow exposto)',
+      selectOperatorHint: 'Selecione um operador para começar.',
+      squadA: 'Esquadrão A',
+      squadB: 'Esquadrão B',
+      missionSuccess: 'Missão bem-sucedida',
+      nextRoom: 'Próxima sala →',
+      nextLevel: 'Próximo nível →',
+      replayRoom: 'Repetir sala',
+      replayLevel: 'Repetir nível',
+      backToMenu: 'Voltar ao menu',
+      skinUnlocked: 'Skin desbloqueada!',
+      continueBtn: 'Continuar',
+      bestScore: 'Melhor pontuação',
+      roomSecured: 'Sala segura',
+      newBestScore: 'Nova melhor pontuação!',
+    },
+  };
+
+  function t(key) {
+    return (STRINGS[currentLang] && STRINGS[currentLang][key]) || STRINGS.fr[key] || key;
+  }
+
+  // Applique la traduction à tous les éléments statiques marqués
+  // data-i18n="clé" — appelé au chargement et à chaque changement de langue.
+  function applyStaticTranslations() {
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+      el.textContent = t(el.getAttribute('data-i18n'));
+    });
+    document.documentElement.setAttribute('lang', currentLang === 'ptbr' ? 'pt-BR' : currentLang);
+  }
+
+  function setLanguage(lang) {
+    if (!STRINGS[lang]) return;
+    currentLang = lang;
+    try { localStorage.setItem('breachsix-lang', lang); } catch (e) {}
+    applyStaticTranslations();
+    document.querySelectorAll('.lang-btn').forEach(b => {
+      b.classList.toggle('active', b.getAttribute('data-lang') === lang);
+    });
+  }
+
   const classData = {
     Assault: { wpn: 'M4', speed: 2 },
     Light:  { wpn: 'MP5', speed: 3 },
@@ -2427,7 +2594,7 @@
       card.className = 'level-card';
       card.innerHTML =
         '<div><div class="lc-title">' + def.name + '</div><div class="lc-sub">' + def.sub + '</div></div>' +
-        '<div class="lc-score"><span class="lbl">Meilleur score</span>' + bestScores[id].toLocaleString('fr-CA') + '</div>';
+        '<div class="lc-score"><span class="lbl">' + t('bestScore') + '</span>' + bestScores[id].toLocaleString('fr-CA') + '</div>';
       card.addEventListener('click', () => showBriefing(Number(id)));
       list.appendChild(card);
     });
@@ -3929,6 +4096,12 @@
   function saveJSONPref(key, value) {
     try { localStorage.setItem(key, JSON.stringify(value)); } catch (e) {}
   }
+  function loadStringPref(key, fallback) {
+    try { const v = localStorage.getItem(key); return v || fallback; } catch (e) { return fallback; }
+  }
+  function saveStringPref(key, value) {
+    try { localStorage.setItem(key, value); } catch (e) {}
+  }
   let colorblindMode = loadBoolPref('breachsix-colorblind');
   let largeTextMode = loadBoolPref('breachsix-large-text');
 
@@ -3950,6 +4123,14 @@
     applyAccessibility();
   });
   applyAccessibility();
+
+  document.querySelectorAll('.lang-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      setLanguage(btn.getAttribute('data-lang'));
+      renderLevelList();
+    });
+  });
+  setLanguage(currentLang);
 
   initDoors();
   applyLevelVisibility();
