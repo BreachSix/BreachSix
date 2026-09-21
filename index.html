@@ -320,6 +320,13 @@
     font-size: 0.8rem; color: var(--text-dim); margin-bottom: 16px; line-height: 1.4;
   }
 </style>
+<!--
+  Chargés sans condition : inoffensifs en dehors de Telegram (ces scripts ne
+  font simplement rien si window.Telegram/window.Adsgram ne sont jamais
+  utilisés). Rien ne change pour un joueur sur Google Play/navigateur normal.
+-->
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<script src="https://sad.adsgram.ai/js/sad.min.js"></script>
 </head>
 <body>
 <div class="app" id="app">
@@ -588,7 +595,7 @@
 <div class="toast" id="toast"></div>
 
 <script>
-(function() {
+function bootGame() {
   // --- Internationalisation (architecture) ---
   // Portée actuelle : tout le texte statique de l'interface (menu, légende,
   // écran de résultat, accessibilité). Le contenu des 150 niveaux (nom,
@@ -3420,16 +3427,33 @@ const LEVEL_I18N = {"en": {"1": {"name": "Level 1 · Residence", "sub": "Easy ·
     };
   });
 
+  // --- AdsGram (Telegram Mini App) ---
+  // Réseau publicitaire natif aux Mini Apps Telegram — pas de pont requis,
+  // le SDK tourne directement dans la page. ATTENTION : "TON_BLOCK_ID" est
+  // un espace réservé — remplace-le par le blockId obtenu sur
+  // https://partner.adsgram.ai une fois le compte créé, sinon cette
+  // branche échoue silencieusement et le jeu retombe sur la simulation.
+  let adsgramController = null;
+  if (isTelegram && window.Adsgram) {
+    try { adsgramController = window.Adsgram.init({ blockId: 'TON_BLOCK_ID' }); } catch (e) {}
+  }
+
   function requestRewardedAd() {
-    if (nativeAdPort) {
+    if (adsgramController) {
+      // AdsGram (Telegram) : priorité si on tourne dans un Mini App.
+      adsgramController.show()
+        .then(() => onAdResult(true))
+        .catch(() => onAdResult(false));
+    } else if (nativeAdPort) {
       // Le natif décide vraiment si la pub a été regardée jusqu'au bout —
       // onAdResult() n'est appelé qu'à la réception de sa réponse.
       nativeAdPort.postMessage(JSON.stringify({ type: 'REQUEST_REWARDED_AD' }));
     } else {
-      // Pas de pont natif détecté : simulation existante, inchangée.
+      // Ni Telegram ni pont natif détecté : simulation existante, inchangée.
       setTimeout(() => onAdResult(true), 1400);
     }
   }
+
 
   function onAdResult(success) {
     watchingAd = false;
@@ -4286,11 +4310,20 @@ const LEVEL_I18N = {"en": {"1": {"name": "Level 1 · Residence", "sub": "Easy ·
   });
 
   // --- Accessibilité ---
+  // Écrit aussi vers DeviceStorage sur Telegram (asynchrone, sans bloquer) —
+  // localStorage reste la source de vérité immédiate dans tous les cas.
+  function mirrorToTelegramStorage(key, rawValue) {
+    if (isTelegram && window.Telegram.WebApp.DeviceStorage) {
+      try { window.Telegram.WebApp.DeviceStorage.set(key, rawValue).catch(() => {}); } catch (e) {}
+    }
+  }
   function loadBoolPref(key) {
     try { return localStorage.getItem(key) === '1'; } catch (e) { return false; }
   }
   function saveBoolPref(key, value) {
-    try { localStorage.setItem(key, value ? '1' : '0'); } catch (e) {}
+    const raw = value ? '1' : '0';
+    try { localStorage.setItem(key, raw); } catch (e) {}
+    mirrorToTelegramStorage(key, raw);
   }
   function loadIntPref(key, fallback) {
     try {
@@ -4299,7 +4332,9 @@ const LEVEL_I18N = {"en": {"1": {"name": "Level 1 · Residence", "sub": "Easy ·
     } catch (e) { return fallback; }
   }
   function saveIntPref(key, value) {
-    try { localStorage.setItem(key, String(value)); } catch (e) {}
+    const raw = String(value);
+    try { localStorage.setItem(key, raw); } catch (e) {}
+    mirrorToTelegramStorage(key, raw);
   }
   function loadJSONPref(key, fallback) {
     try {
@@ -4308,13 +4343,16 @@ const LEVEL_I18N = {"en": {"1": {"name": "Level 1 · Residence", "sub": "Easy ·
     } catch (e) { return fallback; }
   }
   function saveJSONPref(key, value) {
-    try { localStorage.setItem(key, JSON.stringify(value)); } catch (e) {}
+    const raw = JSON.stringify(value);
+    try { localStorage.setItem(key, raw); } catch (e) {}
+    mirrorToTelegramStorage(key, raw);
   }
   function loadStringPref(key, fallback) {
     try { const v = localStorage.getItem(key); return v || fallback; } catch (e) { return fallback; }
   }
   function saveStringPref(key, value) {
     try { localStorage.setItem(key, value); } catch (e) {}
+    mirrorToTelegramStorage(key, value);
   }
   let colorblindMode = loadBoolPref('breachsix-colorblind');
   let largeTextMode = loadBoolPref('breachsix-large-text');
@@ -4352,7 +4390,31 @@ const LEVEL_I18N = {"en": {"1": {"name": "Level 1 · Residence", "sub": "Easy ·
   renderLevelList();
   renderSkinTrack();
   showScreen('menu');
-})();
+}
+
+// --- Démarrage : Telegram Mini App ou normal (Google Play/navigateur) ---
+// Sur Telegram, on précharge d'abord les données sauvegardées depuis
+// DeviceStorage (persistant, propre à Telegram) vers localStorage, pour que
+// tout le reste du jeu — qui lit ses préférences de façon synchrone au
+// démarrage — les trouve déjà en place. Hors Telegram, rien ne change :
+// bootGame() démarre immédiatement, exactement comme avant.
+const isTelegram = !!(window.Telegram && window.Telegram.WebApp);
+const PERSIST_KEYS = ['breachsix-ads-watched', 'breachsix-best-scores', 'breachsix-colorblind', 'breachsix-lang', 'breachsix-large-text', 'breachsix-milestone-tier', 'breachsix-squad-composition'];
+
+function preloadTelegramStorage(done) {
+  if (!isTelegram || !window.Telegram.WebApp.DeviceStorage) { done(); return; }
+  try { window.Telegram.WebApp.ready(); window.Telegram.WebApp.expand(); } catch (e) {}
+  const ds = window.Telegram.WebApp.DeviceStorage;
+  let remaining = PERSIST_KEYS.length;
+  const finishOne = () => { if (--remaining <= 0) done(); };
+  PERSIST_KEYS.forEach(key => {
+    ds.get(key)
+      .then(value => { if (value !== undefined && value !== null) { try { localStorage.setItem(key, value); } catch (e) {} } finishOne(); })
+      .catch(() => finishOne());
+  });
+}
+
+preloadTelegramStorage(bootGame);
 </script>
 <script>
   if ('serviceWorker' in navigator) {
