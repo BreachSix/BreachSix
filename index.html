@@ -3696,7 +3696,11 @@
     // At night, every weapon is fitted with a silencer regardless of class,
     // so gunfire never gives the squad away. A bomb-only room has no enemy to
     // shoot at all, so the objective is trivially met there too.
-    const stealthSuccess = isBombRoom || isNight || !assignedList.some(([, op]) => op.cls !== 'Shadow');
+    // Bonus "approche furtive" : uniquement si aucun combat n'a eu lieu
+    // (pièce bombe) ou si l'escouade envoyée est entièrement composée de
+    // Shadow (corps-à-corps silencieux). La nuit ne rend aucune arme à feu
+    // silencieuse — elle ne doit donc jamais accorder ce bonus à elle seule.
+    const stealthSuccess = isBombRoom || !assignedList.some(([, op]) => op.cls !== 'Shadow');
 
     const slowestDuration = 2200 - (assignedList.length ? Math.min(...assignedList.map(([, op]) => classData[op.cls].speed)) * 300 : 0);
 
@@ -4196,7 +4200,7 @@
         { label: 'Aucun coup de feu tiré (approche furtive)', ok: r.stealthSuccess },
         { label: 'Désamorçage rapide et maîtrisé (marge de sécurité)', ok: r.bombFastDefuse },
       ];
-    } else {
+    } else if (r.hasT2) {
       const hostageLabel = r.hostageSafe
         ? 'Otage libéré sans blessure'
         : 'Otage blessé dans l\'échange de tirs';
@@ -4205,9 +4209,20 @@
         { label: hostageLabel, ok: r.hostageSafe },
         { label: 'Aucun coup de feu tiré (approche furtive)', ok: r.stealthSuccess },
       ];
+    } else {
+      // Pas de garde blindé/otage dans cette pièce : seuls 2 bonus
+      // s'appliquent réellement. On ne prétend pas qu'un otage a été
+      // "libéré sans blessure" quand il n'y en avait aucun ici.
+      secondaries = [
+        { label: 'Aucun opérateur perdu', ok: r.noOperatorLost },
+        { label: 'Aucun coup de feu tiré (approche furtive)', ok: r.stealthSuccess },
+      ];
     }
     const achieved = secondaries.filter(s => s.ok).length;
-    const scoreTable = [1000, 2500, 5000, 10000];
+    // Barème à 4 paliers (0 à 3 bonus) pour les pièces à 3 bonus possibles ;
+    // barème à 3 paliers (0 à 2 bonus) pour les pièces sans otage, réparti
+    // également pour que 10 000 reste atteignable partout.
+    const scoreTable = secondaries.length === 3 ? [1000, 2500, 5000, 10000] : [1000, 5500, 10000];
     const roomScore = scoreTable[achieved];
     roomScores[currentRoomIndex] = roomScore;
 
