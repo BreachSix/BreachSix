@@ -323,11 +323,12 @@
 </style>
 <!--
   Chargés sans condition : inoffensifs en dehors de Telegram (ces scripts ne
-  font simplement rien si window.Telegram/window.Adsgram ne sont jamais
-  utilisés). Rien ne change pour un joueur sur Google Play/navigateur normal.
+  font simplement rien si window.Telegram/window.Adsgram/window.initCdTma ne
+  sont jamais utilisés). Rien ne change pour un joueur sur Google Play/navigateur normal.
 -->
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <script src="https://sad.adsgram.ai/js/sad.min.js"></script>
+<script src="https://js.onclckvd.com/in-stream-ad-admanager/tma.js"></script>
 </head>
 <body>
 <div class="app" id="app">
@@ -3943,9 +3944,25 @@ const LEVEL_I18N = {"en": {"1": {"name": "Level 1 · Residence", "sub": "Easy ·
     try { adsgramController = window.Adsgram.init({ blockId: '49198' }); } catch (e) {}
   }
 
+  // OnClicka (onclicka.com) — second réseau publicitaire Telegram Mini App,
+  // utilisé en priorité pendant qu'AdsGram reste en réserve. Remplacer
+  // 'YOUR_ONCLICKA_SPOT_ID' par le vrai SPOT-ID fourni par OnClicka une
+  // fois la plateforme approuvée.
+  let onclickaShow = null;
+  if (isTelegram && window.initCdTma) {
+    window.initCdTma({ id: 'YOUR_ONCLICKA_SPOT_ID' })
+      .then(show => { onclickaShow = show; })
+      .catch(() => {});
+  }
+
   function requestRewardedAd() {
-    if (adsgramController) {
-      // AdsGram (Telegram) : priorité si on tourne dans un Mini App.
+    if (onclickaShow) {
+      // OnClicka : réseau publicitaire principal.
+      onclickaShow()
+        .then(() => onAdResult(true))
+        .catch(() => onAdResult(false));
+    } else if (adsgramController) {
+      // AdsGram (Telegram) : en réserve si OnClicka n'est pas disponible.
       adsgramController.show()
         .then(() => onAdResult(true))
         .catch(() => onAdResult(false));
