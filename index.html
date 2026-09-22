@@ -336,6 +336,7 @@
   <div id="menu-screen">
     <header>
       <h1>Breach<span>Six</span></h1>
+      <span class="mission-tag" data-i18n="gameSubtitle">Escouade tactique</span>
     </header>
     <div class="lang-switcher" style="display:flex; flex-wrap:wrap; gap:5px; margin-bottom:10px;">
       <button class="lang-btn active" data-lang="fr" style="flex:1 1 18%;">FR</button>
@@ -380,7 +381,7 @@
   <!-- BRIEFING SCREEN -->
   <div id="briefing-screen" style="display:none;">
     <header>
-      <button class="back-btn" id="briefing-back-btn">← Menu</button>
+      <button class="back-btn" id="briefing-back-btn" data-i18n="backToMenuShort">← Menu</button>
     </header>
     <div class="briefing-image-wrap">
       <img id="briefing-image" src="" alt="">
@@ -393,20 +394,20 @@
       <img class="briefing-faction-logo" src="./faction-logo.jpg" alt="">
       <img id="briefing-enemy-img" src="" alt="">
     </div>
-    <button class="go-btn ready" id="briefing-start-btn" style="margin-top:auto;">LANCER LA MISSION →</button>
+    <button class="go-btn ready" id="briefing-start-btn" data-i18n="launchMissionBtn" style="margin-top:auto;">LANCER LA MISSION →</button>
   </div>
 
   <!-- MISSION SCREEN -->
   <div id="mission-screen" style="display:none;">
     <header>
-      <button class="back-btn" id="back-btn">← Menu</button>
+      <button class="back-btn" id="back-btn" data-i18n="backToMenuShort">← Menu</button>
       <button class="compose-btn" id="compose-btn" data-i18n="compose">Composer</button>
     </header>
     <div class="mission-tag" id="mission-tag">Niveau 1 · Résidence · Jour · 5 points d'entrée</div>
 
     <div class="brief">
       <strong data-i18n="objectiveLabel">Objectif :</strong> <span id="brief-objective">neutraliser la menace et libérer l'otage.</span>
-      Sélectionne un opérateur, puis touche un point d'entrée pour l'assigner — tu peux en assigner plusieurs au même point. Touche un point sans opérateur sélectionné pour en retirer un.
+      <span data-i18n="missionInstructions">Sélectionne un opérateur, puis touche un point d'entrée pour l'assigner — tu peux en assigner plusieurs au même point. Touche un point sans opérateur sélectionné pour en retirer un.</span>
     </div>
 
     <div class="room-wrap">
@@ -565,7 +566,7 @@
       </div>
     </div>
 
-    <button class="go-btn" id="go-btn" disabled>GO — LANCER L'ASSAUT</button>
+    <button class="go-btn" id="go-btn" data-i18n="goAssaultBtn" disabled>GO — LANCER L'ASSAUT</button>
   </div>
 
 </div>
@@ -576,10 +577,10 @@
     <div class="score" id="result-score">1000</div>
     <div class="best-score" id="best-score-note"></div>
     <ul class="obj-list" id="obj-list"></ul>
-    <button class="replay-btn" id="next-room-btn" style="display:none;">Pièce suivante →</button>
-    <button class="replay-btn" id="next-level-btn" style="display:none;">Niveau suivant →</button>
-    <button class="replay-btn" id="replay-btn">Rejouer la pièce</button>
-    <button class="replay-btn" id="menu-return-btn" style="margin-top:8px;">Retour au menu</button>
+    <button class="replay-btn" id="next-room-btn" data-i18n="nextRoom" style="display:none;">Pièce suivante →</button>
+    <button class="replay-btn" id="next-level-btn" data-i18n="nextLevel" style="display:none;">Niveau suivant →</button>
+    <button class="replay-btn" id="replay-btn" data-i18n="replayRoom">Rejouer la pièce</button>
+    <button class="replay-btn" id="menu-return-btn" data-i18n="backToMenu" style="margin-top:8px;">Retour au menu</button>
   </div>
 </div>
 
@@ -641,6 +642,19 @@ function bootGame() {
       replayLevel: 'Rejouer le niveau',
       backToMenu: 'Retour au menu',
       skinUnlocked: 'Skin débloqué !',
+      gameSubtitle: 'Escouade tactique',
+      backToMenuShort: '← Menu',
+      launchMissionBtn: 'LANCER LA MISSION →',
+      goAssaultBtn: 'GO — LANCER L\'ASSAUT',
+      dayLabel: 'Jour',
+      nightLabel: 'Nuit',
+      roomLabel: 'Pièce',
+      entryPointsLabel: 'points d\'entrée',
+      levelLabel: 'Niveau',
+      objectiveBomb: 'désamorcer la bombe avant l\'explosion — la vitesse de l\'opérateur compte plus que sa classe.',
+      objectiveHostage: 'neutraliser la menace et libérer l\'otage.',
+      objectiveNeutralize: 'neutraliser la menace.',
+      missionInstructions: 'Sélectionne un opérateur, puis touche un point d\'entrée pour l\'assigner — tu peux en assigner plusieurs au même point. Touche un point sans opérateur sélectionné pour en retirer un.',
       skinCuivre: 'Cuivre',
       skinArgent: 'Argent',
       skinOr: 'Or',
@@ -688,6 +702,19 @@ function bootGame() {
       replayLevel: 'Replay level',
       backToMenu: 'Back to menu',
       skinUnlocked: 'Skin unlocked!',
+      gameSubtitle: 'Tactical Squad',
+      backToMenuShort: '← Menu',
+      launchMissionBtn: 'LAUNCH MISSION →',
+      goAssaultBtn: 'GO — LAUNCH ASSAULT',
+      dayLabel: 'Day',
+      nightLabel: 'Night',
+      roomLabel: 'Room',
+      entryPointsLabel: 'entry points',
+      levelLabel: 'Level',
+      objectiveBomb: 'defuse the bomb before it explodes — the operator\'s speed matters more than their class.',
+      objectiveHostage: 'neutralize the threat and free the hostage.',
+      objectiveNeutralize: 'neutralize the threat.',
+      missionInstructions: 'Select an operator, then tap an entry point to assign them — you can assign several to the same point. Tap a point with no operator selected to remove one.',
       skinCuivre: 'Copper',
       skinArgent: 'Silver',
       skinOr: 'Gold',
@@ -735,6 +762,19 @@ function bootGame() {
       replayLevel: 'Repetir nivel',
       backToMenu: 'Volver al menú',
       skinUnlocked: '¡Skin desbloqueado!',
+      gameSubtitle: 'Escuadrón táctico',
+      backToMenuShort: '← Menú',
+      launchMissionBtn: 'INICIAR MISIÓN →',
+      goAssaultBtn: 'GO — INICIAR ASALTO',
+      dayLabel: 'Día',
+      nightLabel: 'Noche',
+      roomLabel: 'Sala',
+      entryPointsLabel: 'puntos de entrada',
+      levelLabel: 'Nivel',
+      objectiveBomb: 'desactivar la bomba antes de que explote — la velocidad del operador importa más que su clase.',
+      objectiveHostage: 'neutralizar la amenaza y liberar al rehén.',
+      objectiveNeutralize: 'neutralizar la amenaza.',
+      missionInstructions: 'Selecciona un operador y luego toca un punto de entrada para asignarlo — puedes asignar varios al mismo punto. Toca un punto sin operador seleccionado para retirarlo.',
       skinCuivre: 'Cobre',
       skinArgent: 'Plata',
       skinOr: 'Oro',
@@ -782,6 +822,19 @@ function bootGame() {
       replayLevel: 'Repetir nível',
       backToMenu: 'Voltar ao menu',
       skinUnlocked: 'Skin desbloqueada!',
+      gameSubtitle: 'Esquadrão tático',
+      backToMenuShort: '← Menu',
+      launchMissionBtn: 'INICIAR MISSÃO →',
+      goAssaultBtn: 'GO — INICIAR ASSALTO',
+      dayLabel: 'Dia',
+      nightLabel: 'Noite',
+      roomLabel: 'Sala',
+      entryPointsLabel: 'pontos de entrada',
+      levelLabel: 'Nível',
+      objectiveBomb: 'desarmar a bomba antes que exploda — a velocidade do operador importa mais que sua classe.',
+      objectiveHostage: 'neutralizar a ameaça e libertar o refém.',
+      objectiveNeutralize: 'neutralizar a ameaça.',
+      missionInstructions: 'Selecione um operador e toque em um ponto de entrada para atribuí-lo — você pode atribuir vários ao mesmo ponto. Toque em um ponto sem operador selecionado para removê-lo.',
       skinCuivre: 'Cobre',
       skinArgent: 'Prata',
       skinOr: 'Ouro',
@@ -829,6 +882,19 @@ function bootGame() {
       replayLevel: 'Level wiederholen',
       backToMenu: 'Zurück zum Menü',
       skinUnlocked: 'Skin freigeschaltet!',
+      gameSubtitle: 'Taktisches Team',
+      backToMenuShort: '← Menü',
+      launchMissionBtn: 'MISSION STARTEN →',
+      goAssaultBtn: 'GO — ANGRIFF STARTEN',
+      dayLabel: 'Tag',
+      nightLabel: 'Nacht',
+      roomLabel: 'Raum',
+      entryPointsLabel: 'Zugänge',
+      levelLabel: 'Level',
+      objectiveBomb: 'die Bombe entschärfen, bevor sie explodiert — die Geschwindigkeit des Operators zählt mehr als seine Klasse.',
+      objectiveHostage: 'die Bedrohung neutralisieren und die Geisel befreien.',
+      objectiveNeutralize: 'die Bedrohung neutralisieren.',
+      missionInstructions: 'Wähle einen Operator aus und tippe dann auf einen Zugang, um ihn zuzuweisen — du kannst mehrere demselben Punkt zuweisen. Tippe auf einen Punkt ohne ausgewählten Operator, um einen zu entfernen.',
       skinCuivre: 'Kupfer',
       skinArgent: 'Silber',
       skinOr: 'Gold',
@@ -876,6 +942,19 @@ function bootGame() {
       replayLevel: 'Ripeti livello',
       backToMenu: 'Torna al menu',
       skinUnlocked: 'Skin sbloccata!',
+      gameSubtitle: 'Squadra tattica',
+      backToMenuShort: '← Menu',
+      launchMissionBtn: 'AVVIA MISSIONE →',
+      goAssaultBtn: 'GO — AVVIA L\'ASSALTO',
+      dayLabel: 'Giorno',
+      nightLabel: 'Notte',
+      roomLabel: 'Stanza',
+      entryPointsLabel: 'punti d\'accesso',
+      levelLabel: 'Livello',
+      objectiveBomb: 'disinnescare la bomba prima che esploda — la velocità dell\'operatore conta più della sua classe.',
+      objectiveHostage: 'neutralizzare la minaccia e liberare l\'ostaggio.',
+      objectiveNeutralize: 'neutralizzare la minaccia.',
+      missionInstructions: 'Seleziona un operatore, poi tocca un punto d\'accesso per assegnarlo — puoi assegnarne più di uno allo stesso punto. Tocca un punto senza operatore selezionato per rimuoverne uno.',
       skinCuivre: 'Rame',
       skinArgent: 'Argento',
       skinOr: 'Oro',
@@ -923,6 +1002,19 @@ function bootGame() {
       replayLevel: 'Повторить уровень',
       backToMenu: 'В меню',
       skinUnlocked: 'Скин разблокирован!',
+      gameSubtitle: 'Тактический отряд',
+      backToMenuShort: '← Меню',
+      launchMissionBtn: 'НАЧАТЬ МИССИЮ →',
+      goAssaultBtn: 'GO — НАЧАТЬ ШТУРМ',
+      dayLabel: 'День',
+      nightLabel: 'Ночь',
+      roomLabel: 'Комната',
+      entryPointsLabel: 'точки входа',
+      levelLabel: 'Уровень',
+      objectiveBomb: 'обезвредить бомбу до взрыва — скорость оперативника важнее его класса.',
+      objectiveHostage: 'нейтрализовать угрозу и освободить заложника.',
+      objectiveNeutralize: 'нейтрализовать угрозу.',
+      missionInstructions: 'Выберите оперативника, затем коснитесь точки входа, чтобы назначить его — можно назначить несколько на одну точку. Коснитесь точки без выбранного оперативника, чтобы убрать его.',
       skinCuivre: 'Медь',
       skinArgent: 'Серебро',
       skinOr: 'Золото',
@@ -970,6 +1062,19 @@ function bootGame() {
       replayLevel: 'レベルをやり直す',
       backToMenu: 'メニューに戻る',
       skinUnlocked: 'スキン解除！',
+      gameSubtitle: '戦術部隊',
+      backToMenuShort: '← メニュー',
+      launchMissionBtn: 'ミッション開始 →',
+      goAssaultBtn: 'GO — 突入開始',
+      dayLabel: '昼',
+      nightLabel: '夜',
+      roomLabel: '部屋',
+      entryPointsLabel: 'つの侵入口',
+      levelLabel: 'レベル',
+      objectiveBomb: '爆発前に爆弾を解除する——オペレーターの速度がクラスよりも重要だ。',
+      objectiveHostage: '脅威を無力化し、人質を解放する。',
+      objectiveNeutralize: '脅威を無力化する。',
+      missionInstructions: 'オペレーターを選択し、侵入口をタップして割り当てる——同じ地点に複数割り当てることも可能。オペレーターを選択せずに地点をタップすると解除される。',
       skinCuivre: '銅',
       skinArgent: '銀',
       skinOr: '金',
@@ -1017,6 +1122,19 @@ function bootGame() {
       replayLevel: '레벨 다시 하기',
       backToMenu: '메뉴로 돌아가기',
       skinUnlocked: '스킨 해제!',
+      gameSubtitle: '전술 분대',
+      backToMenuShort: '← 메뉴',
+      launchMissionBtn: '임무 시작 →',
+      goAssaultBtn: 'GO — 돌입 시작',
+      dayLabel: '낮',
+      nightLabel: '밤',
+      roomLabel: '방',
+      entryPointsLabel: '개 진입로',
+      levelLabel: '레벨',
+      objectiveBomb: '폭발 전에 폭탄을 해체하라 — 오퍼레이터의 속도가 클래스보다 중요하다.',
+      objectiveHostage: '위협을 제거하고 인질을 구출하라.',
+      objectiveNeutralize: '위협을 제거하라.',
+      missionInstructions: '오퍼레이터를 선택한 후 진입로를 눌러 배정하세요 — 같은 지점에 여러 명을 배정할 수 있습니다. 오퍼레이터를 선택하지 않고 지점을 누르면 배정이 해제됩니다.',
       skinCuivre: '구리',
       skinArgent: '은',
       skinOr: '금',
@@ -1064,6 +1182,19 @@ function bootGame() {
       replayLevel: '重玩本关',
       backToMenu: '返回菜单',
       skinUnlocked: '皮肤已解锁！',
+      gameSubtitle: '战术小队',
+      backToMenuShort: '← 菜单',
+      launchMissionBtn: '开始任务 →',
+      goAssaultBtn: 'GO — 开始突袭',
+      dayLabel: '白天',
+      nightLabel: '夜晚',
+      roomLabel: '房间',
+      entryPointsLabel: '个入口',
+      levelLabel: '关卡',
+      objectiveBomb: '在爆炸前拆除炸弹——干员的速度比职业更重要。',
+      objectiveHostage: '消灭威胁并解救人质。',
+      objectiveNeutralize: '消灭威胁。',
+      missionInstructions: '选择一名干员，然后点击一个入口进行分配——可以将多名干员分配到同一入口。在未选择干员的情况下点击入口可取消分配。',
       skinCuivre: '铜',
       skinArgent: '银',
       skinOr: '金',
@@ -2959,16 +3090,16 @@ const LEVEL_I18N = {"en": {"1": {"name": "Level 1 · Residence", "sub": "Easy ·
     const tag = document.getElementById('mission-tag');
     const def = levelDefs[currentLevel];
     const room = currentRoom();
-    const timeLabel = isNight ? 'Nuit' : 'Jour';
-    const roomPart = def.rooms.length > 1 ? ' · Pièce ' + (currentRoomIndex + 1) + '/' + def.rooms.length : '';
-    tag.textContent = 'Niveau ' + currentLevel + ' · ' + timeLabel + roomPart + ' · ' + room.doors.length + " points d'entrée";
+    const timeLabel = isNight ? t('nightLabel') : t('dayLabel');
+    const roomPart = def.rooms.length > 1 ? ' · ' + t('roomLabel') + ' ' + (currentRoomIndex + 1) + '/' + def.rooms.length : '';
+    tag.textContent = t('levelLabel') + ' ' + currentLevel + ' · ' + timeLabel + roomPart + ' · ' + room.doors.length + ' ' + t('entryPointsLabel');
     const objectiveEl = document.getElementById('brief-objective');
     if (room.type === 'bomb') {
-      objectiveEl.textContent = "désamorcer la bombe avant l'explosion — la vitesse de l'opérateur compte plus que sa classe.";
+      objectiveEl.textContent = t('objectiveBomb');
     } else if (room.threats.includes('T2')) {
-      objectiveEl.textContent = 'neutraliser la menace et libérer l\'otage.';
+      objectiveEl.textContent = t('objectiveHostage');
     } else {
-      objectiveEl.textContent = 'neutraliser la menace.';
+      objectiveEl.textContent = t('objectiveNeutralize');
     }
   }
 
