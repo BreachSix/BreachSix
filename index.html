@@ -267,7 +267,6 @@
   .best-score { font-size: 0.78rem; color: var(--ok); margin-bottom: 4px; min-height: 16px; }
 
   .skins-section { margin-top: 16px; padding-top: 12px; border-top: 1px solid var(--wall); }
-  .skins-section-top { margin-top: 0; padding-top: 0; border-top: none; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid var(--wall); }
   .skins-header { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 8px; }
   .ads-count { font-size: 0.68rem; color: var(--text-dim); }
   .skin-track { display: flex; gap: 6px; margin-bottom: 10px; }
@@ -350,15 +349,6 @@
       <button class="lang-btn" data-lang="zh" style="flex:1 1 18%;">ZH</button>
     </div>
     <div class="menu-scroll">
-      <div class="skins-section skins-section-top">
-        <div class="skins-header">
-          <span class="squad-title" data-i18n="weaponSkins" style="color:var(--amber);">Skins d'armes</span>
-          <span class="ads-count" id="ads-count">0 pub visionnée</span>
-        </div>
-        <div class="skin-track" id="skin-track"></div>
-        <button class="compose-btn watch-ad-btn" id="watch-ad-btn">▶ Regarder une pub optionnelle</button>
-      </div>
-
       <div class="brief" style="margin-bottom:14px;">
         Choisis une mission. Ta composition d'escouade reste la même d'une mission à l'autre.
       </div>
@@ -373,6 +363,15 @@
           <button class="compose-btn" id="colorblind-btn" data-i18n="colorblindMode" style="flex:1;">Mode daltonien</button>
           <button class="compose-btn" id="large-text-btn" data-i18n="largeTextMode" style="flex:1;">Texte agrandi</button>
         </div>
+      </div>
+
+      <div class="skins-section">
+        <div class="skins-header">
+          <span class="squad-title" data-i18n="weaponSkins" style="color:var(--amber);">Skins d'armes</span>
+          <span class="ads-count" id="ads-count">0 pub visionnée</span>
+        </div>
+        <div class="skin-track" id="skin-track"></div>
+        <button class="compose-btn watch-ad-btn" id="watch-ad-btn">▶ Regarder une pub optionnelle</button>
       </div>
     </div>
   </div>
