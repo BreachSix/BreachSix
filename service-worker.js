@@ -1,4 +1,4 @@
-const CACHE_VERSION = 'v47';
+const CACHE_VERSION = 'v48';
 const CACHE_NAME = 'breachsix-' + CACHE_VERSION;
 const ASSETS = [
   './',
@@ -126,6 +126,6 @@ self.addEventListener('fetch', (event) => {
   // Cache d'abord pour le reste (icônes, manifest) — ces fichiers changent
   // rarement, autant les servir instantanément depuis le cache.
   event.respondWith(
-    caches.match(req).then((cached) => cached || fetch(req))
+    caches.match(req).then((cached) => cached || fetch(req).catch(() => cached))
   );
 });
