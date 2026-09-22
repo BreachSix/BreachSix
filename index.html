@@ -3429,13 +3429,11 @@ const LEVEL_I18N = {"en": {"1": {"name": "Level 1 · Residence", "sub": "Easy ·
 
   // --- AdsGram (Telegram Mini App) ---
   // Réseau publicitaire natif aux Mini Apps Telegram — pas de pont requis,
-  // le SDK tourne directement dans la page. ATTENTION : "TON_BLOCK_ID" est
-  // un espace réservé — remplace-le par le blockId obtenu sur
-  // https://partner.adsgram.ai une fois le compte créé, sinon cette
-  // branche échoue silencieusement et le jeu retombe sur la simulation.
+  // le SDK tourne directement dans la page. blockId 49198 = plateforme
+  // "BreachSix : Tactical Squad" sur partner.adsgram.ai (bloc Rewarded).
   let adsgramController = null;
   if (isTelegram && window.Adsgram) {
-    try { adsgramController = window.Adsgram.init({ blockId: 'TON_BLOCK_ID' }); } catch (e) {}
+    try { adsgramController = window.Adsgram.init({ blockId: '49198' }); } catch (e) {}
   }
 
   function requestRewardedAd() {
