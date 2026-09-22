@@ -268,6 +268,15 @@
 
   .skins-section { margin-top: 16px; padding-top: 12px; border-top: 1px solid var(--wall); }
   .skins-section-top { margin-top: 0; padding-top: 0; border-top: none; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid var(--wall); }
+  .knife-progress-card { display: flex; align-items: center; gap: 12px; background: var(--panel-2); border: 1px solid var(--wall); border-radius: 10px; padding: 10px 12px; margin-bottom: 16px; }
+  .knife-progress-img { width: 44px; height: 44px; border-radius: 8px; object-fit: cover; flex-shrink: 0; background: var(--panel); }
+  .knife-progress-body { flex: 1; min-width: 0; }
+  .knife-progress-top { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
+  .knife-progress-name { font-size: 0.85rem; font-weight: 600; color: var(--amber); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .knife-progress-tier { font-size: 0.7rem; color: var(--text-dim); white-space: nowrap; }
+  .knife-progress-bar-track { height: 6px; background: var(--panel); border-radius: 3px; margin-top: 6px; overflow: hidden; }
+  .knife-progress-bar-fill { height: 100%; background: var(--amber); border-radius: 3px; }
+  .knife-progress-sub { font-size: 0.7rem; color: var(--text-dim); margin-top: 5px; }
   .skins-header { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 8px; }
   .ads-count { font-size: 0.68rem; color: var(--text-dim); }
   .skin-track { display: flex; gap: 6px; margin-bottom: 10px; }
@@ -359,6 +368,20 @@
         </div>
         <div class="skin-track" id="skin-track"></div>
         <button class="compose-btn watch-ad-btn" id="watch-ad-btn" data-i18n="watchAdBtn">▶ Regarder une pub optionnelle</button>
+      </div>
+
+      <div class="knife-progress-card" id="knife-progress-card">
+        <img class="knife-progress-img" id="knife-progress-img" src="" alt="">
+        <div class="knife-progress-body">
+          <div class="knife-progress-top">
+            <span class="knife-progress-name" id="knife-progress-name">—</span>
+            <span class="knife-progress-tier" id="knife-progress-tier">—</span>
+          </div>
+          <div class="knife-progress-bar-track">
+            <div class="knife-progress-bar-fill" id="knife-progress-bar-fill" style="width:0%;"></div>
+          </div>
+          <div class="knife-progress-sub" id="knife-progress-sub">—</div>
+        </div>
       </div>
 
       <button class="compose-btn" id="menu-compose-btn" data-i18n="composeSquads" style="width:100%; margin-bottom:16px;">Composer les escouades</button>
@@ -644,6 +667,22 @@ function bootGame() {
       replayLevel: 'Rejouer le niveau',
       backToMenu: 'Retour au menu',
       skinUnlocked: 'Skin débloqué !',
+      knifeBaseLabel: 'Karambit standard',
+      tierName1: 'Acier brossé',
+      tierName2: 'Noir tactique',
+      tierName3: 'Cuivre',
+      tierName4: 'Bronze antique',
+      tierName5: 'Argent',
+      tierName6: 'Or',
+      tierName7: 'Nacre',
+      tierName8: 'Platine',
+      tierName9: 'Diamant taillé',
+      tierName10: 'Damascus arc-en-ciel',
+      knifeTierWord: 'Palier',
+      knifeReachedSuffix: ' atteint !',
+      knifeLevelsCompletedSuffix: ' niveaux complétés',
+      knifeUnlockedSuffix: ' débloqué.',
+      knifeProgressToNextSuffix: ' niveaux vers le prochain palier',
       missionFailedTitle: 'Mission échouée',
       bombExplodedTitle: 'La bombe a explosé',
       ptsUnit: 'pts',
@@ -722,6 +761,22 @@ function bootGame() {
       replayLevel: 'Replay level',
       backToMenu: 'Back to menu',
       skinUnlocked: 'Skin unlocked!',
+      knifeBaseLabel: 'Standard karambit',
+      tierName1: 'Brushed steel',
+      tierName2: 'Tactical black',
+      tierName3: 'Copper',
+      tierName4: 'Antique bronze',
+      tierName5: 'Silver',
+      tierName6: 'Gold',
+      tierName7: 'Mother of pearl',
+      tierName8: 'Platinum',
+      tierName9: 'Cut diamond',
+      tierName10: 'Rainbow damascus',
+      knifeTierWord: 'Tier',
+      knifeReachedSuffix: ' reached!',
+      knifeLevelsCompletedSuffix: ' levels completed',
+      knifeUnlockedSuffix: ' unlocked.',
+      knifeProgressToNextSuffix: ' levels to the next tier',
       missionFailedTitle: 'Mission failed',
       bombExplodedTitle: 'The bomb exploded',
       ptsUnit: 'pts',
@@ -800,6 +855,22 @@ function bootGame() {
       replayLevel: 'Repetir nivel',
       backToMenu: 'Volver al menú',
       skinUnlocked: '¡Skin desbloqueado!',
+      knifeBaseLabel: 'Karambit estándar',
+      tierName1: 'Acero cepillado',
+      tierName2: 'Negro táctico',
+      tierName3: 'Cobre',
+      tierName4: 'Bronce antiguo',
+      tierName5: 'Plata',
+      tierName6: 'Oro',
+      tierName7: 'Nácar',
+      tierName8: 'Platino',
+      tierName9: 'Diamante tallado',
+      tierName10: 'Damasco arcoíris',
+      knifeTierWord: 'Nivel',
+      knifeReachedSuffix: ' alcanzado!',
+      knifeLevelsCompletedSuffix: ' niveles completados',
+      knifeUnlockedSuffix: ' desbloqueado.',
+      knifeProgressToNextSuffix: ' niveles para el próximo nivel',
       missionFailedTitle: 'Misión fallida',
       bombExplodedTitle: 'La bomba explotó',
       ptsUnit: 'pts',
@@ -878,6 +949,22 @@ function bootGame() {
       replayLevel: 'Repetir nível',
       backToMenu: 'Voltar ao menu',
       skinUnlocked: 'Skin desbloqueada!',
+      knifeBaseLabel: 'Karambit padrão',
+      tierName1: 'Aço escovado',
+      tierName2: 'Preto tático',
+      tierName3: 'Cobre',
+      tierName4: 'Bronze antigo',
+      tierName5: 'Prata',
+      tierName6: 'Ouro',
+      tierName7: 'Madrepérola',
+      tierName8: 'Platina',
+      tierName9: 'Diamante lapidado',
+      tierName10: 'Damasco arco-íris',
+      knifeTierWord: 'Nível',
+      knifeReachedSuffix: ' alcançado!',
+      knifeLevelsCompletedSuffix: ' níveis concluídos',
+      knifeUnlockedSuffix: ' desbloqueada.',
+      knifeProgressToNextSuffix: ' níveis para o próximo nível',
       missionFailedTitle: 'Missão fracassada',
       bombExplodedTitle: 'A bomba explodiu',
       ptsUnit: 'pts',
@@ -956,6 +1043,22 @@ function bootGame() {
       replayLevel: 'Level wiederholen',
       backToMenu: 'Zurück zum Menü',
       skinUnlocked: 'Skin freigeschaltet!',
+      knifeBaseLabel: 'Standard-Karambit',
+      tierName1: 'Gebürsteter Stahl',
+      tierName2: 'Taktisches Schwarz',
+      tierName3: 'Kupfer',
+      tierName4: 'Antikbronze',
+      tierName5: 'Silber',
+      tierName6: 'Gold',
+      tierName7: 'Perlmutt',
+      tierName8: 'Platin',
+      tierName9: 'Geschliffener Diamant',
+      tierName10: 'Regenbogen-Damaststahl',
+      knifeTierWord: 'Stufe',
+      knifeReachedSuffix: ' erreicht!',
+      knifeLevelsCompletedSuffix: ' Level abgeschlossen',
+      knifeUnlockedSuffix: ' freigeschaltet.',
+      knifeProgressToNextSuffix: ' Level bis zur nächsten Stufe',
       missionFailedTitle: 'Mission fehlgeschlagen',
       bombExplodedTitle: 'Die Bombe ist explodiert',
       ptsUnit: 'Pkt.',
@@ -1034,6 +1137,22 @@ function bootGame() {
       replayLevel: 'Ripeti livello',
       backToMenu: 'Torna al menu',
       skinUnlocked: 'Skin sbloccata!',
+      knifeBaseLabel: 'Karambit standard',
+      tierName1: 'Acciaio spazzolato',
+      tierName2: 'Nero tattico',
+      tierName3: 'Rame',
+      tierName4: 'Bronzo antico',
+      tierName5: 'Argento',
+      tierName6: 'Oro',
+      tierName7: 'Madreperla',
+      tierName8: 'Platino',
+      tierName9: 'Diamante tagliato',
+      tierName10: 'Damasco arcobaleno',
+      knifeTierWord: 'Livello',
+      knifeReachedSuffix: ' raggiunto!',
+      knifeLevelsCompletedSuffix: ' livelli completati',
+      knifeUnlockedSuffix: ' sbloccato.',
+      knifeProgressToNextSuffix: ' livelli al prossimo livello',
       missionFailedTitle: 'Missione fallita',
       bombExplodedTitle: 'La bomba è esplosa',
       ptsUnit: 'pt',
@@ -1112,6 +1231,22 @@ function bootGame() {
       replayLevel: 'Повторить уровень',
       backToMenu: 'В меню',
       skinUnlocked: 'Скин разблокирован!',
+      knifeBaseLabel: 'Стандартный карамбит',
+      tierName1: 'Матовая сталь',
+      tierName2: 'Тактический чёрный',
+      tierName3: 'Медь',
+      tierName4: 'Античная бронза',
+      tierName5: 'Серебро',
+      tierName6: 'Золото',
+      tierName7: 'Перламутр',
+      tierName8: 'Платина',
+      tierName9: 'Огранённый бриллиант',
+      tierName10: 'Радужный дамаск',
+      knifeTierWord: 'Уровень',
+      knifeReachedSuffix: ' достигнут!',
+      knifeLevelsCompletedSuffix: ' уровней пройдено',
+      knifeUnlockedSuffix: ' разблокирован.',
+      knifeProgressToNextSuffix: ' уровней до следующего этапа',
       missionFailedTitle: 'Миссия провалена',
       bombExplodedTitle: 'Бомба взорвалась',
       ptsUnit: 'очк.',
@@ -1190,6 +1325,22 @@ function bootGame() {
       replayLevel: 'レベルをやり直す',
       backToMenu: 'メニューに戻る',
       skinUnlocked: 'スキン解除！',
+      knifeBaseLabel: '標準カランビット',
+      tierName1: 'ブラッシュドスチール',
+      tierName2: 'タクティカルブラック',
+      tierName3: '銅',
+      tierName4: 'アンティークブロンズ',
+      tierName5: '銀',
+      tierName6: '金',
+      tierName7: 'マザーオブパール',
+      tierName8: 'プラチナ',
+      tierName9: 'カットダイヤモンド',
+      tierName10: 'レインボーダマスカス',
+      knifeTierWord: 'ティア',
+      knifeReachedSuffix: 'に到達！',
+      knifeLevelsCompletedSuffix: 'レベル完了',
+      knifeUnlockedSuffix: 'を解除。',
+      knifeProgressToNextSuffix: 'レベルで次のティアへ',
       missionFailedTitle: 'ミッション失敗',
       bombExplodedTitle: '爆弾が爆発した',
       ptsUnit: 'pt',
@@ -1268,6 +1419,22 @@ function bootGame() {
       replayLevel: '레벨 다시 하기',
       backToMenu: '메뉴로 돌아가기',
       skinUnlocked: '스킨 해제!',
+      knifeBaseLabel: '기본 카람빗',
+      tierName1: '브러시드 스틸',
+      tierName2: '택티컬 블랙',
+      tierName3: '구리',
+      tierName4: '앤틱 브론즈',
+      tierName5: '은',
+      tierName6: '금',
+      tierName7: '자개',
+      tierName8: '백금',
+      tierName9: '커트 다이아몬드',
+      tierName10: '레인보우 다마스커스',
+      knifeTierWord: '등급',
+      knifeReachedSuffix: ' 도달!',
+      knifeLevelsCompletedSuffix: '개 레벨 완료',
+      knifeUnlockedSuffix: ' 해제됨.',
+      knifeProgressToNextSuffix: '개 레벨 후 다음 등급',
       missionFailedTitle: '임무 실패',
       bombExplodedTitle: '폭탄이 폭발했다',
       ptsUnit: 'pt',
@@ -1346,6 +1513,22 @@ function bootGame() {
       replayLevel: '重玩本关',
       backToMenu: '返回菜单',
       skinUnlocked: '皮肤已解锁！',
+      knifeBaseLabel: '标准卡兰比特刀',
+      tierName1: '拉丝钢',
+      tierName2: '战术黑',
+      tierName3: '铜',
+      tierName4: '古铜',
+      tierName5: '银',
+      tierName6: '金',
+      tierName7: '珍珠母',
+      tierName8: '铂金',
+      tierName9: '切割钻石',
+      tierName10: '彩虹大马士革',
+      knifeTierWord: '阶段',
+      knifeReachedSuffix: '达成！',
+      knifeLevelsCompletedSuffix: '个关卡已完成',
+      knifeUnlockedSuffix: '已解锁。',
+      knifeProgressToNextSuffix: '个关卡后进入下一阶段',
       missionFailedTitle: '任务失败',
       bombExplodedTitle: '炸弹已爆炸',
       ptsUnit: '分',
@@ -1423,6 +1606,7 @@ function bootGame() {
       b.classList.toggle('active', b.getAttribute('data-lang') === lang);
     });
     if (typeof renderSkinTrack === 'function') renderSkinTrack();
+    if (typeof renderKnifeProgress === 'function') renderKnifeProgress();
   }
 
   const classData = {
@@ -3372,16 +3556,16 @@ const LEVEL_I18N = {"en": {"1": {"name": "Level 1 · Residence", "sub": "Easy ·
   // Seul le fini du palier 10 est illustré pour l'instant (image fournie) ;
   // les autres réutilisent temporairement la même image en attendant leurs visuels dédiés.
   const MILESTONE_TIERS = [
-    { name: 'Acier brossé', img: './milestone-tier1.jpg' },
-    { name: 'Noir tactique', img: './milestone-tier2.jpg' },
-    { name: 'Cuivre', img: './milestone-tier3.jpg' },
-    { name: 'Bronze antique', img: './milestone-tier4.jpg' },
-    { name: 'Argent', img: './milestone-tier5.jpg' },
-    { name: 'Or', img: './milestone-tier6.jpg' },
-    { name: 'Nacre', img: './milestone-tier7.jpg' },
-    { name: 'Platine', img: './milestone-tier8.jpg' },
-    { name: 'Diamant taillé', img: './milestone-tier9.jpg' },
-    { name: 'Damascus arc-en-ciel', img: './milestone-karambit.jpg' },
+    { nameKey: 'tierName1', img: './milestone-tier1.jpg' },
+    { nameKey: 'tierName2', img: './milestone-tier2.jpg' },
+    { nameKey: 'tierName3', img: './milestone-tier3.jpg' },
+    { nameKey: 'tierName4', img: './milestone-tier4.jpg' },
+    { nameKey: 'tierName5', img: './milestone-tier5.jpg' },
+    { nameKey: 'tierName6', img: './milestone-tier6.jpg' },
+    { nameKey: 'tierName7', img: './milestone-tier7.jpg' },
+    { nameKey: 'tierName8', img: './milestone-tier8.jpg' },
+    { nameKey: 'tierName9', img: './milestone-tier9.jpg' },
+    { nameKey: 'tierName10', img: './milestone-karambit.jpg' },
   ];
   function checkLevelMilestone() {
     const shownTier = loadIntPref('breachsix-milestone-tier', 0);
@@ -3394,14 +3578,46 @@ const LEVEL_I18N = {"en": {"1": {"name": "Level 1 · Residence", "sub": "Easy ·
     }
     saveIntPref('breachsix-milestone-tier', nextTier);
     const tierInfo = MILESTONE_TIERS[nextTier - 1] || MILESTONE_TIERS[MILESTONE_TIERS.length - 1];
+    renderKnifeProgress();
     setTimeout(() => {
       showCelebration({
-        label: 'Palier ' + nextTier + '/10 atteint !',
+        label: t('knifeTierWord') + ' ' + nextTier + '/10' + t('knifeReachedSuffix'),
         img: tierInfo.img,
-        title: rangeEnd + ' niveaux complétés',
-        sub: 'Karambit "' + tierInfo.name + '" débloqué.',
+        title: rangeEnd + t('knifeLevelsCompletedSuffix'),
+        sub: t(tierInfo.nameKey) + t('knifeUnlockedSuffix'),
       });
     }, 700);
+  }
+
+  // Carte de progression du karambit affichée en permanence en haut du menu :
+  // montre le palier actuellement débloqué et l'effort restant (sur 15)
+  // avant le prochain, plutôt qu'une jauge globale sur 150 qui bouge lentement.
+  function renderKnifeProgress() {
+    const shownTier = loadIntPref('breachsix-milestone-tier', 0);
+    const img = document.getElementById('knife-progress-img');
+    const nameEl = document.getElementById('knife-progress-name');
+    const tierEl = document.getElementById('knife-progress-tier');
+    const fillEl = document.getElementById('knife-progress-bar-fill');
+    const subEl = document.getElementById('knife-progress-sub');
+
+    const currentTierInfo = shownTier > 0 ? MILESTONE_TIERS[shownTier - 1] : null;
+    img.src = currentTierInfo ? currentTierInfo.img : SHADOW_OPERATOR_IMG;
+    nameEl.textContent = currentTierInfo ? t(currentTierInfo.nameKey) : t('knifeBaseLabel');
+    tierEl.textContent = t('knifeTierWord') + ' ' + shownTier + '/10';
+
+    if (shownTier >= MILESTONE_TIERS.length) {
+      fillEl.style.width = '100%';
+      subEl.textContent = '';
+      return;
+    }
+    const rangeStart = shownTier * LEVEL_MILESTONE_STEP + 1;
+    const rangeEnd = rangeStart + LEVEL_MILESTONE_STEP - 1;
+    let completed = 0;
+    for (let id = rangeStart; id <= rangeEnd; id++) {
+      if (bestScores[id] > 0) completed++;
+    }
+    fillEl.style.width = Math.round((completed / LEVEL_MILESTONE_STEP) * 100) + '%';
+    subEl.textContent = completed + '/' + LEVEL_MILESTONE_STEP + t('knifeProgressToNextSuffix');
   }
 
   // Gabarits de forme de pièce selon le type de lieu. "square" reproduit
@@ -4911,6 +5127,7 @@ const LEVEL_I18N = {"en": {"1": {"name": "Level 1 · Residence", "sub": "Easy ·
   renderAll();
   renderLevelList();
   renderSkinTrack();
+  renderKnifeProgress();
   showScreen('menu');
 }
 
