@@ -267,6 +267,7 @@
   .best-score { font-size: 0.78rem; color: var(--ok); margin-bottom: 4px; min-height: 16px; }
 
   .skins-section { margin-top: 16px; padding-top: 12px; border-top: 1px solid var(--wall); }
+  .skins-section-top { margin-top: 0; padding-top: 0; border-top: none; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid var(--wall); }
   .skins-header { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 8px; }
   .ads-count { font-size: 0.68rem; color: var(--text-dim); }
   .skin-track { display: flex; gap: 6px; margin-bottom: 10px; }
@@ -349,6 +350,15 @@
       <button class="lang-btn" data-lang="zh" style="flex:1 1 18%;">ZH</button>
     </div>
     <div class="menu-scroll">
+      <div class="skins-section skins-section-top">
+        <div class="skins-header">
+          <span class="squad-title" data-i18n="weaponSkins" style="color:var(--amber);">Skins d'armes</span>
+          <span class="ads-count" id="ads-count">0 pub visionnée</span>
+        </div>
+        <div class="skin-track" id="skin-track"></div>
+        <button class="compose-btn watch-ad-btn" id="watch-ad-btn">▶ Regarder une pub optionnelle</button>
+      </div>
+
       <div class="brief" style="margin-bottom:14px;">
         Choisis une mission. Ta composition d'escouade reste la même d'une mission à l'autre.
       </div>
@@ -363,15 +373,6 @@
           <button class="compose-btn" id="colorblind-btn" data-i18n="colorblindMode" style="flex:1;">Mode daltonien</button>
           <button class="compose-btn" id="large-text-btn" data-i18n="largeTextMode" style="flex:1;">Texte agrandi</button>
         </div>
-      </div>
-
-      <div class="skins-section">
-        <div class="skins-header">
-          <span class="squad-title" data-i18n="weaponSkins" style="color:var(--amber);">Skins d'armes</span>
-          <span class="ads-count" id="ads-count">0 pub visionnée</span>
-        </div>
-        <div class="skin-track" id="skin-track"></div>
-        <button class="compose-btn watch-ad-btn" id="watch-ad-btn">▶ Regarder une pub optionnelle</button>
       </div>
     </div>
   </div>
@@ -4396,44 +4397,23 @@ const LEVEL_I18N = {"en": {"1": {"name": "Level 1 · Residence", "sub": "Easy ·
 // tout le reste du jeu — qui lit ses préférences de façon synchrone au
 // démarrage — les trouve déjà en place. Hors Telegram, rien ne change :
 // bootGame() démarre immédiatement, exactement comme avant.
-// SÉCURITÉ : bootGame() est garanti de démarrer une seule fois, peu importe
-// ce qui arrive à Telegram (API absente, promesse qui ne répond jamais,
-// erreur inattendue) — un filet de 2 secondes force le démarrage si le
-// préchargement n'a pas terminé à temps, pour que le jeu ne reste jamais
-// bloqué sur un écran vide.
 const isTelegram = !!(window.Telegram && window.Telegram.WebApp);
 const PERSIST_KEYS = ['breachsix-ads-watched', 'breachsix-best-scores', 'breachsix-colorblind', 'breachsix-lang', 'breachsix-large-text', 'breachsix-milestone-tier', 'breachsix-squad-composition'];
 
-let gameStarted = false;
-function startGameOnce() {
-  if (gameStarted) return;
-  gameStarted = true;
-  bootGame();
-}
-
 function preloadTelegramStorage(done) {
-  if (!isTelegram) { done(); return; }
+  if (!isTelegram || !window.Telegram.WebApp.DeviceStorage) { done(); return; }
   try { window.Telegram.WebApp.ready(); window.Telegram.WebApp.expand(); } catch (e) {}
-  let ds;
-  try { ds = window.Telegram.WebApp.DeviceStorage; } catch (e) { ds = null; }
-  if (!ds || typeof ds.get !== 'function') { done(); return; }
+  const ds = window.Telegram.WebApp.DeviceStorage;
   let remaining = PERSIST_KEYS.length;
   const finishOne = () => { if (--remaining <= 0) done(); };
   PERSIST_KEYS.forEach(key => {
-    try {
-      const result = ds.get(key);
-      if (!result || typeof result.then !== 'function') { finishOne(); return; }
-      result
-        .then(value => { if (value !== undefined && value !== null) { try { localStorage.setItem(key, value); } catch (e) {} } finishOne(); })
-        .catch(() => finishOne());
-    } catch (e) {
-      finishOne();
-    }
+    ds.get(key)
+      .then(value => { if (value !== undefined && value !== null) { try { localStorage.setItem(key, value); } catch (e) {} } finishOne(); })
+      .catch(() => finishOne());
   });
 }
 
-setTimeout(startGameOnce, 2000); // filet de sécurité : démarre de toute façon après 2s
-preloadTelegramStorage(startGameOnce);
+preloadTelegramStorage(bootGame);
 </script>
 <script>
   if ('serviceWorker' in navigator) {
