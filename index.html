@@ -356,7 +356,7 @@
           <span class="ads-count" id="ads-count">0 pub visionnée</span>
         </div>
         <div class="skin-track" id="skin-track"></div>
-        <button class="compose-btn watch-ad-btn" id="watch-ad-btn">▶ Regarder une pub optionnelle</button>
+        <button class="compose-btn watch-ad-btn" id="watch-ad-btn" data-i18n="watchAdBtn">▶ Regarder une pub optionnelle</button>
       </div>
 
       <div class="brief" style="margin-bottom:14px;">
@@ -593,6 +593,15 @@
   </div>
 </div>
 
+<div class="overlay" id="skin-preview-overlay">
+  <div class="celebration-card">
+    <img class="celebration-img" id="skin-preview-img" src="" alt="">
+    <div class="celebration-title" id="skin-preview-title">Cuivre</div>
+    <div class="celebration-sub" id="skin-preview-status"></div>
+    <button class="replay-btn" id="skin-preview-close-btn" data-i18n="closeBtn">Fermer</button>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script>
@@ -632,6 +641,23 @@ function bootGame() {
       replayLevel: 'Rejouer le niveau',
       backToMenu: 'Retour au menu',
       skinUnlocked: 'Skin débloqué !',
+      skinCuivre: 'Cuivre',
+      skinArgent: 'Argent',
+      skinOr: 'Or',
+      skinDamas: 'Damas',
+      skinPlatine: 'Platine',
+      skinDiamant: 'Diamant',
+      watchAdBtn: '▶ Regarder une pub optionnelle',
+      watchAdBtnLoading: 'Pub en cours…',
+      adUnlockedLabel: 'Débloqué',
+      adsReqUnit: 'pubs',
+      adsWatchedSingular: ' pub visionnée',
+      adsWatchedPlural: ' pubs visionnées',
+      adFailedMsg: 'Pub non complétée — réessaie pour débloquer un skin.',
+      adWatchedToastPrefix: 'Pub visionnée (',
+      closeBtn: 'Fermer',
+      lockedLabel: 'Verrouillé',
+      adSkinAvailableSub: 'Ce skin d\'arme est maintenant disponible.',
       continueBtn: 'Continuer',
       bestScore: 'Meilleur score',
       roomSecured: 'Pièce sécurisée',
@@ -662,6 +688,23 @@ function bootGame() {
       replayLevel: 'Replay level',
       backToMenu: 'Back to menu',
       skinUnlocked: 'Skin unlocked!',
+      skinCuivre: 'Copper',
+      skinArgent: 'Silver',
+      skinOr: 'Gold',
+      skinDamas: 'Damascus',
+      skinPlatine: 'Platinum',
+      skinDiamant: 'Diamond',
+      watchAdBtn: '▶ Watch an optional ad',
+      watchAdBtnLoading: 'Ad playing…',
+      adUnlockedLabel: 'Unlocked',
+      adsReqUnit: 'ads',
+      adsWatchedSingular: ' ad watched',
+      adsWatchedPlural: ' ads watched',
+      adFailedMsg: 'Ad not completed — try again to unlock a skin.',
+      adWatchedToastPrefix: 'Ad watched (',
+      closeBtn: 'Close',
+      lockedLabel: 'Locked',
+      adSkinAvailableSub: 'This weapon skin is now available.',
       continueBtn: 'Continue',
       bestScore: 'Best score',
       roomSecured: 'Room secured',
@@ -692,6 +735,23 @@ function bootGame() {
       replayLevel: 'Repetir nivel',
       backToMenu: 'Volver al menú',
       skinUnlocked: '¡Skin desbloqueado!',
+      skinCuivre: 'Cobre',
+      skinArgent: 'Plata',
+      skinOr: 'Oro',
+      skinDamas: 'Damasco',
+      skinPlatine: 'Platino',
+      skinDiamant: 'Diamante',
+      watchAdBtn: '▶ Ver un anuncio opcional',
+      watchAdBtnLoading: 'Anuncio en curso…',
+      adUnlockedLabel: 'Desbloqueado',
+      adsReqUnit: 'anuncios',
+      adsWatchedSingular: ' anuncio visto',
+      adsWatchedPlural: ' anuncios vistos',
+      adFailedMsg: 'Anuncio no completado — inténtalo de nuevo para desbloquear un skin.',
+      adWatchedToastPrefix: 'Anuncio visto (',
+      closeBtn: 'Cerrar',
+      lockedLabel: 'Bloqueado',
+      adSkinAvailableSub: 'Este skin de arma ya está disponible.',
       continueBtn: 'Continuar',
       bestScore: 'Mejor puntaje',
       roomSecured: 'Sala asegurada',
@@ -722,6 +782,23 @@ function bootGame() {
       replayLevel: 'Repetir nível',
       backToMenu: 'Voltar ao menu',
       skinUnlocked: 'Skin desbloqueada!',
+      skinCuivre: 'Cobre',
+      skinArgent: 'Prata',
+      skinOr: 'Ouro',
+      skinDamas: 'Damasco',
+      skinPlatine: 'Platina',
+      skinDiamant: 'Diamante',
+      watchAdBtn: '▶ Assistir a um anúncio opcional',
+      watchAdBtnLoading: 'Anúncio em andamento…',
+      adUnlockedLabel: 'Desbloqueado',
+      adsReqUnit: 'anúncios',
+      adsWatchedSingular: ' anúncio assistido',
+      adsWatchedPlural: ' anúncios assistidos',
+      adFailedMsg: 'Anúncio não concluído — tente novamente para desbloquear uma skin.',
+      adWatchedToastPrefix: 'Anúncio assistido (',
+      closeBtn: 'Fechar',
+      lockedLabel: 'Bloqueado',
+      adSkinAvailableSub: 'Esta skin de arma já está disponível.',
       continueBtn: 'Continuar',
       bestScore: 'Melhor pontuação',
       roomSecured: 'Sala segura',
@@ -752,6 +829,23 @@ function bootGame() {
       replayLevel: 'Level wiederholen',
       backToMenu: 'Zurück zum Menü',
       skinUnlocked: 'Skin freigeschaltet!',
+      skinCuivre: 'Kupfer',
+      skinArgent: 'Silber',
+      skinOr: 'Gold',
+      skinDamas: 'Damaststahl',
+      skinPlatine: 'Platin',
+      skinDiamant: 'Diamant',
+      watchAdBtn: '▶ Optionale Werbung ansehen',
+      watchAdBtnLoading: 'Werbung läuft…',
+      adUnlockedLabel: 'Freigeschaltet',
+      adsReqUnit: 'Anzeigen',
+      adsWatchedSingular: ' Anzeige gesehen',
+      adsWatchedPlural: ' Anzeigen gesehen',
+      adFailedMsg: 'Werbung nicht abgeschlossen — versuche es erneut, um einen Skin freizuschalten.',
+      adWatchedToastPrefix: 'Anzeige gesehen (',
+      closeBtn: 'Schließen',
+      lockedLabel: 'Gesperrt',
+      adSkinAvailableSub: 'Dieser Waffen-Skin ist jetzt verfügbar.',
       continueBtn: 'Weiter',
       bestScore: 'Bestwert',
       roomSecured: 'Raum gesichert',
@@ -782,6 +876,23 @@ function bootGame() {
       replayLevel: 'Ripeti livello',
       backToMenu: 'Torna al menu',
       skinUnlocked: 'Skin sbloccata!',
+      skinCuivre: 'Rame',
+      skinArgent: 'Argento',
+      skinOr: 'Oro',
+      skinDamas: 'Damasco',
+      skinPlatine: 'Platino',
+      skinDiamant: 'Diamante',
+      watchAdBtn: '▶ Guarda una pubblicità facoltativa',
+      watchAdBtnLoading: 'Pubblicità in corso…',
+      adUnlockedLabel: 'Sbloccata',
+      adsReqUnit: 'pubblicità',
+      adsWatchedSingular: ' pubblicità guardata',
+      adsWatchedPlural: ' pubblicità guardate',
+      adFailedMsg: 'Pubblicità non completata — riprova per sbloccare uno skin.',
+      adWatchedToastPrefix: 'Pubblicità guardata (',
+      closeBtn: 'Chiudi',
+      lockedLabel: 'Bloccata',
+      adSkinAvailableSub: 'Questo skin dell\'arma è ora disponibile.',
       continueBtn: 'Continua',
       bestScore: 'Miglior punteggio',
       roomSecured: 'Stanza messa in sicurezza',
@@ -812,6 +923,23 @@ function bootGame() {
       replayLevel: 'Повторить уровень',
       backToMenu: 'В меню',
       skinUnlocked: 'Скин разблокирован!',
+      skinCuivre: 'Медь',
+      skinArgent: 'Серебро',
+      skinOr: 'Золото',
+      skinDamas: 'Дамаск',
+      skinPlatine: 'Платина',
+      skinDiamant: 'Алмаз',
+      watchAdBtn: '▶ Посмотреть рекламу (по желанию)',
+      watchAdBtnLoading: 'Идёт реклама…',
+      adUnlockedLabel: 'Разблокировано',
+      adsReqUnit: 'реклам',
+      adsWatchedSingular: ' реклама просмотрена',
+      adsWatchedPlural: ' реклам просмотрено',
+      adFailedMsg: 'Реклама не досмотрена — попробуйте снова, чтобы разблокировать скин.',
+      adWatchedToastPrefix: 'Реклама просмотрена (',
+      closeBtn: 'Закрыть',
+      lockedLabel: 'Заблокировано',
+      adSkinAvailableSub: 'Этот скин оружия теперь доступен.',
       continueBtn: 'Продолжить',
       bestScore: 'Лучший результат',
       roomSecured: 'Комната зачищена',
@@ -842,6 +970,23 @@ function bootGame() {
       replayLevel: 'レベルをやり直す',
       backToMenu: 'メニューに戻る',
       skinUnlocked: 'スキン解除！',
+      skinCuivre: '銅',
+      skinArgent: '銀',
+      skinOr: '金',
+      skinDamas: 'ダマスカス',
+      skinPlatine: 'プラチナ',
+      skinDiamant: 'ダイヤモンド',
+      watchAdBtn: '▶ 任意の広告を見る',
+      watchAdBtnLoading: '広告再生中…',
+      adUnlockedLabel: '解除済み',
+      adsReqUnit: '回視聴',
+      adsWatchedSingular: '回視聴',
+      adsWatchedPlural: '回視聴',
+      adFailedMsg: '広告が完了しませんでした——もう一度試してスキンを解除してください。',
+      adWatchedToastPrefix: '広告視聴済み（',
+      closeBtn: '閉じる',
+      lockedLabel: 'ロック中',
+      adSkinAvailableSub: 'この武器スキンが利用可能になりました。',
       continueBtn: '続ける',
       bestScore: 'ベストスコア',
       roomSecured: '部屋を制圧',
@@ -872,6 +1017,23 @@ function bootGame() {
       replayLevel: '레벨 다시 하기',
       backToMenu: '메뉴로 돌아가기',
       skinUnlocked: '스킨 해제!',
+      skinCuivre: '구리',
+      skinArgent: '은',
+      skinOr: '금',
+      skinDamas: '다마스커스',
+      skinPlatine: '백금',
+      skinDiamant: '다이아몬드',
+      watchAdBtn: '▶ 선택 광고 보기',
+      watchAdBtnLoading: '광고 재생 중…',
+      adUnlockedLabel: '해제됨',
+      adsReqUnit: '개 광고',
+      adsWatchedSingular: '개 광고 시청',
+      adsWatchedPlural: '개 광고 시청',
+      adFailedMsg: '광고가 완료되지 않았습니다 — 스킨을 해제하려면 다시 시도하세요.',
+      adWatchedToastPrefix: '광고 시청 (',
+      closeBtn: '닫기',
+      lockedLabel: '잠김',
+      adSkinAvailableSub: '이 무기 스킨을 이제 사용할 수 있습니다.',
       continueBtn: '계속',
       bestScore: '최고 점수',
       roomSecured: '방 제압 완료',
@@ -902,6 +1064,23 @@ function bootGame() {
       replayLevel: '重玩本关',
       backToMenu: '返回菜单',
       skinUnlocked: '皮肤已解锁！',
+      skinCuivre: '铜',
+      skinArgent: '银',
+      skinOr: '金',
+      skinDamas: '大马士革',
+      skinPlatine: '铂金',
+      skinDiamant: '钻石',
+      watchAdBtn: '▶ 观看可选广告',
+      watchAdBtnLoading: '广告播放中…',
+      adUnlockedLabel: '已解锁',
+      adsReqUnit: '个广告',
+      adsWatchedSingular: '个广告已观看',
+      adsWatchedPlural: '个广告已观看',
+      adFailedMsg: '广告未完成——请重试以解锁皮肤。',
+      adWatchedToastPrefix: '已观看广告（',
+      closeBtn: '关闭',
+      lockedLabel: '已锁定',
+      adSkinAvailableSub: '该武器皮肤现已可用。',
       continueBtn: '继续',
       bestScore: '最高分',
       roomSecured: '房间已肃清',
@@ -930,6 +1109,7 @@ function bootGame() {
     document.querySelectorAll('.lang-btn').forEach(b => {
       b.classList.toggle('active', b.getAttribute('data-lang') === lang);
     });
+    if (typeof renderSkinTrack === 'function') renderSkinTrack();
   }
 
   const classData = {
@@ -3352,12 +3532,12 @@ const LEVEL_I18N = {"en": {"1": {"name": "Level 1 · Residence", "sub": "Easy ·
 
   // --- Ad-based cosmetic skin unlocks (simulated) ---
   const skinDefs = [
-    { name: 'Cuivre', slug: 'cuivre', req: 5, img: './skin-cuivre.jpg', color: '#c17a4a' },
-    { name: 'Argent', slug: 'argent', req: 10, img: './skin-argent.jpg', color: '#c0c0c8' },
-    { name: 'Or', slug: 'or', req: 15, img: './skin-or.jpg', color: '#d4af37' },
-    { name: 'Damas', slug: 'damas', req: 25, img: './skin-damas.jpg', color: '#7c8896' },
-    { name: 'Platine', slug: 'platine', req: 35, img: './skin-platine.jpg', color: '#dcdce2' },
-    { name: 'Diamant', slug: 'diamant', req: 50, img: './skin-diamant.jpg', color: '#cdeaf7' },
+    { nameKey: 'skinCuivre', slug: 'cuivre', req: 5, img: './skin-cuivre.jpg', color: '#c17a4a' },
+    { nameKey: 'skinArgent', slug: 'argent', req: 10, img: './skin-argent.jpg', color: '#c0c0c8' },
+    { nameKey: 'skinOr', slug: 'or', req: 15, img: './skin-or.jpg', color: '#d4af37' },
+    { nameKey: 'skinDamas', slug: 'damas', req: 25, img: './skin-damas.jpg', color: '#7c8896' },
+    { nameKey: 'skinPlatine', slug: 'platine', req: 35, img: './skin-platine.jpg', color: '#dcdce2' },
+    { nameKey: 'skinDiamant', slug: 'diamant', req: 50, img: './skin-diamant.jpg', color: '#cdeaf7' },
   ];
   // Le skin M4 le plus haut déjà débloqué s'affiche automatiquement sur l'arme
   // de l'Assault en mission (couleur) et sur le portrait de briefing (image
@@ -3375,17 +3555,28 @@ const LEVEL_I18N = {"en": {"1": {"name": "Level 1 · Residence", "sub": "Easy ·
   let watchingAd = false;
 
   function renderSkinTrack() {
-    document.getElementById('ads-count').textContent = adsWatched + (adsWatched === 1 ? ' pub visionnée' : ' pubs visionnées');
+    document.getElementById('ads-count').textContent = adsWatched + (adsWatched === 1 ? t('adsWatchedSingular') : t('adsWatchedPlural'));
     const track = document.getElementById('skin-track');
     track.innerHTML = '';
     skinDefs.forEach(s => {
       const unlocked = adsWatched >= s.req;
+      const name = t(s.nameKey);
       const chip = document.createElement('div');
       chip.className = 'skin-chip' + (unlocked ? ' unlocked' : '');
-      chip.innerHTML = '<img class="sc-img" src="' + s.img + '" alt="' + s.name + '">' +
-        '<div class="sc-name">' + s.name + '</div><div class="sc-req">' + (unlocked ? 'Débloqué' : s.req + ' pubs') + '</div>';
+      chip.innerHTML = '<img class="sc-img" src="' + s.img + '" alt="' + name + '">' +
+        '<div class="sc-name">' + name + '</div><div class="sc-req">' + (unlocked ? t('adUnlockedLabel') : s.req + ' ' + t('adsReqUnit')) + '</div>';
+      chip.addEventListener('click', () => showSkinPreview(s, unlocked));
       track.appendChild(chip);
     });
+  }
+
+  // Aperçu au clic : montre le rendu réel du skin en grand, verrouillé ou
+  // non, sans jamais déclencher de pub — juste pour donner envie.
+  function showSkinPreview(skin, unlocked) {
+    document.getElementById('skin-preview-img').src = skin.img;
+    document.getElementById('skin-preview-title').textContent = t(skin.nameKey);
+    document.getElementById('skin-preview-status').textContent = unlocked ? t('adUnlockedLabel') : (t('lockedLabel') + ' — ' + skin.req + ' ' + t('adsReqUnit'));
+    document.getElementById('skin-preview-overlay').classList.add('show');
   }
 
   function showToast(msg) {
@@ -3405,6 +3596,9 @@ const LEVEL_I18N = {"en": {"1": {"name": "Level 1 · Residence", "sub": "Easy ·
   }
   document.getElementById('celebration-close-btn').addEventListener('click', () => {
     document.getElementById('celebration-overlay').classList.remove('show');
+  });
+  document.getElementById('skin-preview-close-btn').addEventListener('click', () => {
+    document.getElementById('skin-preview-overlay').classList.remove('show');
   });
 
   // --- Pont AdMob natif (TWA PostMessage, Chrome 115+) ---
@@ -3458,9 +3652,9 @@ const LEVEL_I18N = {"en": {"1": {"name": "Level 1 · Residence", "sub": "Easy ·
     watchingAd = false;
     const btn = document.getElementById('watch-ad-btn');
     btn.disabled = false;
-    btn.textContent = '▶ Regarder une pub optionnelle';
+    btn.textContent = t('watchAdBtn');
     if (!success) {
-      showToast('Pub non complétée — réessaie pour débloquer un skin.');
+      showToast(t('adFailedMsg'));
       return;
     }
     adsWatched++;
@@ -3469,13 +3663,13 @@ const LEVEL_I18N = {"en": {"1": {"name": "Level 1 · Residence", "sub": "Easy ·
     renderSkinTrack();
     if (justUnlocked) {
       showCelebration({
-        label: 'Skin débloqué !',
+        label: t('skinUnlocked'),
         img: justUnlocked.img,
-        title: justUnlocked.name,
-        sub: 'Ce skin d\'arme est maintenant disponible.',
+        title: t(justUnlocked.nameKey),
+        sub: t('adSkinAvailableSub'),
       });
     } else {
-      showToast('Pub visionnée (' + adsWatched + ')');
+      showToast(t('adWatchedToastPrefix') + adsWatched + ')');
     }
   }
 
@@ -3484,7 +3678,7 @@ const LEVEL_I18N = {"en": {"1": {"name": "Level 1 · Residence", "sub": "Easy ·
     watchingAd = true;
     const btn = document.getElementById('watch-ad-btn');
     btn.disabled = true;
-    btn.textContent = 'Pub en cours…';
+    btn.textContent = t('watchAdBtnLoading');
     requestRewardedAd();
   });
 
