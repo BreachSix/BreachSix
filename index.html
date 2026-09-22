@@ -4396,23 +4396,44 @@ const LEVEL_I18N = {"en": {"1": {"name": "Level 1 · Residence", "sub": "Easy ·
 // tout le reste du jeu — qui lit ses préférences de façon synchrone au
 // démarrage — les trouve déjà en place. Hors Telegram, rien ne change :
 // bootGame() démarre immédiatement, exactement comme avant.
+// SÉCURITÉ : bootGame() est garanti de démarrer une seule fois, peu importe
+// ce qui arrive à Telegram (API absente, promesse qui ne répond jamais,
+// erreur inattendue) — un filet de 2 secondes force le démarrage si le
+// préchargement n'a pas terminé à temps, pour que le jeu ne reste jamais
+// bloqué sur un écran vide.
 const isTelegram = !!(window.Telegram && window.Telegram.WebApp);
 const PERSIST_KEYS = ['breachsix-ads-watched', 'breachsix-best-scores', 'breachsix-colorblind', 'breachsix-lang', 'breachsix-large-text', 'breachsix-milestone-tier', 'breachsix-squad-composition'];
 
+let gameStarted = false;
+function startGameOnce() {
+  if (gameStarted) return;
+  gameStarted = true;
+  bootGame();
+}
+
 function preloadTelegramStorage(done) {
-  if (!isTelegram || !window.Telegram.WebApp.DeviceStorage) { done(); return; }
+  if (!isTelegram) { done(); return; }
   try { window.Telegram.WebApp.ready(); window.Telegram.WebApp.expand(); } catch (e) {}
-  const ds = window.Telegram.WebApp.DeviceStorage;
+  let ds;
+  try { ds = window.Telegram.WebApp.DeviceStorage; } catch (e) { ds = null; }
+  if (!ds || typeof ds.get !== 'function') { done(); return; }
   let remaining = PERSIST_KEYS.length;
   const finishOne = () => { if (--remaining <= 0) done(); };
   PERSIST_KEYS.forEach(key => {
-    ds.get(key)
-      .then(value => { if (value !== undefined && value !== null) { try { localStorage.setItem(key, value); } catch (e) {} } finishOne(); })
-      .catch(() => finishOne());
+    try {
+      const result = ds.get(key);
+      if (!result || typeof result.then !== 'function') { finishOne(); return; }
+      result
+        .then(value => { if (value !== undefined && value !== null) { try { localStorage.setItem(key, value); } catch (e) {} } finishOne(); })
+        .catch(() => finishOne());
+    } catch (e) {
+      finishOne();
+    }
   });
 }
 
-preloadTelegramStorage(bootGame);
+setTimeout(startGameOnce, 2000); // filet de sécurité : démarre de toute façon après 2s
+preloadTelegramStorage(startGameOnce);
 </script>
 <script>
   if ('serviceWorker' in navigator) {
