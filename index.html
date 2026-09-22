@@ -4403,12 +4403,21 @@ function preloadTelegramStorage(done) {
   if (!isTelegram || !window.Telegram.WebApp.DeviceStorage) { done(); return; }
   try { window.Telegram.WebApp.ready(); window.Telegram.WebApp.expand(); } catch (e) {}
   const ds = window.Telegram.WebApp.DeviceStorage;
+  let finished = false;
+  const finishOnce = () => { if (finished) return; finished = true; done(); };
+  // Filet de sécurité : si DeviceStorage ne répond jamais (cas d'un navigateur
+  // mobile normal où le script Telegram se charge mais où l'API ne fonctionne
+  // pas réellement hors de l'app Telegram), le jeu démarre quand même après 2s
+  // au lieu de rester bloqué indéfiniment sur un écran vide.
+  const safetyTimer = setTimeout(finishOnce, 2000);
   let remaining = PERSIST_KEYS.length;
-  const finishOne = () => { if (--remaining <= 0) done(); };
+  const finishOne = () => { if (--remaining <= 0) { clearTimeout(safetyTimer); finishOnce(); } };
   PERSIST_KEYS.forEach(key => {
-    ds.get(key)
-      .then(value => { if (value !== undefined && value !== null) { try { localStorage.setItem(key, value); } catch (e) {} } finishOne(); })
-      .catch(() => finishOne());
+    try {
+      ds.get(key)
+        .then(value => { if (value !== undefined && value !== null) { try { localStorage.setItem(key, value); } catch (e) {} } finishOne(); })
+        .catch(() => finishOne());
+    } catch (e) { finishOne(); }
   });
 }
 
