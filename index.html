@@ -4283,7 +4283,21 @@ const LEVEL_I18N = {"en": {"1": {"name": "Level 1 · Residence", "sub": "Easy ·
     return Promise.reject(new Error('Monetag SDK non chargé'));
   }
 
+  // --- Interrupteur de phase de test : simulation de pub privilégiée ---
+  // Tant que ce flag est à true, TOUTE demande de pub (bouton "Pub optionnelle")
+  // passe directement par la simulation ci-dessous, peu importe qu'OnClicka,
+  // Monetag, AdsGram ou le pont AdMob natif soient détectés/disponibles.
+  // La cascade réelle plus bas dans cette fonction reste intacte et inchangée :
+  // repasser ce flag à false suffit à la réactiver telle quelle, sans rien
+  // reconstruire, une fois la phase de test terminée.
+  const FORCE_AD_SIMULATION = true;
+
   function requestRewardedAd() {
+    if (FORCE_AD_SIMULATION) {
+      // Phase de test en cours : simulation forcée, cascade réelle court-circuitée.
+      setTimeout(() => onAdResult(true), 1400);
+      return;
+    }
     if (onclickaShow) {
       // OnClicka : réseau publicitaire principal.
       onclickaShow()
