@@ -264,6 +264,9 @@
   .level-card .lc-sub { font-size: 0.7rem; color: var(--text-dim); margin-top: 2px; }
   .level-card .lc-score { font-family: var(--font-head); font-size: 0.85rem; color: var(--amber); text-align: right; }
   .level-card .lc-score .lbl { display: block; font-size: 0.6rem; color: var(--text-dim); font-family: var(--font-body); }
+  .level-card.locked { opacity: 0.55; }
+  .level-card.locked .lc-title { color: var(--text-dim); }
+  .level-card.locked:active { border-color: var(--wall); }
   .best-score { font-size: 0.78rem; color: var(--ok); margin-bottom: 4px; min-height: 16px; }
 
   .skins-section { margin-top: 16px; padding-top: 12px; border-top: 1px solid var(--wall); }
@@ -338,6 +341,14 @@
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <script src="https://sad.adsgram.ai/js/sad.min.js"></script>
 <script src="https://js.onclckvd.com/in-stream-ad-admanager/tma.js"></script>
+<!--
+  Monetag : remplacer cette ligne au complet par le tag <script> exact fourni
+  par le tableau de bord Monetag (section "Getting SDK tag"), une fois le
+  compte créé et une zone Rewarded Interstitial obtenue. Le tag ressemble à :
+  <script src="https://VRAI_DOMAINE/sdk.js" data-zone="TON_ZONE_ID" data-sdk="show_TON_ZONE_ID"></script>
+  Le nom de fonction généré (data-sdk="...") doit ensuite être reporté dans
+  MONETAG_SHOW_FN plus bas dans le fichier.
+-->
 </head>
 <body>
 <div class="app" id="app">
@@ -667,6 +678,13 @@ function bootGame() {
       replayLevel: 'Rejouer le niveau',
       backToMenu: 'Retour au menu',
       skinUnlocked: 'Skin débloqué !',
+      hintChangeClass: 'Touche un opérateur pour changer sa classe.',
+      hintOperatorRemovedContinue: 'Opérateur retiré. Sélectionne un opérateur pour continuer.',
+      hintAssigned: 'Assigné. Tu peux ajouter un autre opérateur au même point, ou toucher GO.',
+      hintOperatorRemovedFromDoor: 'Opérateur retiré du point d\'entrée.',
+      hintSelectFirst: 'Sélectionne d\'abord un opérateur ci-dessous.',
+      levelLockedLabel: 'Verrouillé',
+      levelLockedToast: 'Termine le niveau précédent pour déverrouiller celui-ci.',
       knifeBaseLabel: 'Karambit standard',
       tierName1: 'Acier brossé',
       tierName2: 'Noir tactique',
@@ -761,6 +779,13 @@ function bootGame() {
       replayLevel: 'Replay level',
       backToMenu: 'Back to menu',
       skinUnlocked: 'Skin unlocked!',
+      hintChangeClass: 'Tap an operator to change their class.',
+      hintOperatorRemovedContinue: 'Operator removed. Select an operator to continue.',
+      hintAssigned: 'Assigned. You can add another operator to the same point, or tap GO.',
+      hintOperatorRemovedFromDoor: 'Operator removed from the entry point.',
+      hintSelectFirst: 'Select an operator below first.',
+      levelLockedLabel: 'Locked',
+      levelLockedToast: 'Complete the previous level to unlock this one.',
       knifeBaseLabel: 'Standard karambit',
       tierName1: 'Brushed steel',
       tierName2: 'Tactical black',
@@ -855,6 +880,13 @@ function bootGame() {
       replayLevel: 'Repetir nivel',
       backToMenu: 'Volver al menú',
       skinUnlocked: '¡Skin desbloqueado!',
+      hintChangeClass: 'Toca un operador para cambiar su clase.',
+      hintOperatorRemovedContinue: 'Operador retirado. Selecciona un operador para continuar.',
+      hintAssigned: 'Asignado. Puedes añadir otro operador al mismo punto, o tocar GO.',
+      hintOperatorRemovedFromDoor: 'Operador retirado del punto de entrada.',
+      hintSelectFirst: 'Selecciona primero un operador abajo.',
+      levelLockedLabel: 'Bloqueado',
+      levelLockedToast: 'Completa el nivel anterior para desbloquear este.',
       knifeBaseLabel: 'Karambit estándar',
       tierName1: 'Acero cepillado',
       tierName2: 'Negro táctico',
@@ -949,6 +981,13 @@ function bootGame() {
       replayLevel: 'Repetir nível',
       backToMenu: 'Voltar ao menu',
       skinUnlocked: 'Skin desbloqueada!',
+      hintChangeClass: 'Toque em um operador para mudar sua classe.',
+      hintOperatorRemovedContinue: 'Operador removido. Selecione um operador para continuar.',
+      hintAssigned: 'Atribuído. Você pode adicionar outro operador ao mesmo ponto, ou tocar em GO.',
+      hintOperatorRemovedFromDoor: 'Operador removido do ponto de entrada.',
+      hintSelectFirst: 'Selecione primeiro um operador abaixo.',
+      levelLockedLabel: 'Bloqueado',
+      levelLockedToast: 'Conclua o nível anterior para desbloquear este.',
       knifeBaseLabel: 'Karambit padrão',
       tierName1: 'Aço escovado',
       tierName2: 'Preto tático',
@@ -1043,6 +1082,13 @@ function bootGame() {
       replayLevel: 'Level wiederholen',
       backToMenu: 'Zurück zum Menü',
       skinUnlocked: 'Skin freigeschaltet!',
+      hintChangeClass: 'Tippe auf einen Operator, um seine Klasse zu ändern.',
+      hintOperatorRemovedContinue: 'Operator entfernt. Wähle einen Operator, um fortzufahren.',
+      hintAssigned: 'Zugewiesen. Du kannst einen weiteren Operator demselben Punkt zuweisen oder GO drücken.',
+      hintOperatorRemovedFromDoor: 'Operator vom Zugang entfernt.',
+      hintSelectFirst: 'Wähle zuerst einen Operator unten aus.',
+      levelLockedLabel: 'Gesperrt',
+      levelLockedToast: 'Schließe das vorherige Level ab, um dieses freizuschalten.',
       knifeBaseLabel: 'Standard-Karambit',
       tierName1: 'Gebürsteter Stahl',
       tierName2: 'Taktisches Schwarz',
@@ -1137,6 +1183,13 @@ function bootGame() {
       replayLevel: 'Ripeti livello',
       backToMenu: 'Torna al menu',
       skinUnlocked: 'Skin sbloccata!',
+      hintChangeClass: 'Tocca un operatore per cambiarne la classe.',
+      hintOperatorRemovedContinue: 'Operatore rimosso. Seleziona un operatore per continuare.',
+      hintAssigned: 'Assegnato. Puoi aggiungere un altro operatore allo stesso punto, oppure toccare GO.',
+      hintOperatorRemovedFromDoor: 'Operatore rimosso dal punto d\'accesso.',
+      hintSelectFirst: 'Seleziona prima un operatore qui sotto.',
+      levelLockedLabel: 'Bloccato',
+      levelLockedToast: 'Completa il livello precedente per sbloccare questo.',
       knifeBaseLabel: 'Karambit standard',
       tierName1: 'Acciaio spazzolato',
       tierName2: 'Nero tattico',
@@ -1231,6 +1284,13 @@ function bootGame() {
       replayLevel: 'Повторить уровень',
       backToMenu: 'В меню',
       skinUnlocked: 'Скин разблокирован!',
+      hintChangeClass: 'Коснитесь оперативника, чтобы изменить его класс.',
+      hintOperatorRemovedContinue: 'Оперативник снят. Выберите оперативника, чтобы продолжить.',
+      hintAssigned: 'Назначено. Можно добавить ещё одного оперативника на ту же точку или нажать GO.',
+      hintOperatorRemovedFromDoor: 'Оперативник снят с точки входа.',
+      hintSelectFirst: 'Сначала выберите оперативника ниже.',
+      levelLockedLabel: 'Заблокировано',
+      levelLockedToast: 'Пройдите предыдущий уровень, чтобы разблокировать этот.',
       knifeBaseLabel: 'Стандартный карамбит',
       tierName1: 'Матовая сталь',
       tierName2: 'Тактический чёрный',
@@ -1325,6 +1385,13 @@ function bootGame() {
       replayLevel: 'レベルをやり直す',
       backToMenu: 'メニューに戻る',
       skinUnlocked: 'スキン解除！',
+      hintChangeClass: 'オペレーターをタップしてクラスを変更。',
+      hintOperatorRemovedContinue: 'オペレーターを解除しました。続けるにはオペレーターを選択してください。',
+      hintAssigned: '配置完了。同じ地点に別のオペレーターを追加するか、GOをタップしてください。',
+      hintOperatorRemovedFromDoor: '侵入口からオペレーターを解除しました。',
+      hintSelectFirst: 'まず下のオペレーターを選択してください。',
+      levelLockedLabel: 'ロック中',
+      levelLockedToast: 'このレベルを解除するには前のレベルをクリアしてください。',
       knifeBaseLabel: '標準カランビット',
       tierName1: 'ブラッシュドスチール',
       tierName2: 'タクティカルブラック',
@@ -1419,6 +1486,13 @@ function bootGame() {
       replayLevel: '레벨 다시 하기',
       backToMenu: '메뉴로 돌아가기',
       skinUnlocked: '스킨 해제!',
+      hintChangeClass: '오퍼레이터를 눌러 클래스를 변경하세요.',
+      hintOperatorRemovedContinue: '오퍼레이터가 해제되었습니다. 계속하려면 오퍼레이터를 선택하세요.',
+      hintAssigned: '배정 완료. 같은 지점에 다른 오퍼레이터를 추가하거나 GO를 누르세요.',
+      hintOperatorRemovedFromDoor: '진입로에서 오퍼레이터가 해제되었습니다.',
+      hintSelectFirst: '먼저 아래에서 오퍼레이터를 선택하세요.',
+      levelLockedLabel: '잠김',
+      levelLockedToast: '이 레벨을 해제하려면 이전 레벨을 완료하세요.',
       knifeBaseLabel: '기본 카람빗',
       tierName1: '브러시드 스틸',
       tierName2: '택티컬 블랙',
@@ -1513,6 +1587,13 @@ function bootGame() {
       replayLevel: '重玩本关',
       backToMenu: '返回菜单',
       skinUnlocked: '皮肤已解锁！',
+      hintChangeClass: '点击干员以更改其职业。',
+      hintOperatorRemovedContinue: '干员已移除。请选择一名干员以继续。',
+      hintAssigned: '已分配。你可以将另一名干员分配到同一入口，或点击GO。',
+      hintOperatorRemovedFromDoor: '已从入口移除干员。',
+      hintSelectFirst: '请先在下方选择一名干员。',
+      levelLockedLabel: '已锁定',
+      levelLockedToast: '完成上一关才能解锁此关卡。',
       knifeBaseLabel: '标准卡兰比特刀',
       tierName1: '拉丝钢',
       tierName2: '战术黑',
@@ -1884,9 +1965,9 @@ function bootGame() {
     if (composeMode) {
       for (const k in assignments) delete assignments[k];
       selectedOp = null;
-      hint.textContent = 'Touche un opérateur pour changer sa classe.';
+      hint.textContent = t('hintChangeClass');
     } else {
-      hint.textContent = 'Sélectionne un opérateur pour commencer.';
+      hint.textContent = t('selectOperatorHint');
     }
     document.getElementById('compose-btn').classList.toggle('active', composeMode);
     document.getElementById('compose-btn').textContent = composeMode ? 'Prêt' : 'Composer';
@@ -3469,17 +3550,30 @@ const LEVEL_I18N = {"en": {"1": {"name": "Level 1 · Residence", "sub": "Easy ·
     }
   }
 
+  function isLevelUnlocked(id) {
+    const n = Number(id);
+    return n <= 1 || bestScores[n - 1] > 0;
+  }
+
   function renderLevelList() {
     const list = document.getElementById('level-list');
     list.innerHTML = '';
     Object.keys(levelDefs).forEach(id => {
       const def = levelDefs[id];
+      const unlocked = isLevelUnlocked(id);
       const card = document.createElement('div');
-      card.className = 'level-card';
-      card.innerHTML =
-        '<div><div class="lc-title">' + getLevelField(id, 'name') + '</div><div class="lc-sub">' + getLevelField(id, 'sub') + '</div></div>' +
-        '<div class="lc-score"><span class="lbl">' + t('bestScore') + '</span>' + bestScores[id].toLocaleString('fr-CA') + '</div>';
-      card.addEventListener('click', () => showBriefing(Number(id)));
+      card.className = 'level-card' + (unlocked ? '' : ' locked');
+      if (unlocked) {
+        card.innerHTML =
+          '<div><div class="lc-title">' + getLevelField(id, 'name') + '</div><div class="lc-sub">' + getLevelField(id, 'sub') + '</div></div>' +
+          '<div class="lc-score"><span class="lbl">' + t('bestScore') + '</span>' + bestScores[id].toLocaleString('fr-CA') + '</div>';
+        card.addEventListener('click', () => showBriefing(Number(id)));
+      } else {
+        card.innerHTML =
+          '<div><div class="lc-title">' + getLevelField(id, 'name') + '</div><div class="lc-sub">' + getLevelField(id, 'sub') + '</div></div>' +
+          '<div class="lc-score"><span class="lbl">🔒</span>' + t('levelLockedLabel') + '</div>';
+        card.addEventListener('click', () => showToast(t('levelLockedToast')));
+      }
       list.appendChild(card);
     });
   }
@@ -3680,8 +3774,14 @@ const LEVEL_I18N = {"en": {"1": {"name": "Level 1 · Residence", "sub": "Easy ·
       doors: { N:{x:140,y:20}, NE:{x:480,y:50}, E:{x:480,y:140}, S:{x:140,y:180}, W:{x:20,y:90}, F:{x:300,y:20} },
       t1: { x: 230, y: 60 }, t2: { x: 400, y: 130 }, t3: { x: 300, y: 150 }, bomb: { x: 230, y: 60 },
       t4: { x: 60, y: 150 }, t5: { x: 350, y: 60 }, t6: { x: 240, y: 140 },
-      // Salle entièrement convexe : aucun point de passage requis, même
-      // avec les emplacements T4-T6 ajoutés (vérifié géométriquement).
+      // Salle globalement convexe, MAIS la petite cloison sous le mur du haut
+      // (x=170-178, y=20-70) peut couper un trajet en ligne droite depuis la
+      // porte N (et, à la marge, W vers T1) — détecté par vérification
+      // géométrique automatisée. Un point de passage sous la cloison
+      // (x=150, hors de sa plage x, y=90, sous sa plage y) règle les 6 cas
+      // affectés sans risquer de nouvelle collision (vérifié).
+      waypoints: { T1: { x: 150, y: 90 }, T2: { x: 150, y: 90 }, T3: { x: 150, y: 90 }, T5: { x: 150, y: 90 }, T6: { x: 150, y: 90 } },
+      waypointDoors: { T1: ['N', 'W'], T2: ['N'], T3: ['N'], T5: ['N'], T6: ['N'] },
     },
     hourglass: {
       // Deux pièces (haut/bas) reliées par un corridor étroit — inspiré des
@@ -3980,6 +4080,7 @@ const LEVEL_I18N = {"en": {"1": {"name": "Level 1 · Residence", "sub": "Easy ·
   }
 
   function showBriefing(levelId) {
+    if (!isLevelUnlocked(levelId)) { showToast(t('levelLockedToast')); return; }
     const def = levelDefs[levelId];
     pendingBriefingLevel = levelId;
     document.getElementById('overlay').classList.remove('show');
@@ -4027,7 +4128,7 @@ const LEVEL_I18N = {"en": {"1": {"name": "Level 1 · Residence", "sub": "Easy ·
     applyLevelVisibility();
     resetRoomVisuals();
     updateMissionTag();
-    hint.textContent = 'Sélectionne un opérateur pour commencer.';
+    hint.textContent = t('selectOperatorHint');
     renderAll();
     showScreen('mission');
   }
@@ -4041,7 +4142,7 @@ const LEVEL_I18N = {"en": {"1": {"name": "Level 1 · Residence", "sub": "Easy ·
     applyLevelVisibility();
     resetRoomVisuals();
     updateMissionTag();
-    hint.textContent = 'Sélectionne un opérateur pour commencer.';
+    hint.textContent = t('selectOperatorHint');
     renderAll();
   }
 
@@ -4171,14 +4272,30 @@ const LEVEL_I18N = {"en": {"1": {"name": "Level 1 · Residence", "sub": "Easy ·
       .catch(() => {});
   }
 
+  // Monetag — troisième réseau publicitaire Telegram Mini App dans la
+  // chaîne de secours. MONETAG_SHOW_FN doit être remplacé par le nom exact
+  // généré par le tag SDK Monetag une fois le compte créé (voir commentaire
+  // du <script> Monetag dans le <head>) — ex. 'show_812345'.
+  const MONETAG_SHOW_FN = 'MONETAG_SHOW_FN_PLACEHOLDER';
+  function monetagShow() {
+    const fn = window[MONETAG_SHOW_FN];
+    if (typeof fn === 'function') return fn();
+    return Promise.reject(new Error('Monetag SDK non chargé'));
+  }
+
   function requestRewardedAd() {
     if (onclickaShow) {
       // OnClicka : réseau publicitaire principal.
       onclickaShow()
         .then(() => onAdResult(true))
         .catch(() => onAdResult(false));
+    } else if (isTelegram && typeof window[MONETAG_SHOW_FN] === 'function') {
+      // Monetag : deuxième réseau, en réserve si OnClicka n'est pas disponible.
+      monetagShow()
+        .then(() => onAdResult(true))
+        .catch(() => onAdResult(false));
     } else if (adsgramController) {
-      // AdsGram (Telegram) : en réserve si OnClicka n'est pas disponible.
+      // AdsGram (Telegram) : en réserve si OnClicka et Monetag ne sont pas disponibles.
       adsgramController.show()
         .then(() => onAdResult(true))
         .catch(() => onAdResult(false));
@@ -4239,7 +4356,7 @@ const LEVEL_I18N = {"en": {"1": {"name": "Level 1 · Residence", "sub": "Easy ·
         if (assignments[d].length === 0) delete assignments[d];
       }
       selectedOp = null;
-      hint.textContent = 'Opérateur retiré. Sélectionne un opérateur pour continuer.';
+      hint.textContent = t('hintOperatorRemovedContinue');
       renderAll();
       return;
     }
@@ -4258,7 +4375,7 @@ const LEVEL_I18N = {"en": {"1": {"name": "Level 1 · Residence", "sub": "Easy ·
       if (!assignments[doorId]) assignments[doorId] = [];
       assignments[doorId].push(op);
       selectedOp = null;
-      hint.textContent = 'Assigné. Tu peux ajouter un autre opérateur au même point, ou toucher GO.';
+      hint.textContent = t('hintAssigned');
       renderAll();
       return;
     }
@@ -4266,11 +4383,11 @@ const LEVEL_I18N = {"en": {"1": {"name": "Level 1 · Residence", "sub": "Easy ·
       // no operator selected: remove the most recently assigned one at this door
       current.pop();
       if (current.length === 0) delete assignments[doorId];
-      hint.textContent = 'Opérateur retiré du point d\'entrée.';
+      hint.textContent = t('hintOperatorRemovedFromDoor');
       renderAll();
       return;
     }
-    hint.textContent = 'Sélectionne d\'abord un opérateur ci-dessous.';
+    hint.textContent = t('hintSelectFirst');
   }
 
   function renderDoors() {
@@ -5043,7 +5160,7 @@ const LEVEL_I18N = {"en": {"1": {"name": "Level 1 · Residence", "sub": "Easy ·
     resolved = false;
     document.getElementById('overlay').classList.remove('show');
     resetRoomVisuals();
-    hint.textContent = 'Sélectionne un opérateur pour commencer.';
+    hint.textContent = t('selectOperatorHint');
     renderAll();
   });
 
