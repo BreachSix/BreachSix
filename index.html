@@ -369,6 +369,15 @@
   Le nom de fonction généré (data-sdk="...") doit ensuite être reporté dans
   MONETAG_SHOW_FN plus bas dans le fichier.
 -->
+<!--
+  Monetag : SECONDE zone distincte, format "In-App Interstitial" cette fois
+  (pas Rewarded) — utilisée uniquement pour l'interstitiel affiché juste
+  avant la révélation d'un nouveau palier de couteau (tous les 15 niveaux).
+  Remplacer par le vrai tag une fois cette zone créée dans le tableau de
+  bord Monetag ; reporter le nom de fonction généré dans
+  MONETAG_INTERSTITIAL_FN plus bas dans le fichier.
+  <script src="https://VRAI_DOMAINE/sdk.js" data-zone="AUTRE_ZONE_ID" data-sdk="show_AUTRE_ZONE_ID"></script>
+-->
 </head>
 <body>
 <div class="app" id="app">
@@ -3778,11 +3787,13 @@ const LEVEL_I18N = {"en": {"1": {"name": "Level 1 · Residence", "sub": "Easy ·
     const tierInfo = MILESTONE_TIERS[nextTier - 1] || MILESTONE_TIERS[MILESTONE_TIERS.length - 1];
     renderKnifeProgress();
     setTimeout(() => {
-      showCelebration({
-        label: t('knifeTierWord') + ' ' + nextTier + '/10' + t('knifeReachedSuffix'),
-        img: tierInfo.img,
-        title: rangeEnd + t('knifeLevelsCompletedSuffix'),
-        sub: t(tierInfo.nameKey) + t('knifeUnlockedSuffix'),
+      showKnifeTierInterstitial(() => {
+        showCelebration({
+          label: t('knifeTierWord') + ' ' + nextTier + '/10' + t('knifeReachedSuffix'),
+          img: tierInfo.img,
+          title: rangeEnd + t('knifeLevelsCompletedSuffix'),
+          sub: t(tierInfo.nameKey) + t('knifeUnlockedSuffix'),
+        });
       });
     }, 700);
   }
@@ -4403,6 +4414,26 @@ const LEVEL_I18N = {"en": {"1": {"name": "Level 1 · Residence", "sub": "Easy ·
     const fn = window[MONETAG_SHOW_FN];
     if (typeof fn === 'function') return fn();
     return Promise.reject(new Error('Monetag SDK non chargé'));
+  }
+
+  // Monetag — zone distincte, format "In-App Interstitial" (pas Rewarded),
+  // affichée juste avant la révélation d'un nouveau palier de couteau. Ce
+  // n'est pas une porte : le couteau est déjà gagné par la performance (15
+  // niveaux complétés), donc on affiche la célébration qu'elle réussisse,
+  // échoue ou ne soit pas disponible — l'interstitiel monétise seulement ce
+  // moment de pause naturel, sans jamais bloquer le joueur.
+  const MONETAG_INTERSTITIAL_FN = 'MONETAG_INTERSTITIAL_FN_PLACEHOLDER';
+  function monetagInterstitialShow() {
+    const fn = window[MONETAG_INTERSTITIAL_FN];
+    if (typeof fn === 'function') return fn();
+    return Promise.reject(new Error('Monetag Interstitial SDK non chargé'));
+  }
+  function showKnifeTierInterstitial(onDone) {
+    if (typeof window[MONETAG_INTERSTITIAL_FN] === 'function') {
+      monetagInterstitialShow().catch(() => {}).finally(onDone);
+    } else {
+      onDone();
+    }
   }
 
   // --- Interrupteur de phase de test : simulation de pub privilégiée ---
@@ -5140,6 +5171,21 @@ const LEVEL_I18N = {"en": {"1": {"name": "Level 1 · Residence", "sub": "Easy ·
           (earliestEngageEnd < Infinity ? earliestEngageEnd : 0) + 200 + retaliationSpan + 600
         );
 
+    // Marque visuellement une menace neutralisée comme morte : teinte rouge
+    // "touché" (même traitement que la mort d'un opérateur ci-dessus), puis
+    // fondu vers une quasi-transparence — pour qu'un ennemi neutralisé se
+    // distingue clairement d'un ennemi encore actif, même une fois la pièce
+    // terminée.
+    function markThreatDead(threatId, opacity) {
+      const g = document.getElementById(threatId.toLowerCase() + '-g');
+      if (!g) return;
+      const body = g.querySelector('.enemy-body');
+      if (body) body.setAttribute('fill', 'var(--danger)');
+      void g.offsetWidth;
+      g.style.transition = 'opacity 0.4s ease';
+      g.style.opacity = String(opacity != null ? opacity : 0.15);
+    }
+
     if (isBombRoom) {
       const revealAt = bombDefused ? (maxDelay - 500) : bombExplodeAt;
       setTimeout(() => {
@@ -5153,13 +5199,19 @@ const LEVEL_I18N = {"en": {"1": {"name": "Level 1 · Residence", "sub": "Easy ·
           spawnExplosionBurst(svg, bombShapeCfg.bomb.x, bombShapeCfg.bomb.y);
         }
       }, revealAt);
+      // Une pièce de désamorçage peut aussi contenir un garde (T1) — il doit
+      // recevoir le même traitement "mort" que dans les autres pièces,
+      // ce qui n'était pas le cas jusqu'ici.
+      if (t1Cleared) {
+        setTimeout(() => markThreatDead('T1'), maxDelay - 500);
+      }
     } else {
       setTimeout(() => {
-        if (t1Cleared) document.getElementById('t1-g').style.opacity = '0.15';
-        if (t3Cleared && hasT3) document.getElementById('t3-g').style.opacity = '0.15';
-        if (t4Cleared && hasT4) document.getElementById('t4-g').style.opacity = '0.15';
-        if (t5Cleared && hasT5) document.getElementById('t5-g').style.opacity = '0.15';
-        if (t6Cleared && hasT6) document.getElementById('t6-g').style.opacity = '0.15';
+        if (t1Cleared) markThreatDead('T1');
+        if (t3Cleared && hasT3) markThreatDead('T3');
+        if (t4Cleared && hasT4) markThreatDead('T4');
+        if (t5Cleared && hasT5) markThreatDead('T5');
+        if (t6Cleared && hasT6) markThreatDead('T6');
         if (t2Cleared) {
           document.getElementById('t2-g').style.transition = 'opacity 0.3s ease';
           document.getElementById('t2-g').style.opacity = hostageSafe ? '0.15' : '0.5';
