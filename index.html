@@ -254,6 +254,21 @@
     padding: 5px 10px; border-radius: 4px; cursor: pointer;
   }
   .level-list { display: flex; flex-direction: column; gap: 10px; }
+  .chapter-header {
+    display: flex; justify-content: space-between; align-items: center;
+    background: var(--panel-2); border: 1px solid var(--wall); border-radius: 8px;
+    padding: 11px 14px; cursor: pointer; margin-top: 4px;
+  }
+  .chapter-header:first-child { margin-top: 0; }
+  .chapter-header:active { border-color: var(--amber); }
+  .chapter-title { font-family: var(--font-head); font-size: 0.85rem; color: var(--text); }
+  .chapter-sub { font-size: 0.68rem; color: var(--text-dim); margin-top: 2px; }
+  .chapter-status { font-size: 0.72rem; color: var(--text-dim); display: flex; align-items: center; gap: 8px; }
+  .chapter-status .chapter-check { color: var(--ok); }
+  .chapter-chevron { font-size: 0.7rem; color: var(--text-dim); transition: transform 0.2s ease; }
+  .chapter-header.expanded .chapter-chevron { transform: rotate(90deg); }
+  .chapter-levels { display: flex; flex-direction: column; gap: 10px; margin-top: 10px; }
+  .chapter-levels.collapsed { display: none; }
   .level-card {
     background: var(--panel); border: 1px solid var(--wall); border-radius: 6px;
     padding: 12px 14px; cursor: pointer; text-align: left;
@@ -765,6 +780,9 @@ function bootGame() {
       adSkinAvailableSub: 'Ce skin d\'arme est maintenant disponible.',
       continueBtn: 'Continuer',
       bestScore: 'Meilleur score',
+      chapterWord: 'Chapitre',
+      levelsWord: 'Niveaux',
+      chapterDoneLabel: 'Terminé',
       roomSecured: 'Pièce sécurisée',
       newBestScore: 'Nouveau meilleur score !',
     },
@@ -866,6 +884,9 @@ function bootGame() {
       adSkinAvailableSub: 'This weapon skin is now available.',
       continueBtn: 'Continue',
       bestScore: 'Best score',
+      chapterWord: 'Chapter',
+      levelsWord: 'Levels',
+      chapterDoneLabel: 'Completed',
       roomSecured: 'Room secured',
       newBestScore: 'New best score!',
     },
@@ -967,6 +988,9 @@ function bootGame() {
       adSkinAvailableSub: 'Este skin de arma ya está disponible.',
       continueBtn: 'Continuar',
       bestScore: 'Mejor puntaje',
+      chapterWord: 'Capítulo',
+      levelsWord: 'Niveles',
+      chapterDoneLabel: 'Completado',
       roomSecured: 'Sala asegurada',
       newBestScore: '¡Nuevo mejor puntaje!',
     },
@@ -1068,6 +1092,9 @@ function bootGame() {
       adSkinAvailableSub: 'Esta skin de arma já está disponível.',
       continueBtn: 'Continuar',
       bestScore: 'Melhor pontuação',
+      chapterWord: 'Capítulo',
+      levelsWord: 'Níveis',
+      chapterDoneLabel: 'Concluído',
       roomSecured: 'Sala segura',
       newBestScore: 'Nova melhor pontuação!',
     },
@@ -1169,6 +1196,9 @@ function bootGame() {
       adSkinAvailableSub: 'Dieser Waffen-Skin ist jetzt verfügbar.',
       continueBtn: 'Weiter',
       bestScore: 'Bestwert',
+      chapterWord: 'Kapitel',
+      levelsWord: 'Level',
+      chapterDoneLabel: 'Abgeschlossen',
       roomSecured: 'Raum gesichert',
       newBestScore: 'Neuer Bestwert!',
     },
@@ -1270,6 +1300,9 @@ function bootGame() {
       adSkinAvailableSub: 'Questo skin dell\'arma è ora disponibile.',
       continueBtn: 'Continua',
       bestScore: 'Miglior punteggio',
+      chapterWord: 'Capitolo',
+      levelsWord: 'Livelli',
+      chapterDoneLabel: 'Completato',
       roomSecured: 'Stanza messa in sicurezza',
       newBestScore: 'Nuovo miglior punteggio!',
     },
@@ -1371,6 +1404,9 @@ function bootGame() {
       adSkinAvailableSub: 'Этот скин оружия теперь доступен.',
       continueBtn: 'Продолжить',
       bestScore: 'Лучший результат',
+      chapterWord: 'Глава',
+      levelsWord: 'Уровни',
+      chapterDoneLabel: 'Пройдено',
       roomSecured: 'Комната зачищена',
       newBestScore: 'Новый лучший результат!',
     },
@@ -1472,6 +1508,9 @@ function bootGame() {
       adSkinAvailableSub: 'この武器スキンが利用可能になりました。',
       continueBtn: '続ける',
       bestScore: 'ベストスコア',
+      chapterWord: 'チャプター',
+      levelsWord: 'レベル',
+      chapterDoneLabel: 'クリア済み',
       roomSecured: '部屋を制圧',
       newBestScore: '新記録！',
     },
@@ -1573,6 +1612,9 @@ function bootGame() {
       adSkinAvailableSub: '이 무기 스킨을 이제 사용할 수 있습니다.',
       continueBtn: '계속',
       bestScore: '최고 점수',
+      chapterWord: '챕터',
+      levelsWord: '레벨',
+      chapterDoneLabel: '완료',
       roomSecured: '방 제압 완료',
       newBestScore: '신기록!',
     },
@@ -1674,6 +1716,9 @@ function bootGame() {
       adSkinAvailableSub: '该武器皮肤现已可用。',
       continueBtn: '继续',
       bestScore: '最高分',
+      chapterWord: '章节',
+      levelsWord: '关卡',
+      chapterDoneLabel: '已完成',
       roomSecured: '房间已肃清',
       newBestScore: '刷新最高分！',
     },
@@ -3569,27 +3614,71 @@ const LEVEL_I18N = {"en": {"1": {"name": "Level 1 · Residence", "sub": "Easy ·
     return n <= 1 || bestScores[n - 1] > 0;
   }
 
+  // Mémorise le chapitre actuellement déplié (un seul à la fois, comme un
+  // accordéon) — réinitialisé à chaque chargement de page, pas persisté.
+  let expandedChapter = null;
+
   function renderLevelList() {
     const list = document.getElementById('level-list');
     list.innerHTML = '';
-    Object.keys(levelDefs).forEach(id => {
-      const def = levelDefs[id];
-      const unlocked = isLevelUnlocked(id);
-      const card = document.createElement('div');
-      card.className = 'level-card' + (unlocked ? '' : ' locked');
-      if (unlocked) {
-        card.innerHTML =
-          '<div><div class="lc-title">' + getLevelField(id, 'name') + '</div><div class="lc-sub">' + getLevelField(id, 'sub') + '</div></div>' +
-          '<div class="lc-score"><span class="lbl">' + t('bestScore') + '</span>' + bestScores[id].toLocaleString('fr-CA') + '</div>';
-        card.addEventListener('click', () => showBriefing(Number(id)));
-      } else {
-        card.innerHTML =
-          '<div><div class="lc-title">' + getLevelField(id, 'name') + '</div><div class="lc-sub">' + getLevelField(id, 'sub') + '</div></div>' +
-          '<div class="lc-score"><span class="lbl">🔒</span>' + t('levelLockedLabel') + '</div>';
-        card.addEventListener('click', () => showToast(t('levelLockedToast')));
-      }
-      list.appendChild(card);
-    });
+    const ids = Object.keys(levelDefs).map(Number).sort((a, b) => a - b);
+    const CHAPTER_SIZE = 15;
+    const chapterCount = Math.ceil(ids.length / CHAPTER_SIZE) || 1;
+
+    // Par défaut, on ouvre le chapitre du niveau débloqué le plus avancé —
+    // c'est là que le joueur reprend sa progression.
+    if (expandedChapter === null) {
+      let furthest = ids[0] || 1;
+      ids.forEach(id => { if (isLevelUnlocked(id)) furthest = id; });
+      expandedChapter = Math.ceil(furthest / CHAPTER_SIZE);
+    }
+
+    for (let chapter = 1; chapter <= chapterCount; chapter++) {
+      const startId = (chapter - 1) * CHAPTER_SIZE + 1;
+      const endId = Math.min(chapter * CHAPTER_SIZE, ids.length);
+      const chapterIds = ids.filter(id => id >= startId && id <= endId);
+      if (!chapterIds.length) continue;
+
+      const allDone = chapterIds.every(id => bestScores[id] > 0);
+      const anyUnlocked = chapterIds.some(id => isLevelUnlocked(id));
+      const isExpanded = expandedChapter === chapter;
+
+      const header = document.createElement('div');
+      header.className = 'chapter-header' + (isExpanded ? ' expanded' : '');
+      header.innerHTML =
+        '<div><div class="chapter-title">' + t('chapterWord') + ' ' + chapter + '</div>' +
+        '<div class="chapter-sub">' + t('levelsWord') + ' ' + startId + '\u2013' + endId + '</div></div>' +
+        '<div class="chapter-status">' +
+        (allDone ? '<span class="chapter-check">\u2713 ' + t('chapterDoneLabel') + '</span>' : (!anyUnlocked ? '\uD83D\uDD12' : '')) +
+        '<span class="chapter-chevron">\u25B6</span></div>';
+      header.addEventListener('click', () => {
+        expandedChapter = isExpanded ? null : chapter;
+        renderLevelList();
+      });
+      list.appendChild(header);
+
+      const group = document.createElement('div');
+      group.className = 'chapter-levels' + (isExpanded ? '' : ' collapsed');
+      chapterIds.forEach(id => {
+        const def = levelDefs[id];
+        const unlocked = isLevelUnlocked(id);
+        const card = document.createElement('div');
+        card.className = 'level-card' + (unlocked ? '' : ' locked');
+        if (unlocked) {
+          card.innerHTML =
+            '<div><div class="lc-title">' + getLevelField(id, 'name') + '</div><div class="lc-sub">' + getLevelField(id, 'sub') + '</div></div>' +
+            '<div class="lc-score"><span class="lbl">' + t('bestScore') + '</span>' + bestScores[id].toLocaleString('fr-CA') + '</div>';
+          card.addEventListener('click', () => showBriefing(Number(id)));
+        } else {
+          card.innerHTML =
+            '<div><div class="lc-title">' + getLevelField(id, 'name') + '</div><div class="lc-sub">' + getLevelField(id, 'sub') + '</div></div>' +
+            '<div class="lc-score"><span class="lbl">🔒</span>' + t('levelLockedLabel') + '</div>';
+          card.addEventListener('click', () => showToast(t('levelLockedToast')));
+        }
+        group.appendChild(card);
+      });
+      list.appendChild(group);
+    }
   }
 
   // Portrait d'opérateur affiché en vignette sur le briefing, selon la
