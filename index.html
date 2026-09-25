@@ -3615,6 +3615,7 @@ const LEVEL_I18N = {"en": {"1": {"name": "Level 1 · Residence", "sub": "Easy ·
     Light: { urbain: './op-light-urbain.png', desert: './op-light-desert.png', jungle: './op-light-jungle.png', arctique: './op-light-arctique.png' },
   };
   const SHADOW_OPERATOR_IMG = './op-shadow.png';
+  const KARAMBIT_STANDARD_IMG = './milestone-tier0.jpg'; // karambit au palier 0, avant tout déblocage
   function getOperatorPortrait(cls, env) {
     if (cls === 'Shadow') return SHADOW_OPERATOR_IMG;
     const set = CLASS_ENV_OPERATOR_IMG[cls] || ENV_OPERATOR_IMG;
@@ -3695,7 +3696,7 @@ const LEVEL_I18N = {"en": {"1": {"name": "Level 1 · Residence", "sub": "Easy ·
     const subEl = document.getElementById('knife-progress-sub');
 
     const currentTierInfo = shownTier > 0 ? MILESTONE_TIERS[shownTier - 1] : null;
-    img.src = currentTierInfo ? currentTierInfo.img : SHADOW_OPERATOR_IMG;
+    img.src = currentTierInfo ? currentTierInfo.img : KARAMBIT_STANDARD_IMG;
     nameEl.textContent = currentTierInfo ? t(currentTierInfo.nameKey) : t('knifeBaseLabel');
     tierEl.textContent = t('knifeTierWord') + ' ' + shownTier + '/10';
 

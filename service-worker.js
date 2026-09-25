@@ -1,4 +1,4 @@
-const CACHE_VERSION = 'v62';
+const CACHE_VERSION = 'v63';
 const CACHE_NAME = 'breachsix-' + CACHE_VERSION;
 const ASSETS = [
   './',
@@ -73,6 +73,7 @@ const ASSETS = [
   './skin-platine.jpg',
   './skin-diamant.jpg',
   './milestone-karambit.jpg',
+  './milestone-tier0.jpg',
   './milestone-tier1.jpg',
   './milestone-tier2.jpg',
   './milestone-tier3.jpg',
