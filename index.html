@@ -3625,7 +3625,9 @@ const LEVEL_I18N = {"en": {"1": {"name": "Level 1 · Residence", "sub": "Easy ·
 
   // Mémorise le chapitre actuellement déplié (un seul à la fois, comme un
   // accordéon) — réinitialisé à chaque chargement de page, pas persisté.
-  let expandedChapter = null;
+  // undefined = pas encore initialisé (ouvre le chapitre en cours par défaut) ;
+  // null = le joueur a explicitement replié le chapitre (reste fermé).
+  let expandedChapter;
 
   function renderLevelList() {
     const list = document.getElementById('level-list');
@@ -3635,8 +3637,10 @@ const LEVEL_I18N = {"en": {"1": {"name": "Level 1 · Residence", "sub": "Easy ·
     const chapterCount = Math.ceil(ids.length / CHAPTER_SIZE) || 1;
 
     // Par défaut, on ouvre le chapitre du niveau débloqué le plus avancé —
-    // c'est là que le joueur reprend sa progression.
-    if (expandedChapter === null) {
+    // c'est là que le joueur reprend sa progression. Ne s'applique qu'au
+    // tout premier rendu (expandedChapter encore undefined) : une fois que
+    // le joueur a replié un chapitre (null), ça reste fermé.
+    if (expandedChapter === undefined) {
       let furthest = ids[0] || 1;
       ids.forEach(id => { if (isLevelUnlocked(id)) furthest = id; });
       expandedChapter = Math.ceil(furthest / CHAPTER_SIZE);
