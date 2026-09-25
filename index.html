@@ -272,7 +272,8 @@
   .skins-section { margin-top: 16px; padding-top: 12px; border-top: 1px solid var(--wall); }
   .skins-section-top { margin-top: 0; padding-top: 0; border-top: none; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid var(--wall); }
   .knife-progress-card { display: flex; align-items: center; gap: 12px; background: var(--panel-2); border: 1px solid var(--wall); border-radius: 10px; padding: 10px 12px; margin-bottom: 16px; }
-  .knife-progress-img { width: 44px; height: 44px; border-radius: 8px; object-fit: cover; flex-shrink: 0; background: var(--panel); }
+  .knife-progress-img { width: 44px; height: 44px; border-radius: 8px; object-fit: contain; flex-shrink: 0; background: #47473f; padding: 3px; cursor: pointer; }
+  .knife-progress-card { cursor: pointer; }
   .knife-progress-body { flex: 1; min-width: 0; }
   .knife-progress-top { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
   .knife-progress-name { font-size: 0.85rem; font-weight: 600; color: var(--amber); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -321,8 +322,12 @@
     font-family: var(--font-head); font-size: 0.8rem; letter-spacing: 0.08em;
     color: var(--amber); text-transform: uppercase; margin-bottom: 10px;
   }
+  .celebration-img-frame {
+    background: #47473f; border-radius: 10px; padding: 14px;
+    margin-bottom: 14px; display: flex; align-items: center; justify-content: center;
+  }
   .celebration-img {
-    width: 100%; max-height: 180px; object-fit: contain; margin-bottom: 14px;
+    width: 100%; max-height: 180px; object-fit: contain; margin-bottom: 0;
     filter: drop-shadow(0 4px 14px rgba(201,162,74,0.35));
   }
   .celebration-title {
@@ -623,7 +628,7 @@
 <div class="overlay" id="celebration-overlay">
   <div class="celebration-card">
     <div class="celebration-label" id="celebration-label">Skin débloqué !</div>
-    <img class="celebration-img" id="celebration-img" src="" alt="">
+    <div class="celebration-img-frame"><img class="celebration-img" id="celebration-img" src="" alt=""></div>
     <div class="celebration-title" id="celebration-title">Cuivre</div>
     <div class="celebration-sub" id="celebration-sub"></div>
     <button class="replay-btn" id="celebration-close-btn">Continuer</button>
@@ -632,10 +637,19 @@
 
 <div class="overlay" id="skin-preview-overlay">
   <div class="celebration-card">
-    <img class="celebration-img" id="skin-preview-img" src="" alt="">
+    <div class="celebration-img-frame"><img class="celebration-img" id="skin-preview-img" src="" alt=""></div>
     <div class="celebration-title" id="skin-preview-title">Cuivre</div>
     <div class="celebration-sub" id="skin-preview-status"></div>
     <button class="replay-btn" id="skin-preview-close-btn" data-i18n="closeBtn">Fermer</button>
+  </div>
+</div>
+
+<div class="overlay" id="knife-preview-overlay">
+  <div class="celebration-card">
+    <div class="celebration-img-frame"><img class="celebration-img" id="knife-preview-img" src="" alt=""></div>
+    <div class="celebration-title" id="knife-preview-title">Karambit standard</div>
+    <div class="celebration-sub" id="knife-preview-status"></div>
+    <button class="replay-btn" id="knife-preview-close-btn" data-i18n="closeBtn">Fermer</button>
   </div>
 </div>
 
@@ -4209,6 +4223,24 @@ const LEVEL_I18N = {"en": {"1": {"name": "Level 1 · Residence", "sub": "Easy ·
     document.getElementById('skin-preview-status').textContent = unlocked ? t('adUnlockedLabel') : (t('lockedLabel') + ' — ' + skin.req + ' ' + t('adsReqUnit'));
     document.getElementById('skin-preview-overlay').classList.add('show');
   }
+
+  // Aperçu au clic sur la carte de progression du couteau : montre le
+  // palier actuellement affiché en grand, même principe que l'aperçu des
+  // skins d'arme.
+  function showKnifePreview() {
+    const shownTier = loadIntPref('breachsix-milestone-tier', 0);
+    const currentTierInfo = shownTier > 0 ? MILESTONE_TIERS[shownTier - 1] : null;
+    const img = currentTierInfo ? currentTierInfo.img : KARAMBIT_STANDARD_IMG;
+    const name = currentTierInfo ? t(currentTierInfo.nameKey) : t('knifeBaseLabel');
+    document.getElementById('knife-preview-img').src = img;
+    document.getElementById('knife-preview-title').textContent = name;
+    document.getElementById('knife-preview-status').textContent = t('knifeTierWord') + ' ' + shownTier + '/10';
+    document.getElementById('knife-preview-overlay').classList.add('show');
+  }
+  document.getElementById('knife-progress-card').addEventListener('click', showKnifePreview);
+  document.getElementById('knife-preview-close-btn').addEventListener('click', () => {
+    document.getElementById('knife-preview-overlay').classList.remove('show');
+  });
 
   function showToast(msg) {
     const toast = document.getElementById('toast');
