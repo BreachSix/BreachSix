@@ -3629,7 +3629,7 @@ const LEVEL_I18N = {"en": {"1": {"name": "Level 1 · Residence", "sub": "Easy ·
     Light: { urbain: './op-light-urbain.png', desert: './op-light-desert.png', jungle: './op-light-jungle.png', arctique: './op-light-arctique.png' },
   };
   const SHADOW_OPERATOR_IMG = './op-shadow.png';
-  const KARAMBIT_STANDARD_IMG = './milestone-tier0.jpg'; // karambit au palier 0, avant tout déblocage
+  const KARAMBIT_STANDARD_IMG = './milestone-tier0-standard.jpg'; // karambit au palier 0, avant tout déblocage
   function getOperatorPortrait(cls, env) {
     if (cls === 'Shadow') return SHADOW_OPERATOR_IMG;
     const set = CLASS_ENV_OPERATOR_IMG[cls] || ENV_OPERATOR_IMG;
@@ -3665,16 +3665,16 @@ const LEVEL_I18N = {"en": {"1": {"name": "Level 1 · Residence", "sub": "Easy ·
   // Seul le fini du palier 10 est illustré pour l'instant (image fournie) ;
   // les autres réutilisent temporairement la même image en attendant leurs visuels dédiés.
   const MILESTONE_TIERS = [
-    { nameKey: 'tierName1', img: './milestone-tier1.jpg' },
-    { nameKey: 'tierName2', img: './milestone-tier2.jpg' },
-    { nameKey: 'tierName3', img: './milestone-tier3.jpg' },
-    { nameKey: 'tierName4', img: './milestone-tier4.jpg' },
-    { nameKey: 'tierName5', img: './milestone-tier5.jpg' },
-    { nameKey: 'tierName6', img: './milestone-tier6.jpg' },
-    { nameKey: 'tierName7', img: './milestone-tier7.jpg' },
-    { nameKey: 'tierName8', img: './milestone-tier8.jpg' },
-    { nameKey: 'tierName9', img: './milestone-tier9.jpg' },
-    { nameKey: 'tierName10', img: './milestone-karambit.jpg' },
+    { nameKey: 'tierName1', img: './milestone-tier1-acier-brosse.jpg' },
+    { nameKey: 'tierName2', img: './milestone-tier2-noir-tactique.jpg' },
+    { nameKey: 'tierName3', img: './milestone-tier3-cuivre.jpg' },
+    { nameKey: 'tierName4', img: './milestone-tier4-bronze-antique.jpg' },
+    { nameKey: 'tierName5', img: './milestone-tier5-argent.jpg' },
+    { nameKey: 'tierName6', img: './milestone-tier6-or.jpg' },
+    { nameKey: 'tierName7', img: './milestone-tier7-nacre.jpg' },
+    { nameKey: 'tierName8', img: './milestone-tier8-platine.jpg' },
+    { nameKey: 'tierName9', img: './milestone-tier9-diamant-taille.jpg' },
+    { nameKey: 'tierName10', img: './milestone-tier10-damascus-arc-en-ciel.jpg' },
   ];
   function checkLevelMilestone() {
     const shownTier = loadIntPref('breachsix-milestone-tier', 0);
