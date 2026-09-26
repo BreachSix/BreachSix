@@ -1,4 +1,4 @@
-const CACHE_VERSION = 'v75';
+const CACHE_VERSION = 'v76';
 const CACHE_NAME = 'breachsix-' + CACHE_VERSION;
 const ASSETS = [
   './',
