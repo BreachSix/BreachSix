@@ -26,21 +26,31 @@ class TwaLauncherActivity : AppCompatActivity() {
     private var customTabsSession: CustomTabsSession? = null
     private var serviceConnection: CustomTabsServiceConnection? = null
     private var twaLaunched = false
+    private var postMessageChannelRequested = false
 
     private lateinit var adManager: RewardedAdManager
 
     private val customTabsCallback = object : CustomTabsCallback() {
+        override fun onNavigationEvent(navigationEvent: Int, extras: Bundle?) {
+            // La doc officielle Chrome exige que requestPostMessageChannel()
+            // soit appelé APRES la fin de la navigation, jamais avant.
+            if (navigationEvent == NAVIGATION_FINISHED && !postMessageChannelRequested) {
+                postMessageChannelRequested = true
+                val requested = customTabsSession
+                    ?.requestPostMessageChannel(Uri.parse(POST_MESSAGE_ORIGIN))
+                Log.d(TAG, "requestPostMessageChannel après navigation: $requested")
+            }
+        }
+
         override fun onMessageChannelReady(extras: Bundle?) {
             Log.d(TAG, "postMessage channel ready")
+            // Premier postMessage = poignée de main. C'est ce message qui fait
+            // que Chrome transmet enfin le MessagePort au JS (event.ports[0]).
             customTabsSession?.postMessage("{\"type\":\"NATIVE_BRIDGE_READY\"}", null)
-            launchTwa()
         }
 
         override fun onPostMessage(message: String, extras: Bundle?) {
             handleIncomingMessage(message)
-        }
-
-        override fun onNavigationEvent(navigationEvent: Int, extras: Bundle?) {
         }
     }
 
@@ -77,10 +87,10 @@ class TwaLauncherActivity : AppCompatActivity() {
                     Uri.parse(LAUNCH_URL),
                     null
                 )
-                val requested = session.requestPostMessageChannel(Uri.parse(POST_MESSAGE_ORIGIN))
-                if (!requested) {
-                    Log.w(TAG, "requestPostMessageChannel a échoué")
-                }
+                // On lance la TWA dès que la session est prête : le canal
+                // postMessage sera demandé APRES la navigation (voir
+                // onNavigationEvent ci-dessus), pas avant.
+                launchTwa()
             }
 
             override fun onServiceDisconnected(name: ComponentName) {
