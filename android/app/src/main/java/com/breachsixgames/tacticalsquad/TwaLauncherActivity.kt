@@ -93,10 +93,16 @@ class TwaLauncherActivity : AppCompatActivity() {
     private fun launchTwa() {
         if (twaLaunched) return
         twaLaunched = true
-        val twaIntent = TrustedWebActivityIntentBuilder(Uri.parse(LAUNCH_URL))
-            .build(customTabsSession)
-        twaIntent.launchTrustedWebActivity(this)
+        val session = customTabsSession
+        if (session != null) {
+            val twaIntent = TrustedWebActivityIntentBuilder(Uri.parse(LAUNCH_URL)).build(session)
+            twaIntent.launchTrustedWebActivity(this)
+        } else {
+            val fallbackIntent = androidx.browser.customtabs.CustomTabsIntent.Builder().build()
+            fallbackIntent.launchUrl(this, Uri.parse(LAUNCH_URL))
+        }
     }
+    
 
     override fun onDestroy() {
         serviceConnection?.let { unbindService(it) }
