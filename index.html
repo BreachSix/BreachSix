@@ -1,9 +1,12 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-<!-- Google AdSense — vérification de propriété du site breachsixgames.com -->
-<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5775885539187715"
-     crossorigin="anonymous"></script>
+<!-- Google AdSense — chargé dynamiquement par initCookieConsent() seulement
+     après consentement explicite (bannière cookies), voir fin du fichier.
+     Ne plus réinsérer de balise <script> AdSense statique ici : elle
+     déposerait des cookies publicitaires avant tout consentement, ce que
+     l'esprit de la Loi 25 (art. 8.1) demande d'éviter pour les technologies
+     de suivi non essentielles. -->
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>BreachSix</title>
@@ -378,6 +381,21 @@
 -->
 </head>
 <body>
+<!-- Bannière de consentement aux cookies (Loi 25) — affichée uniquement sur
+     le site web (jamais dans l'app Android ni dans Telegram, voir
+     initCookieConsent() en fin de fichier). Masquée par défaut ; visible
+     seulement si aucun choix n'a encore été enregistré. -->
+<div id="cookie-banner" style="display:none; position:fixed; left:0; right:0; bottom:0; z-index:9999; background:#1e2117; border-top:1px solid #565c3f; padding:14px 16px; font-family:'Inter',system-ui,sans-serif; color:#e9e4d4; box-shadow:0 -4px 18px rgba(0,0,0,.35);">
+  <div style="max-width:760px; margin:0 auto; display:flex; flex-wrap:wrap; gap:12px; align-items:center; justify-content:space-between;">
+    <p style="margin:0; font-size:0.86rem; line-height:1.5; flex:1 1 260px; color:#e9e4d4;" data-i18n="cookieBannerText">
+      Ce site utilise des cookies publicitaires (Google AdSense) pour se financer. Vous pouvez les accepter ou les refuser — le site fonctionne dans les deux cas. Voir notre <a href="privacy.html" style="color:#c9a24a;">politique de confidentialité</a>.
+    </p>
+    <div style="display:flex; gap:8px; flex:0 0 auto;">
+      <button id="cookie-decline-btn" type="button" style="background:transparent; border:1px solid #565c3f; color:#e9e4d4; border-radius:6px; padding:8px 14px; font-size:0.85rem; cursor:pointer;" data-i18n="cookieDecline">Refuser</button>
+      <button id="cookie-accept-btn" type="button" style="background:#c9a24a; border:1px solid #c9a24a; color:#14160f; font-weight:600; border-radius:6px; padding:8px 14px; font-size:0.85rem; cursor:pointer;" data-i18n="cookieAccept">Accepter</button>
+    </div>
+  </div>
+</div>
 <div class="app" id="app">
 
   <!-- MENU SCREEN -->
@@ -5536,6 +5554,59 @@ function preloadTelegramStorage(done) {
   });
 }
 
+// --- Consentement aux cookies (Loi 25) ---
+// AdSense n'est pertinent que sur le site web (breachsixgames.com visité
+// dans un navigateur normal) : on ne l'affiche jamais dans l'app Android
+// (TWA) ni dans la mini-app Telegram, où la monétisation passe déjà par
+// AdMob natif / Monetag / AdsGram — des cookies publicitaires web n'y ont
+// aucun sens et ne devraient pas être posés silencieusement.
+const COOKIE_CONSENT_KEY = 'breachsix-cookie-consent'; // 'accepted' | 'declined'
+const ADSENSE_CLIENT_ID = 'ca-pub-5775885539187715';
+
+function loadAdSense() {
+  if (document.getElementById('adsense-script')) return;
+  const s = document.createElement('script');
+  s.id = 'adsense-script';
+  s.async = true;
+  s.crossOrigin = 'anonymous';
+  s.src = 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=' + ADSENSE_CLIENT_ID;
+  document.head.appendChild(s);
+}
+
+function initCookieConsent() {
+  const isStandaloneApp = !!(window.matchMedia && window.matchMedia('(display-mode: standalone)').matches);
+  // Hors Telegram et hors app installée (TWA Android) uniquement : c'est là
+  // qu'AdSense peut réellement s'afficher (site web dans un navigateur).
+  if (isTelegram || isStandaloneApp) return;
+
+  const choice = (() => { try { return localStorage.getItem(COOKIE_CONSENT_KEY); } catch (e) { return null; } })();
+  if (choice === 'accepted') { loadAdSense(); return; }
+  if (choice === 'declined') return;
+
+  const banner = document.getElementById('cookie-banner');
+  if (!banner) return;
+  banner.style.display = 'block';
+
+  const setChoice = (value) => {
+    try { localStorage.setItem(COOKIE_CONSENT_KEY, value); } catch (e) {}
+    banner.style.display = 'none';
+    if (value === 'accepted') loadAdSense();
+  };
+
+  const acceptBtn = document.getElementById('cookie-accept-btn');
+  const declineBtn = document.getElementById('cookie-decline-btn');
+  if (acceptBtn) acceptBtn.addEventListener('click', () => setChoice('accepted'));
+  if (declineBtn) declineBtn.addEventListener('click', () => setChoice('declined'));
+}
+
+// Permet de rouvrir la bannière pour changer d'avis plus tard (ex. lien
+// "Préférences cookies" ajouté dans privacy.html ou le menu du jeu).
+window.reopenCookieBanner = function () {
+  try { localStorage.removeItem(COOKIE_CONSENT_KEY); } catch (e) {}
+  initCookieConsent();
+};
+
+initCookieConsent();
 preloadTelegramStorage(bootGame);
 </script>
 <script>
