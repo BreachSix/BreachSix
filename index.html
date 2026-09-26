@@ -4531,7 +4531,13 @@ const LEVEL_I18N = {"en": {"1": {"name": "Level 1 · Residence", "sub": "Easy ·
     return Promise.reject(new Error('Monetag Interstitial SDK non chargé'));
   }
   function showKnifeTierInterstitial(onDone) {
-    if (typeof window[MONETAG_INTERSTITIAL_FN] === 'function') {
+    // CORRIGÉ (v83, 26 sept. 2026) : ajout de la garde isTelegram, manquante
+    // ici alors qu'elle est bien présente dans requestRewardedAd(). Sans
+    // elle, si le SDK Monetag était un jour chargé/présent hors Telegram
+    // (contenu en cache, changement futur), cet interstitiel se
+    // déclencherait quand même sur le web — repéré suite à un test réel du
+    // joueur montrant une pub Monetag sur breachsixgames.com.
+    if (isTelegram && typeof window[MONETAG_INTERSTITIAL_FN] === 'function') {
       monetagInterstitialShow().catch(() => {}).finally(onDone);
     } else {
       onDone();
