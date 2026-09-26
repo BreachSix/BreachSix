@@ -362,21 +362,17 @@
 <script src="https://sad.adsgram.ai/js/sad.min.js"></script>
 <script src="https://js.onclckvd.com/in-stream-ad-admanager/tma.js"></script>
 <!--
-  Monetag : remplacer cette ligne au complet par le tag <script> exact fourni
-  par le tableau de bord Monetag (section "Getting SDK tag"), une fois le
-  compte créé et une zone Rewarded Interstitial obtenue. Le tag ressemble à :
-  <script src="https://VRAI_DOMAINE/sdk.js" data-zone="TON_ZONE_ID" data-sdk="show_TON_ZONE_ID"></script>
-  Le nom de fonction généré (data-sdk="...") doit ensuite être reporté dans
-  MONETAG_SHOW_FN plus bas dans le fichier.
+  Monetag — zone Rewarded Interstitial (App BreachSixGamesBot, ID 3506130).
+  Fonction générée : show_11892831 → reportée dans MONETAG_SHOW_FN plus bas.
 -->
+<script src='//libtl.com/sdk.js' data-zone='11892831' data-sdk='show_11892831'></script>
 <!--
-  Monetag : SECONDE zone distincte, format "In-App Interstitial" cette fois
-  (pas Rewarded) — utilisée uniquement pour l'interstitiel affiché juste
-  avant la révélation d'un nouveau palier de couteau (tous les 15 niveaux).
-  Remplacer par le vrai tag une fois cette zone créée dans le tableau de
-  bord Monetag ; reporter le nom de fonction généré dans
-  MONETAG_INTERSTITIAL_FN plus bas dans le fichier.
-  <script src="https://VRAI_DOMAINE/sdk.js" data-zone="AUTRE_ZONE_ID" data-sdk="show_AUTRE_ZONE_ID"></script>
+  Monetag : une seule zone suffit (11892831) — réutilisée à la fois pour la
+  pub récompensée principale (MONETAG_SHOW_FN) et pour l'interstitiel avant
+  révélation de couteau (MONETAG_INTERSTITIAL_FN). Le format "In-App
+  Interstitial" séparé envisagé au départ ne convenait pas : c'est un mode
+  automatique/périodique sans Promise, incompatible avec un déclenchement
+  précis à un moment du jeu.
 -->
 </head>
 <body>
@@ -4413,20 +4409,27 @@ const LEVEL_I18N = {"en": {"1": {"name": "Level 1 · Residence", "sub": "Easy ·
   // chaîne de secours. MONETAG_SHOW_FN doit être remplacé par le nom exact
   // généré par le tag SDK Monetag une fois le compte créé (voir commentaire
   // du <script> Monetag dans le <head>) — ex. 'show_812345'.
-  const MONETAG_SHOW_FN = 'MONETAG_SHOW_FN_PLACEHOLDER';
+  const MONETAG_SHOW_FN = 'show_11892831';
   function monetagShow() {
     const fn = window[MONETAG_SHOW_FN];
     if (typeof fn === 'function') return fn();
     return Promise.reject(new Error('Monetag SDK non chargé'));
   }
 
-  // Monetag — zone distincte, format "In-App Interstitial" (pas Rewarded),
-  // affichée juste avant la révélation d'un nouveau palier de couteau. Ce
-  // n'est pas une porte : le couteau est déjà gagné par la performance (15
-  // niveaux complétés), donc on affiche la célébration qu'elle réussisse,
-  // échoue ou ne soit pas disponible — l'interstitiel monétise seulement ce
-  // moment de pause naturel, sans jamais bloquer le joueur.
-  const MONETAG_INTERSTITIAL_FN = 'MONETAG_INTERSTITIAL_FN_PLACEHOLDER';
+  // Monetag — même zone/fonction que la pub récompensée principale
+  // (show_11892831), réutilisée ici sans donner de récompense supplémentaire.
+  // Monetag facture chaque affichage indépendamment du fait qu'une récompense
+  // en jeu soit donnée ou non — ce n'est pas une porte : le couteau est déjà
+  // gagné par la performance (15 niveaux complétés), donc on affiche la
+  // célébration qu'elle réussisse, échoue ou ne soit pas disponible —
+  // l'interstitiel monétise seulement ce moment de pause naturel, sans
+  // jamais bloquer le joueur.
+  // À VÉRIFIER EN TEST : le format "Rewarded" de Monetag peut afficher sa
+  // propre interface annonçant "regarde pour gagner une récompense" — si
+  // c'est le cas ici, alors que rien n'est réellement donné à ce moment,
+  // ça peut sembler trompeur pour le joueur. Revoir après le premier test
+  // réel en conditions Telegram.
+  const MONETAG_INTERSTITIAL_FN = 'show_11892831';
   function monetagInterstitialShow() {
     const fn = window[MONETAG_INTERSTITIAL_FN];
     if (typeof fn === 'function') return fn();
