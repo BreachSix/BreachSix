@@ -4442,11 +4442,13 @@ const LEVEL_I18N = {"en": {"1": {"name": "Level 1 · Residence", "sub": "Easy ·
 
   // --- AdsGram (Telegram Mini App) ---
   // Réseau publicitaire natif aux Mini Apps Telegram — pas de pont requis,
-  // le SDK tourne directement dans la page. blockId 49198 = plateforme
-  // "BreachSix : Tactical Squad" sur partner.adsgram.ai (bloc Rewarded).
+  // le SDK tourne directement dans la page. blockId 50046 = nouveau bloc
+  // "Weapon Skins Reward" sur la plateforme "BreachSix: Tactical Squad"
+  // (PlatformID 47374, créée le 26 sept. 2026 après le refus définitif de
+  // l'ancien bloc 49198 — voir breachsix-checklist-lancement).
   let adsgramController = null;
   if (isTelegram && window.Adsgram) {
-    try { adsgramController = window.Adsgram.init({ blockId: '49198' }); } catch (e) {}
+    try { adsgramController = window.Adsgram.init({ blockId: '50046' }); } catch (e) {}
   }
 
   // OnClicka (onclicka.com) — DÉSACTIVÉ le 26 sept. 2026 suite à un bug
