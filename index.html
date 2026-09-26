@@ -359,26 +359,41 @@
   }
 </style>
 <!--
-  Chargés sans condition : inoffensifs en dehors de Telegram (ces scripts ne
-  font simplement rien si window.Telegram/window.Adsgram/window.initCdTma ne
-  sont jamais utilisés). Rien ne change pour un joueur sur Google Play/navigateur normal.
+  CORRIGÉ (v82, 26 sept. 2026) : ces 4 scripts (Telegram, AdsGram, OnClicka,
+  Monetag) étaient chargés SANS CONDITION jusqu'au v81 — donc pour tout
+  visiteur du site web et l'app Android également, alors qu'ils ne sont
+  réellement utilisés que dans Telegram (voir les gardes `isTelegram` plus
+  bas dans le code : AdsGram, OnClicka et Monetag ne sont jamais appelés en
+  dehors de Telegram). Un scan Cookiebot a confirmé que ce simple chargement
+  posait déjà des cookies/traceurs (js.onclckvd.com, libtl.com, telegram.org)
+  pour un visiteur web ordinaire, avant tout consentement — non conforme à
+  la Loi 25 (art. 8.1) même si ces réseaux n'étaient jamais réellement
+  déclenchés hors Telegram. Ces 4 scripts ne sont désormais injectés que si
+  l'URL porte la signature d'un lancement Telegram Mini App (`tgWebAppData`/
+  `tgWebAppPlatform` dans le hash ou la query string — c'est exactement ce
+  que Telegram ajoute lui-même à l'URL au lancement, avant même que
+  telegram-web-app.js soit chargé). document.write() est utilisé
+  volontairement ici (et seulement ici) pour garder un chargement
+  SYNCHRONE dans le <head>, comme avant — le reste du code (isTelegram,
+  preloadTelegramStorage, etc.) suppose que ces scripts sont déjà chargés
+  au moment où il s'exécute, et ça doit rester vrai.
 -->
-<script src="https://telegram.org/js/telegram-web-app.js"></script>
-<script src="https://sad.adsgram.ai/js/sad.min.js"></script>
-<script src="https://js.onclckvd.com/in-stream-ad-admanager/tma.js"></script>
-<!--
-  Monetag — zone Rewarded Interstitial (App BreachSixGamesBot, ID 3506130).
-  Fonction générée : show_11892831 → reportée dans MONETAG_SHOW_FN plus bas.
--->
-<script src='//libtl.com/sdk.js' data-zone='11892831' data-sdk='show_11892831'></script>
-<!--
-  Monetag : une seule zone suffit (11892831) — réutilisée à la fois pour la
-  pub récompensée principale (MONETAG_SHOW_FN) et pour l'interstitiel avant
-  révélation de couteau (MONETAG_INTERSTITIAL_FN). Le format "In-App
-  Interstitial" séparé envisagé au départ ne convenait pas : c'est un mode
-  automatique/périodique sans Promise, incompatible avec un déclenchement
-  précis à un moment du jeu.
--->
+<script>
+  (function () {
+    var url = location.hash + '&' + location.search;
+    var looksLikeTelegram = /tgWebAppData|tgWebAppPlatform/.test(url);
+    if (!looksLikeTelegram) return;
+    document.write('<script src="https://telegram.org/js/telegram-web-app.js"><\/script>');
+    document.write('<script src="https://sad.adsgram.ai/js/sad.min.js"><\/script>');
+    document.write('<script src="https://js.onclckvd.com/in-stream-ad-admanager/tma.js"><\/script>');
+    // Monetag — zone Rewarded Interstitial (App BreachSixGamesBot, ID 3506130).
+    // Fonction générée : show_11892831 → reportée dans MONETAG_SHOW_FN plus bas.
+    // Une seule zone suffit : réutilisée pour la pub récompensée principale
+    // (MONETAG_SHOW_FN) et l'interstitiel avant révélation de couteau
+    // (MONETAG_INTERSTITIAL_FN).
+    document.write('<script src="//libtl.com/sdk.js" data-zone="11892831" data-sdk="show_11892831"><\/script>');
+  })();
+</script>
 </head>
 <body>
 <!-- Bannière de consentement aux cookies (Loi 25) — affichée uniquement sur
