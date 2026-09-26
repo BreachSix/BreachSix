@@ -14,40 +14,12 @@ import androidx.browser.trusted.TrustedWebActivityIntentBuilder
 import com.google.android.gms.ads.MobileAds
 import org.json.JSONObject
 
-/**
- * Point d'entrée natif du jeu. Établit le canal postMessage TWA AVANT de
- * lancer la Trusted Web Activity, pour que le pont AdMob soit actif dès
- * l'ouverture du jeu.
- *
- * Contrat exact avec le code web (déjà en place dans index.html, voir le
- * cahier des charges "Pont natif AdMob TWA") :
- *   Web -> Natif : { "type": "REQUEST_REWARDED_AD" }
- *   Natif -> Web : { "type": "REWARDED_AD_RESULT", "success": <boolean> }
- * Règle non négociable : exactement UN REWARDED_AD_RESULT par
- * REQUEST_REWARDED_AD — jamais zéro, jamais deux.
- *
- * Référence officielle du protocole :
- * https://developer.chrome.com/docs/android/trusted-web-activity/postmessage-api
- *
- * À ADAPTER : le projet généré par PWABuilder fournit normalement une
- * LauncherActivity (com.google.androidbrowserhelper.trusted.LauncherActivity)
- * avec son propre écran de démarrage (splash screen). Si ce splash screen
- * doit être conservé, reporter la logique ci-dessous (établissement du canal
- * AVANT le lancement de la TWA) dans cette classe existante plutôt que de la
- * remplacer, et adapter le nom de l'activité déclarée comme LAUNCHER dans
- * AndroidManifest.xml en conséquence.
- */
 class TwaLauncherActivity : AppCompatActivity() {
 
     companion object {
         private const val TAG = "TwaLauncherActivity"
-
-        // Doit correspondre au domaine déjà vérifié par Digital Asset Links
-        // (assetlinks.json) pour que la TWA s'affiche sans barre d'adresse.
         private const val LAUNCH_URL = "https://breachsixgames.com/"
         private const val POST_MESSAGE_ORIGIN = "https://breachsixgames.com"
-
-        /** Délai maximal d'attente du canal avant de lancer le jeu sans pont pub. */
         private const val CHANNEL_TIMEOUT_MS = 2000L
     }
 
@@ -68,7 +40,6 @@ class TwaLauncherActivity : AppCompatActivity() {
         }
 
         override fun onNavigationEvent(navigationEvent: Int, extras: Bundle?) {
-            // Rien à piloter ici : on ne fait qu'observer le cycle de vie de la session.
         }
     }
 
@@ -81,7 +52,80 @@ class TwaLauncherActivity : AppCompatActivity() {
 
         bindCustomTabsService()
 
-        // Filet de sécurité : même si le canal postMessage ne s'établit
-        // jamais (navigateur incompatible, Digital Asset Links pas encore
-        // propagés, etc.), le jeu doit démarrer — le code web retombe alors
-        // sur la pub simulée, comm
+        window.decorView.postDelayed({ launchTwa() }, CHANNEL_TIMEOUT_MS)
+    }
+
+    private fun bindCustomTabsService() {
+        val packageName = CustomTabsClient.getPackageName(this, null)
+        if (packageName == null) {
+            Log.w(TAG, "Aucun provider Custom Tabs disponible sur l'appareil")
+            return
+        }
+
+        val connection = object : CustomTabsServiceConnection() {
+            override fun onCustomTabsServiceConnected(name: ComponentName, client: CustomTabsClient) {
+                client.warmup(0)
+                val session = client.newSession(customTabsCallback)
+                if (session == null) {
+                    Log.w(TAG, "Impossible de créer une session Custom Tabs")
+                    return
+                }
+                customTabsSession = session
+                session.validateRelationship(
+                    CustomTabsService.RELATION_HANDLE_ALL_URLS,
+                    Uri.parse(LAUNCH_URL),
+                    null
+                )
+                val requested = session.requestPostMessageChannel(Uri.parse(POST_MESSAGE_ORIGIN))
+                if (!requested) {
+                    Log.w(TAG, "requestPostMessageChannel a échoué")
+                }
+            }
+
+            override fun onServiceDisconnected(name: ComponentName) {
+                customTabsSession = null
+            }
+        }
+        serviceConnection = connection
+        CustomTabsClient.bindCustomTabsService(this, packageName, connection)
+    }
+
+    private fun launchTwa() {
+        if (twaLaunched) return
+        twaLaunched = true
+        val twaIntent = TrustedWebActivityIntentBuilder(Uri.parse(LAUNCH_URL))
+            .build(customTabsSession)
+        twaIntent.launchTrustedWebActivity(this)
+    }
+
+    override fun onDestroy() {
+        serviceConnection?.let { unbindService(it) }
+        super.onDestroy()
+    }
+
+    private fun handleIncomingMessage(message: String) {
+        val json = try {
+            JSONObject(message)
+        } catch (e: Exception) {
+            Log.w(TAG, "Message web illisible: $message")
+            return
+        }
+        when (json.optString("type")) {
+            "REQUEST_REWARDED_AD" -> adManager.requestAd()
+            else -> Log.d(TAG, "Message web ignoré (type inconnu): $message")
+        }
+    }
+
+    private fun sendAdResult(success: Boolean) {
+        val session = customTabsSession
+        if (session == null) {
+            Log.w(TAG, "Pas de session postMessage active, impossible d'envoyer REWARDED_AD_RESULT")
+            return
+        }
+        val payload = JSONObject()
+            .put("type", "REWARDED_AD_RESULT")
+            .put("success", success)
+            .toString()
+        session.postMessage(payload, null)
+    }
+}
