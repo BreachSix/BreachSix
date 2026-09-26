@@ -288,7 +288,6 @@
   .best-score { font-size: 0.78rem; color: var(--ok); margin-bottom: 4px; min-height: 16px; }
 
   .skins-section { margin-top: 16px; padding-top: 12px; border-top: 1px solid var(--wall); }
-  .skins-section-top { margin-top: 0; padding-top: 0; border-top: none; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid var(--wall); }
   .knife-progress-card { display: flex; align-items: center; gap: 12px; background: var(--panel-2); border: 1px solid var(--wall); border-radius: 10px; padding: 10px 12px; margin-bottom: 16px; }
   .knife-progress-img { width: 44px; height: 44px; border-radius: 8px; object-fit: contain; flex-shrink: 0; background: #47473f; padding: 3px; cursor: pointer; }
   .knife-progress-card { cursor: pointer; }
@@ -400,7 +399,14 @@
       <button class="lang-btn" data-lang="zh" style="flex:1 1 18%;">ZH</button>
     </div>
     <div class="menu-scroll">
-      <div class="skins-section skins-section-top">
+      <button class="compose-btn" id="menu-compose-btn" data-i18n="composeSquads" style="width:100%; margin-bottom:16px;">Composer les escouades</button>
+
+      <div class="brief" style="margin-bottom:14px;">
+        Choisis une mission. Ta composition d'escouade reste la même d'une mission à l'autre.
+      </div>
+      <div class="level-list" id="level-list"></div>
+
+      <div class="skins-section">
         <div class="skins-header">
           <span class="squad-title" data-i18n="weaponSkins" style="color:var(--amber);">Skins d'armes</span>
           <span class="ads-count" id="ads-count">0 pub visionnée</span>
@@ -409,7 +415,7 @@
         <button class="compose-btn watch-ad-btn" id="watch-ad-btn" data-i18n="watchAdBtn">▶ Regarder une pub optionnelle</button>
       </div>
 
-      <div class="knife-progress-card" id="knife-progress-card">
+      <div class="knife-progress-card" id="knife-progress-card" style="margin-top:14px;">
         <img class="knife-progress-img" id="knife-progress-img" src="" alt="">
         <div class="knife-progress-body">
           <div class="knife-progress-top">
@@ -423,13 +429,6 @@
         </div>
       </div>
 
-      <button class="compose-btn" id="menu-compose-btn" data-i18n="composeSquads" style="width:100%; margin-bottom:16px;">Composer les escouades</button>
-
-      <div class="brief" style="margin-bottom:14px;">
-        Choisis une mission. Ta composition d'escouade reste la même d'une mission à l'autre.
-      </div>
-      <div class="level-list" id="level-list"></div>
-
       <div class="skins-section">
         <div class="skins-header">
           <span class="squad-title" data-i18n="accessibility" style="color:var(--amber);">Accessibilité</span>
@@ -442,8 +441,8 @@
 
       <div class="skins-section" style="text-align:center;">
         <div style="display:flex; gap:10px; justify-content:center; flex-wrap:wrap; padding-top:2px;">
-          <a href="https://t.me/BreachSixGameBot" target="_blank" rel="noopener noreferrer" style="display:inline-flex; align-items:center; gap:6px; color:var(--amber); font-size:0.78rem; text-decoration:none; border:1px solid var(--wall); border-radius:6px; padding:8px 14px; background:var(--panel);">✈ Telegram</a>
-          <a href="mailto:breachstudios.dev@gmail.com" style="display:inline-flex; align-items:center; gap:6px; color:var(--amber); font-size:0.78rem; text-decoration:none; border:1px solid var(--wall); border-radius:6px; padding:8px 14px; background:var(--panel);">✉ Email</a>
+          <a href="https://t.me/BreachSixGameBot" target="_blank" rel="noopener noreferrer" style="display:inline-flex; align-items:center; gap:6px; color:var(--amber); font-size:0.78rem; text-decoration:none; border:1px solid var(--wall); border-radius:6px; padding:8px 14px; background:var(--panel);"><svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" style="flex-shrink:0;"><path d="M2 21L23 12 2 3v7l14 2-14 2z"/></svg> Telegram</a>
+          <a href="mailto:breachstudios.dev@gmail.com" style="display:inline-flex; align-items:center; gap:6px; color:var(--amber); font-size:0.78rem; text-decoration:none; border:1px solid var(--wall); border-radius:6px; padding:8px 14px; background:var(--panel);"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink:0;"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg> Email</a>
         </div>
       </div>
     </div>
@@ -4104,6 +4103,94 @@ const LEVEL_I18N = {"en": {"1": {"name": "Level 1 · Residence", "sub": "Easy ·
     },
   };
 
+  // Repositionne le viseur du tireur d'élite (sous-élément caché par
+  // défaut) au-dessus du casque d'un garde, quelle que soit sa position
+  // réelle dans la forme de pièce active. Fonction de portée module (et non
+  // plus imbriquée dans applyRoomShape) pour être réutilisable par
+  // applyDynamicThreatOffsets, qui repositionne les menaces par pièce
+  // individuelle plutôt que par forme entière.
+  function repositionSniperMark(g, x, y) {
+    const mark = g.querySelector('.sniper-mark');
+    if (!mark) return;
+    const cy = y - 19;
+    mark.querySelector('circle').setAttribute('cx', x); mark.querySelector('circle').setAttribute('cy', cy);
+    const lines = mark.querySelectorAll('line');
+    lines[0].setAttribute('x1', x); lines[0].setAttribute('x2', x);
+    lines[0].setAttribute('y1', cy - 5); lines[0].setAttribute('y2', cy + 5);
+    lines[1].setAttribute('y1', cy); lines[1].setAttribute('y2', cy);
+    lines[1].setAttribute('x1', x - 5); lines[1].setAttribute('x2', x + 5);
+  }
+
+  // Repositionne un garde "simple" (même structure pour T1, T3-T6) — évite
+  // de répéter ce bloc pour chaque nouveau garde ajouté.
+  function repositionSimpleGuard(threatId, pos) {
+    threats[threatId].x = pos.x; threats[threatId].y = pos.y;
+    const g = document.getElementById(threatId.toLowerCase() + '-g');
+    g.querySelector('.enemy-body').setAttribute('cx', pos.x); g.querySelector('.enemy-body').setAttribute('cy', pos.y);
+    g.querySelector('.enemy-helmet').setAttribute('cx', pos.x); g.querySelector('.enemy-helmet').setAttribute('cy', pos.y - 6);
+    const weapon = g.querySelector('.enemy-weapon');
+    weapon.setAttribute('x', pos.x - 1.3); weapon.setAttribute('y', pos.y - 16);
+    repositionSniperMark(g, pos.x, pos.y);
+  }
+
+  // Repositionne T2 (le preneur d'otage) — bespoke car seule menace avec un
+  // corps polygonal et une marque d'otage distincte.
+  function repositionHostageThreat(pos) {
+    threats.T2.x = pos.x; threats.T2.y = pos.y;
+    const t2g = document.getElementById('t2-g');
+    const cx2 = pos.x, cy2 = pos.y;
+    const relPoints = [[0,-12],[9,-7],[9,5],[0,12],[-9,5],[-9,-7]];
+    t2g.querySelector('polygon').setAttribute('points', relPoints.map(p => (cx2 + p[0]) + ',' + (cy2 + p[1])).join(' '));
+    t2g.querySelector('.enemy-helmet').setAttribute('cx', cx2); t2g.querySelector('.enemy-helmet').setAttribute('cy', cy2 - 17);
+    const t2weapon = t2g.querySelector('.enemy-weapon');
+    t2weapon.setAttribute('x', cx2 - 1.3); t2weapon.setAttribute('y', cy2 - 28);
+    const hostageCircle = t2g.querySelector('.hostage-mark');
+    hostageCircle.setAttribute('cx', cx2 + 17); hostageCircle.setAttribute('cy', cy2 + 9);
+    const hostageLine = t2g.querySelector('.hostage-line');
+    hostageLine.setAttribute('x1', cx2 + 17); hostageLine.setAttribute('x2', cx2 + 17);
+    hostageLine.setAttribute('y1', cy2 + 14); hostageLine.setAttribute('y2', cy2 + 21);
+  }
+
+  // Décale légèrement chaque menace active vers le centre des portes
+  // RÉELLEMENT actives de la pièce en cours (room.doors), au lieu de
+  // toujours utiliser la même position fixe par forme quelle que soit la
+  // pièce individuelle (point technique en suspens de la checklist de
+  // lancement). Décalage borné à 12u — très inférieur à la marge de
+  // sécurité d'au moins 87u déjà intégrée à chaque position de base par
+  // forme (voir commentaires dans ROOM_SHAPES) — pour ne jamais pousser un
+  // trajet/waypoint déjà validé au-delà de la tolérance pour laquelle il a
+  // été vérifié.
+  const THREAT_DOOR_OFFSET_MAX = 12;
+
+  function applyDynamicThreatOffsets() {
+    const room = currentRoom();
+    if (room.type === 'bomb') return; // aucune menace T1-T6 à repositionner dans une pièce bombe
+    const shapeCfg = ROOM_SHAPES[levelDefs[currentLevel].roomShape] || ROOM_SHAPES.square;
+
+    const activeDoorPositions = room.doors.map(id => shapeCfg.doors[id]).filter(Boolean);
+    if (!activeDoorPositions.length) return;
+    const centroid = {
+      x: activeDoorPositions.reduce((sum, p) => sum + p.x, 0) / activeDoorPositions.length,
+      y: activeDoorPositions.reduce((sum, p) => sum + p.y, 0) / activeDoorPositions.length,
+    };
+
+    room.threats.forEach(threatId => {
+      const base = shapeCfg[threatId.toLowerCase()];
+      if (!base) return;
+      const dx = centroid.x - base.x, dy = centroid.y - base.y;
+      const dist = Math.hypot(dx, dy);
+      const nudged = dist < 1
+        ? { x: base.x, y: base.y }
+        : { x: base.x + (dx / dist) * THREAT_DOOR_OFFSET_MAX, y: base.y + (dy / dist) * THREAT_DOOR_OFFSET_MAX };
+
+      if (threatId === 'T2') {
+        repositionHostageThreat(nudged);
+      } else {
+        repositionSimpleGuard(threatId, nudged);
+      }
+    });
+  }
+
   function applyRoomShape(shapeKey) {
     const shape = ROOM_SHAPES[shapeKey] || ROOM_SHAPES.square;
     document.getElementById('room-svg').setAttribute('viewBox', shape.viewBox);
@@ -4134,55 +4221,11 @@ const LEVEL_I18N = {"en": {"1": {"name": "Level 1 · Residence", "sub": "Easy ·
       countText.setAttribute('y', pos.y + 4);
     });
 
-    threats.T1.x = shape.t1.x; threats.T1.y = shape.t1.y;
-    const t1g = document.getElementById('t1-g');
-    const t1x = shape.t1.x, t1y = shape.t1.y;
-    t1g.querySelector('.enemy-body').setAttribute('cx', t1x); t1g.querySelector('.enemy-body').setAttribute('cy', t1y);
-    t1g.querySelector('.enemy-helmet').setAttribute('cx', t1x); t1g.querySelector('.enemy-helmet').setAttribute('cy', t1y - 6);
-    const t1weapon = t1g.querySelector('.enemy-weapon');
-    t1weapon.setAttribute('x', t1x - 1.3); t1weapon.setAttribute('y', t1y - 16);
-    repositionSniperMark(t1g, t1x, t1y);
-
-    threats.T2.x = shape.t2.x; threats.T2.y = shape.t2.y;
-    const t2g = document.getElementById('t2-g');
-    const cx2 = shape.t2.x, cy2 = shape.t2.y;
-    const relPoints = [[0,-12],[9,-7],[9,5],[0,12],[-9,5],[-9,-7]];
-    t2g.querySelector('polygon').setAttribute('points', relPoints.map(p => (cx2 + p[0]) + ',' + (cy2 + p[1])).join(' '));
-    t2g.querySelector('.enemy-helmet').setAttribute('cx', cx2); t2g.querySelector('.enemy-helmet').setAttribute('cy', cy2 - 17);
-    const t2weapon = t2g.querySelector('.enemy-weapon');
-    t2weapon.setAttribute('x', cx2 - 1.3); t2weapon.setAttribute('y', cy2 - 28);
-    const hostageCircle = t2g.querySelector('.hostage-mark');
-    hostageCircle.setAttribute('cx', cx2 + 17); hostageCircle.setAttribute('cy', cy2 + 9);
-    const hostageLine = t2g.querySelector('.hostage-line');
-    hostageLine.setAttribute('x1', cx2 + 17); hostageLine.setAttribute('x2', cx2 + 17);
-    hostageLine.setAttribute('y1', cy2 + 14); hostageLine.setAttribute('y2', cy2 + 21);
-
-    // Repositionne le viseur du tireur d'élite (sous-élément caché par
-    // défaut) au-dessus du casque d'un garde, quelle que soit sa position
-    // réelle dans la forme de pièce active.
-    function repositionSniperMark(g, x, y) {
-      const mark = g.querySelector('.sniper-mark');
-      if (!mark) return;
-      const cy = y - 19;
-      mark.querySelector('circle').setAttribute('cx', x); mark.querySelector('circle').setAttribute('cy', cy);
-      const lines = mark.querySelectorAll('line');
-      lines[0].setAttribute('x1', x); lines[0].setAttribute('x2', x);
-      lines[0].setAttribute('y1', cy - 5); lines[0].setAttribute('y2', cy + 5);
-      lines[1].setAttribute('y1', cy); lines[1].setAttribute('y2', cy);
-      lines[1].setAttribute('x1', x - 5); lines[1].setAttribute('x2', x + 5);
-    }
-
-    // Repositionne un garde "simple" (même structure que T3-T6) — évite de
-    // répéter ce bloc pour chaque nouveau garde ajouté.
-    function repositionSimpleGuard(threatId, pos) {
-      threats[threatId].x = pos.x; threats[threatId].y = pos.y;
-      const g = document.getElementById(threatId.toLowerCase() + '-g');
-      g.querySelector('.enemy-body').setAttribute('cx', pos.x); g.querySelector('.enemy-body').setAttribute('cy', pos.y);
-      g.querySelector('.enemy-helmet').setAttribute('cx', pos.x); g.querySelector('.enemy-helmet').setAttribute('cy', pos.y - 6);
-      const weapon = g.querySelector('.enemy-weapon');
-      weapon.setAttribute('x', pos.x - 1.3); weapon.setAttribute('y', pos.y - 16);
-      repositionSniperMark(g, pos.x, pos.y);
-    }
+    // Position de base par forme (voir applyDynamicThreatOffsets pour le
+    // décalage additionnel appliqué ensuite, par pièce individuelle, selon
+    // ses portes réellement actives).
+    repositionSimpleGuard('T1', shape.t1);
+    repositionHostageThreat(shape.t2);
     ['t3', 't4', 't5', 't6'].forEach(key => {
       if (shape[key]) repositionSimpleGuard(key.toUpperCase(), shape[key]);
     });
@@ -4251,6 +4294,7 @@ const LEVEL_I18N = {"en": {"1": {"name": "Level 1 · Residence", "sub": "Easy ·
     document.getElementById('compose-btn').classList.remove('active');
     document.getElementById('compose-btn').textContent = 'Composer';
     applyLevelVisibility();
+    applyDynamicThreatOffsets();
     resetRoomVisuals();
     updateMissionTag();
     hint.textContent = t('selectOperatorHint');
@@ -4265,6 +4309,7 @@ const LEVEL_I18N = {"en": {"1": {"name": "Level 1 · Residence", "sub": "Easy ·
     resolved = false;
     document.getElementById('overlay').classList.remove('show');
     applyLevelVisibility();
+    applyDynamicThreatOffsets();
     resetRoomVisuals();
     updateMissionTag();
     hint.textContent = t('selectOperatorHint');
