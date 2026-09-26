@@ -32,6 +32,7 @@ class TwaLauncherActivity : AppCompatActivity() {
     private val customTabsCallback = object : CustomTabsCallback() {
         override fun onMessageChannelReady(extras: Bundle?) {
             Log.d(TAG, "postMessage channel ready")
+            customTabsSession?.postMessage("{\"type\":\"NATIVE_BRIDGE_READY\"}", null)
             launchTwa()
         }
 
@@ -102,7 +103,7 @@ class TwaLauncherActivity : AppCompatActivity() {
             fallbackIntent.launchUrl(this, Uri.parse(LAUNCH_URL))
         }
     }
-    
+
 
     override fun onDestroy() {
         serviceConnection?.let { unbindService(it) }
