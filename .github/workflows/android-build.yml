@@ -23,10 +23,9 @@ jobs:
           java-version: '17'
 
       - name: Configurer le SDK Android
-        uses: android-actions/setup-android@v3
-
-      - name: Accepter les licences du SDK Android
-        run: yes | sdkmanager --licenses > /dev/null || true
+        run: |
+          yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --licenses > /dev/null || true
+          yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" "platforms;android-34" "build-tools;34.0.0" > /dev/null || true
       - name: Configurer Gradle
         uses: gradle/actions/setup-gradle@v3
         with:
